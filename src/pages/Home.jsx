@@ -507,10 +507,7 @@ const Home = () => {
             <h2 className="text-4xl font-bold text-gray-900">How It Works</h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
-            {/* Connecting line */}
-            <div className="hidden md:block absolute top-14 left-[calc(16.66%+2rem)] right-[calc(16.66%+2rem)] h-0.5 bg-gradient-to-r from-[#1a365d] via-blue-300 to-[#1a365d] opacity-20" />
-
+          <div className="flex flex-col md:flex-row items-stretch gap-0">
             {[
               {
                 step: '01',
@@ -530,20 +527,24 @@ const Home = () => {
                 title: 'Ride in Comfort',
                 description: 'Choose your preferred driver, confirm, pay securely, and enjoy a premium experience.',
               },
-            ].map((item) => (
-              <div
-                key={item.step}
-                className="relative bg-white rounded-2xl shadow-card hover:shadow-card-hover transition-all duration-300 p-8 text-center group"
-              >
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-[#1a365d] text-white text-xs font-bold px-3 py-1 rounded-full tracking-wider">
-                  STEP {item.step}
+            ].map((item, idx, arr) => (
+              <React.Fragment key={item.step}>
+                <div className="relative bg-white rounded-2xl shadow-card hover:shadow-card-hover transition-all duration-300 p-8 text-center group flex-1">
+                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-[#1a365d] text-white text-xs font-bold px-3 py-1 rounded-full tracking-wider">
+                    STEP {item.step}
+                  </div>
+                  <div className="flex items-center justify-center w-16 h-16 bg-primary-50 rounded-2xl mx-auto mb-5 mt-2 group-hover:bg-[#1a365d] transition-colors duration-300">
+                    <item.icon className="text-[#1a365d] group-hover:text-white transition-colors duration-300" size={28} />
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-3">{item.title}</h3>
+                  <p className="text-gray-500 leading-relaxed text-sm">{item.description}</p>
                 </div>
-                <div className="flex items-center justify-center w-16 h-16 bg-primary-50 rounded-2xl mx-auto mb-5 mt-2 group-hover:bg-[#1a365d] transition-colors duration-300">
-                  <item.icon className="text-[#1a365d] group-hover:text-white transition-colors duration-300" size={28} />
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-3">{item.title}</h3>
-                <p className="text-gray-500 leading-relaxed text-sm">{item.description}</p>
-              </div>
+                {idx < arr.length - 1 && (
+                  <div className="hidden md:flex items-center justify-center px-2 flex-shrink-0 text-[#1a365d] opacity-40">
+                    <FiArrowRight size={28} />
+                  </div>
+                )}
+              </React.Fragment>
             ))}
           </div>
         </div>
