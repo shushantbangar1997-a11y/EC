@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 import api from '../utils/api';
+import PlaceAutocomplete from '../components/PlaceAutocomplete';
 import {
   FiMapPin,
   FiCalendar,
@@ -246,6 +247,10 @@ const Home = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handlePlaceChange = (field) => (value) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.pickup_location || !formData.destination || !formData.date || !formData.time) {
@@ -341,33 +346,33 @@ const Home = () => {
 
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-1">
-                  <label className="label-base">Pickup Location *</label>
-                  <div className="relative">
-                    <FiMapPin className="absolute left-3 top-3 text-[#1a365d]" size={16} />
-                    <input
-                      type="text"
-                      name="pickup_location"
-                      value={formData.pickup_location}
-                      onChange={handleInputChange}
-                      placeholder="Enter pickup address or airport"
-                      className="input-base pl-9"
-                    />
-                  </div>
+                  <label htmlFor="home-pickup" className="label-base">Pickup Location *</label>
+                  <PlaceAutocomplete
+                    id="home-pickup"
+                    name="pickup_location"
+                    value={formData.pickup_location}
+                    onChange={handlePlaceChange('pickup_location')}
+                    placeholder="Enter pickup address or airport"
+                    className="input-base pl-9"
+                    icon={<FiMapPin size={16} />}
+                    required
+                    aria-label="Pickup location"
+                  />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="label-base">Destination *</label>
-                  <div className="relative">
-                    <FiNavigation2 className="absolute left-3 top-3 text-[#1a365d]" size={16} />
-                    <input
-                      type="text"
-                      name="destination"
-                      value={formData.destination}
-                      onChange={handleInputChange}
-                      placeholder="Enter drop-off address"
-                      className="input-base pl-9"
-                    />
-                  </div>
+                  <label htmlFor="home-destination" className="label-base">Destination *</label>
+                  <PlaceAutocomplete
+                    id="home-destination"
+                    name="destination"
+                    value={formData.destination}
+                    onChange={handlePlaceChange('destination')}
+                    placeholder="Enter drop-off address"
+                    className="input-base pl-9"
+                    icon={<FiNavigation2 size={16} />}
+                    required
+                    aria-label="Destination address"
+                  />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">

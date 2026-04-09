@@ -1,7 +1,11 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { FiMapPin, FiClock, FiUsers } from 'react-icons/fi'
+import PlaceAutocomplete from '../../components/PlaceAutocomplete'
 
 const BookRide = () => {
+  const [pickup, setPickup] = useState('')
+  const [dropoff, setDropoff] = useState('')
+
   return (
     <div className="min-h-screen bg-gray-50 section-padding">
       <div className="container-custom max-w-2xl">
@@ -10,29 +14,33 @@ const BookRide = () => {
         <div className="card">
           <form className="space-y-6">
             <div>
-              <label className="label-base">Pickup Location</label>
-              <div className="relative">
-                <FiMapPin className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Enter pickup location"
-                  className="input-base pl-10"
-                  required
-                />
-              </div>
+              <label htmlFor="bookriде-pickup" className="label-base">Pickup Location</label>
+              <PlaceAutocomplete
+                id="bookride-pickup"
+                name="pickup_location"
+                value={pickup}
+                onChange={setPickup}
+                placeholder="Enter pickup location"
+                className="input-base pl-10"
+                icon={<FiMapPin className="w-5 h-5 text-gray-400" />}
+                required
+                aria-label="Pickup location"
+              />
             </div>
 
             <div>
-              <label className="label-base">Dropoff Location</label>
-              <div className="relative">
-                <FiMapPin className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Enter dropoff location"
-                  className="input-base pl-10"
-                  required
-                />
-              </div>
+              <label htmlFor="bookride-dropoff" className="label-base">Dropoff Location</label>
+              <PlaceAutocomplete
+                id="bookride-dropoff"
+                name="dropoff_location"
+                value={dropoff}
+                onChange={setDropoff}
+                placeholder="Enter dropoff location"
+                className="input-base pl-10"
+                icon={<FiMapPin className="w-5 h-5 text-gray-400" />}
+                required
+                aria-label="Dropoff location"
+              />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
