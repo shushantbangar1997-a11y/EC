@@ -23,11 +23,10 @@ import {
   FiZap,
   FiGlobe,
   FiAward,
-  FiCreditCard,
   FiCheckCircle,
 } from 'react-icons/fi';
 
-/* ─── Animated counter hook ─────────────────────────────────────────── */
+// Animated counter hook
 function useCountUp(target, duration = 1800, start = false) {
   const [count, setCount] = useState(0);
   useEffect(() => {
@@ -45,7 +44,7 @@ function useCountUp(target, duration = 1800, start = false) {
   return count;
 }
 
-/* ─── Data ───────────────────────────────────────────────────────────── */
+// Static data
 const FLEET = [
   {
     type: 'Sedan',
@@ -173,7 +172,6 @@ const FAQS = [
   },
 ];
 
-/* ─── Component ──────────────────────────────────────────────────────── */
 const Home = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -209,18 +207,28 @@ const Home = () => {
   /* FAQ accordion */
   const [openFaq, setOpenFaq] = useState(null);
 
-  /* Sticky mobile CTA */
+  /* Sticky mobile CTA — show after hero scrolls out, hide when page bottom is visible */
   const heroRef = useRef(null);
-  const footerRef = useRef(null);
+  const bottomSentinelRef = useRef(null);
   const [showStickyCta, setShowStickyCta] = useState(false);
+  const [atBottom, setAtBottom] = useState(false);
   useEffect(() => {
-    const handleScroll = () => {
-      if (!heroRef.current) return;
-      const heroBottom = heroRef.current.getBoundingClientRect().bottom;
-      setShowStickyCta(heroBottom < 0);
+    const heroObserver = new IntersectionObserver(
+      ([entry]) => setShowStickyCta(!entry.isIntersecting),
+      { threshold: 0 }
+    );
+    if (heroRef.current) heroObserver.observe(heroRef.current);
+
+    const bottomObserver = new IntersectionObserver(
+      ([entry]) => setAtBottom(entry.isIntersecting),
+      { threshold: 0 }
+    );
+    if (bottomSentinelRef.current) bottomObserver.observe(bottomSentinelRef.current);
+
+    return () => {
+      heroObserver.disconnect();
+      bottomObserver.disconnect();
     };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   /* Handlers */
@@ -249,7 +257,6 @@ const Home = () => {
 
   const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
 
-  /* ── RENDER ─────────────────────────────────────────────────────────── */
   return (
     <div className="bg-white overflow-x-hidden">
 
@@ -553,7 +560,8 @@ const Home = () => {
                 </div>
                 <h3 className="text-lg font-bold text-gray-900 mb-1">{v.type}</h3>
                 <p className="text-xs text-[#1a365d] font-semibold mb-1">{v.passengers} passengers</p>
-                <p className="text-xs text-gray-500 italic mb-4">{v.tagline}</p>
+                <p className="text-xs text-gray-500 italic mb-1">{v.tagline}</p>
+                <p className="text-xs text-gray-400 mb-4">Best for: {v.bestFor}</p>
                 <ul className="space-y-1.5 mb-5 flex-grow">
                   {v.features.map((f) => (
                     <li key={f} className="flex items-center gap-2 text-xs text-gray-600">
@@ -713,10 +721,13 @@ const Home = () => {
         </div>
       </section>
 
-      {/* ════════ STICKY MOBILE CTA ════════ */}
+      {/* Sentinel element — when visible the sticky CTA hides */}
+      <div ref={bottomSentinelRef} aria-hidden="true" />
+
+      {/* Sticky mobile CTA */}
       <div
         className={`fixed bottom-0 left-0 right-0 z-50 md:hidden transition-all duration-300 ${
-          showStickyCta ? 'translate-y-0 opacity-100' : 'translate-y-full opacity-0'
+          showStickyCta && !atBottom ? 'translate-y-0 opacity-100' : 'translate-y-full opacity-0'
         }`}
       >
         <div className="bg-[#1a365d] border-t border-blue-800 px-4 py-3 flex items-center gap-3 shadow-2xl">
