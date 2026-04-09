@@ -214,7 +214,7 @@ const Navbar = () => {
               className="flex items-center gap-1.5 text-blue-200 hover:text-white transition-colors text-sm font-medium"
             >
               <FiPhone size={14} />
-              {PHONE}
+              Call Us: {PHONE}
             </a>
 
             {isAuthenticated && user && (

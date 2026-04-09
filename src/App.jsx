@@ -8,6 +8,7 @@ import ProtectedRoute from './components/ProtectedRoute'
 
 // Public Pages
 import Home from './pages/Home'
+import Corporate from './pages/Corporate'
 import Login from './pages/auth/Login'
 import Signup from './pages/auth/Signup'
 import Profile from './pages/Profile'
@@ -45,6 +46,7 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/how-it-works" element={<HowItWorks />} />
+            <Route path="/corporate" element={<Corporate />} />
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/terms" element={<Terms />} />
 
