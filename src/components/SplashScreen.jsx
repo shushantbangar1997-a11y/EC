@@ -44,7 +44,7 @@ const SplashScreen = ({ onDone }) => {
         autoPlay
         muted
         playsInline
-        className="max-w-xs sm:max-w-sm md:max-w-md w-full"
+        className="absolute inset-0 w-full h-full object-cover"
       />
     </div>
   )
