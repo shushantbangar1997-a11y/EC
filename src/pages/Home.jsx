@@ -268,7 +268,7 @@ const Home = () => {
   return (
     <div className="bg-white overflow-x-hidden">
 
-      {/* ════════ HERO ════════ */}
+      
       <section
         ref={heroRef}
         className="relative min-h-screen flex items-center bg-gradient-to-br from-[#0f1f3d] via-[#1a365d] to-[#1a3a6b] overflow-hidden"
@@ -475,7 +475,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* ════════ STATS BAR ════════ */}
+      
       <section ref={statsRef} className="bg-white border-b border-gray-100 py-10">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
@@ -499,7 +499,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* ════════ HOW IT WORKS ════════ */}
+      
       <section className="bg-gray-50 py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
@@ -550,7 +550,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* ════════ FLEET SHOWCASE ════════ */}
+      
       <section className="bg-white py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
@@ -591,7 +591,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* ════════ TRUST & GUARANTEES ════════ */}
+      
       <section className="bg-gradient-to-br from-[#0f1f3d] to-[#1a365d] py-24 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
@@ -616,7 +616,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* ════════ TESTIMONIALS ════════ */}
+      
       <section className="bg-gray-50 py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-14">
@@ -655,7 +655,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* ════════ FAQ ════════ */}
+      
       <section className="bg-white py-24">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-14">
@@ -694,7 +694,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* ════════ LEAD CAPTURE ════════ */}
+      
       <section className="bg-gradient-to-r from-[#1a365d] to-[#2d5a8c] py-24">
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
           <div className="inline-flex items-center gap-2 bg-yellow-400 text-[#1a365d] rounded-full px-4 py-1.5 text-sm font-bold mb-8">
