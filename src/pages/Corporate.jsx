@@ -14,7 +14,6 @@ import {
   FiCheck,
   FiCheckCircle,
   FiStar,
-  FiUsers,
   FiCalendar,
   FiMail,
 } from 'react-icons/fi'
