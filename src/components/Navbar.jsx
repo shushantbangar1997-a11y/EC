@@ -288,6 +288,8 @@ const Navbar = () => {
         className={`md:hidden bg-primary-900 border-t border-primary-700 overflow-hidden transition-all duration-300 ease-in-out ${
           isMenuOpen ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0'
         }`}
+        aria-hidden={!isMenuOpen}
+        {...(!isMenuOpen && { inert: '' })}
       >
         <div className="container-custom px-4 sm:px-6 py-4 space-y-1">
           {/* Phone call row */}

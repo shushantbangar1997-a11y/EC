@@ -65,6 +65,7 @@ const Footer = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="Enter your email address"
+                    aria-label="Email address for newsletter signup"
                     className="w-full pl-9 pr-4 py-2.5 bg-primary-800 border border-primary-700 rounded-lg text-white placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
                   />
                 </div>
