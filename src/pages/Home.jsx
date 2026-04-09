@@ -31,15 +31,17 @@ function useCountUp(target, duration = 1800, start = false) {
   const [count, setCount] = useState(0);
   useEffect(() => {
     if (!start) return;
+    let rafId = null;
     let startTime = null;
     const step = (timestamp) => {
       if (!startTime) startTime = timestamp;
       const progress = Math.min((timestamp - startTime) / duration, 1);
       const eased = 1 - Math.pow(1 - progress, 3);
       setCount(Math.floor(eased * target));
-      if (progress < 1) requestAnimationFrame(step);
+      if (progress < 1) rafId = requestAnimationFrame(step);
     };
-    requestAnimationFrame(step);
+    rafId = requestAnimationFrame(step);
+    return () => { if (rafId) cancelAnimationFrame(rafId); };
   }, [target, duration, start]);
   return count;
 }
@@ -207,11 +209,10 @@ const Home = () => {
   /* FAQ accordion */
   const [openFaq, setOpenFaq] = useState(null);
 
-  /* Sticky mobile CTA — show after hero scrolls out, hide when page bottom is visible */
+  /* Sticky mobile CTA — show after hero scrolls out, hide when site footer is visible */
   const heroRef = useRef(null);
-  const bottomSentinelRef = useRef(null);
   const [showStickyCta, setShowStickyCta] = useState(false);
-  const [atBottom, setAtBottom] = useState(false);
+  const [footerVisible, setFooterVisible] = useState(false);
   useEffect(() => {
     const heroObserver = new IntersectionObserver(
       ([entry]) => setShowStickyCta(!entry.isIntersecting),
@@ -219,15 +220,16 @@ const Home = () => {
     );
     if (heroRef.current) heroObserver.observe(heroRef.current);
 
-    const bottomObserver = new IntersectionObserver(
-      ([entry]) => setAtBottom(entry.isIntersecting),
+    const footerEl = document.querySelector('footer');
+    const footerObserver = new IntersectionObserver(
+      ([entry]) => setFooterVisible(entry.isIntersecting),
       { threshold: 0 }
     );
-    if (bottomSentinelRef.current) bottomObserver.observe(bottomSentinelRef.current);
+    if (footerEl) footerObserver.observe(footerEl);
 
     return () => {
       heroObserver.disconnect();
-      bottomObserver.disconnect();
+      footerObserver.disconnect();
     };
   }, []);
 
@@ -256,6 +258,11 @@ const Home = () => {
   };
 
   const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  const bookVehicle = (vehicleType) => {
+    setFormData((prev) => ({ ...prev, vehicle_type: vehicleType }));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   return (
     <div className="bg-white overflow-x-hidden">
@@ -571,7 +578,7 @@ const Home = () => {
                   ))}
                 </ul>
                 <button
-                  onClick={scrollToTop}
+                  onClick={() => bookVehicle(v.type)}
                   className="mt-auto w-full text-center text-sm font-semibold text-[#1a365d] border border-[#1a365d] rounded-lg py-2 hover:bg-[#1a365d] hover:text-white transition-all duration-200"
                 >
                   Book This Vehicle
@@ -721,13 +728,10 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Sentinel element — when visible the sticky CTA hides */}
-      <div ref={bottomSentinelRef} aria-hidden="true" />
-
       {/* Sticky mobile CTA */}
       <div
         className={`fixed bottom-0 left-0 right-0 z-50 md:hidden transition-all duration-300 ${
-          showStickyCta && !atBottom ? 'translate-y-0 opacity-100' : 'translate-y-full opacity-0'
+          showStickyCta && !footerVisible ? 'translate-y-0 opacity-100' : 'translate-y-full opacity-0'
         }`}
       >
         <div className="bg-[#1a365d] border-t border-blue-800 px-4 py-3 flex items-center gap-3 shadow-2xl">
