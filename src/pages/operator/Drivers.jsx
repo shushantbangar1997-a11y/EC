@@ -11,7 +11,7 @@ import {
   FiCheckCircle,
   FiAlertCircle,
   FiStar,
-  FiStickyNote,
+  FiFileText,
   FiPhone,
   FiMail,
   FiTruck,
@@ -468,7 +468,7 @@ export default function Drivers() {
                 {/* Notes Indicator */}
                 {driver.notes && (
                   <div className="flex items-start gap-2 bg-blue-50 rounded p-2">
-                    <FiStickyNote size={14} className="text-blue-600 flex-shrink-0 mt-0.5" />
+                    <FiFileText size={14} className="text-blue-600 flex-shrink-0 mt-0.5" />
                     <p className="text-xs text-blue-900 line-clamp-2">{driver.notes}</p>
                   </div>
                 )}
