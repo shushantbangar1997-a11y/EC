@@ -26,7 +26,7 @@ const BookRide = () => {
 
   if (prefillBid && prefillRide) {
     return (
-      <div className="min-h-screen bg-gray-50 section-padding">
+      <div className="min-h-screen bg-gray-50 section-padding" style={{ background: 'var(--bg-page)', transition: 'background 300ms ease' }}>
         <div className="container-custom max-w-2xl">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Confirm Your Booking</h1>
           <p className="text-gray-500 mb-8">Review your trip details and selected offer below.</p>

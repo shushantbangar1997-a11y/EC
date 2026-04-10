@@ -114,7 +114,7 @@ const RideDetails = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center" style={{ background: 'var(--bg-page)', transition: 'background 300ms ease' }}>
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#1a365d] mx-auto"></div>
           <p className="text-gray-600 mt-4">Loading ride details...</p>
@@ -125,7 +125,7 @@ const RideDetails = () => {
 
   if (!ride) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center" style={{ background: 'var(--bg-page)', transition: 'background 300ms ease' }}>
         <div className="text-center">
           <p className="text-gray-600 mb-4">Ride not found</p>
           <button onClick={() => navigate('/my-rides')} className="text-[#1a365d] font-semibold hover:underline">
@@ -137,7 +137,7 @@ const RideDetails = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50" style={{ background: 'var(--bg-page)', transition: 'background 300ms ease' }}>
       {/* Header */}
       <div className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">

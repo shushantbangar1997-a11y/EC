@@ -296,7 +296,7 @@ export default function Drivers() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
+    <div className="min-h-screen bg-gray-50 p-8" style={{ background: 'var(--bg-page)', transition: 'background 300ms ease' }}>
       {/* Header */}
       <div className="mb-8 flex items-center justify-between">
         <div>

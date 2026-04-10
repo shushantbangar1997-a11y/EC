@@ -237,6 +237,45 @@ body {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
+   SMOOTH THEME TRANSITIONS
+   Applied unconditionally so transitions work in BOTH directions.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.bg-white, .bg-gray-50, .bg-gray-100, .bg-gray-200, .bg-gray-300,
+.bg-blue-50, .bg-blue-100, .bg-green-50, .bg-green-100,
+.bg-red-50, .bg-red-100, .bg-orange-50, .bg-orange-100,
+.bg-amber-50, .bg-amber-100, .bg-yellow-50, .bg-yellow-100,
+.bg-purple-50, .bg-purple-100, .bg-indigo-50, .bg-indigo-100,
+.bg-teal-50, .bg-teal-100, .bg-emerald-50, .bg-emerald-100,
+.card, .card-md, .btn-secondary, .input-base {
+  transition: background-color 300ms ease !important;
+}
+
+.text-gray-900, .text-gray-800, .text-gray-700, .text-gray-600,
+.text-gray-500, .text-gray-400, .text-gray-300,
+.text-blue-800, .text-blue-700, .text-blue-600,
+.text-yellow-800, .text-yellow-700,
+.text-green-800, .text-green-700,
+.text-purple-800, .text-purple-700,
+.text-indigo-800, .text-indigo-700,
+.text-emerald-800, .text-emerald-700,
+.text-red-800, .text-red-700,
+.text-orange-700, .text-orange-600,
+.text-\[#1a365d\], .text-\[#0f1f3d\] {
+  transition: color 200ms ease !important;
+}
+
+.border-gray-100, .border-gray-200, .border-gray-300,
+.border-blue-200, .border-blue-300,
+.border-yellow-300, .border-green-300,
+.border-purple-300, .border-indigo-300,
+.border-emerald-300, .border-red-300,
+.border-orange-200, .border-orange-300,
+.border-\[#1a365d\] {
+  transition: border-color 200ms ease !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
    GLOBAL DARK MODE OVERRIDES
    Fixes every page that uses hardcoded light Tailwind classes.
    Applied only when <html data-theme="dark"> is set.
@@ -340,6 +379,42 @@ body {
 /* Focus rings on dark bg */
 [data-theme='dark'] .focus\:ring-\[#1a365d\]:focus { --tw-ring-color: rgba(96,165,250,0.4) !important; }
 [data-theme='dark'] .focus\:ring-2:focus            { box-shadow: 0 0 0 2px rgba(96,165,250,0.4) !important; }
+
+/* ── Missing gray backgrounds + hover states ────────────────────────── */
+[data-theme='dark'] .bg-gray-300              { background-color: rgba(255,255,255,0.12) !important; }
+[data-theme='dark'] .hover\:bg-gray-200:hover { background-color: rgba(255,255,255,0.08) !important; }
+[data-theme='dark'] .hover\:bg-gray-300:hover { background-color: rgba(255,255,255,0.12) !important; }
+
+/* ── Colored text — dark classes invisible on dark tinted backgrounds ── */
+[data-theme='dark'] .text-blue-800    { color: rgba(147,197,253,0.92) !important; }
+[data-theme='dark'] .text-blue-700    { color: rgba(147,197,253,0.85) !important; }
+[data-theme='dark'] .text-blue-600    { color: rgba(147,197,253,0.80) !important; }
+[data-theme='dark'] .text-yellow-800  { color: rgba(253,224,71,0.92)  !important; }
+[data-theme='dark'] .text-yellow-700  { color: rgba(253,224,71,0.85)  !important; }
+[data-theme='dark'] .text-green-800   { color: rgba(134,239,172,0.92) !important; }
+[data-theme='dark'] .text-green-700   { color: rgba(134,239,172,0.85) !important; }
+[data-theme='dark'] .text-purple-800  { color: rgba(216,180,254,0.92) !important; }
+[data-theme='dark'] .text-purple-700  { color: rgba(216,180,254,0.85) !important; }
+[data-theme='dark'] .text-indigo-800  { color: rgba(165,180,252,0.92) !important; }
+[data-theme='dark'] .text-indigo-700  { color: rgba(165,180,252,0.85) !important; }
+[data-theme='dark'] .text-emerald-800 { color: rgba(110,231,183,0.92) !important; }
+[data-theme='dark'] .text-emerald-700 { color: rgba(110,231,183,0.85) !important; }
+[data-theme='dark'] .text-red-800     { color: rgba(252,165,165,0.92) !important; }
+[data-theme='dark'] .text-red-700     { color: rgba(252,165,165,0.85) !important; }
+[data-theme='dark'] .text-orange-700  { color: rgba(253,186,116,0.90) !important; }
+[data-theme='dark'] .text-orange-600  { color: rgba(253,186,116,0.80) !important; }
+
+/* ── Colored borders ────────────────────────────────────────────────── */
+[data-theme='dark'] .border-blue-200    { border-color: rgba(59,130,246,0.25)  !important; }
+[data-theme='dark'] .border-blue-300    { border-color: rgba(59,130,246,0.35)  !important; }
+[data-theme='dark'] .border-yellow-300  { border-color: rgba(234,179,8,0.35)   !important; }
+[data-theme='dark'] .border-green-300   { border-color: rgba(34,197,94,0.35)   !important; }
+[data-theme='dark'] .border-purple-300  { border-color: rgba(168,85,247,0.35)  !important; }
+[data-theme='dark'] .border-indigo-300  { border-color: rgba(99,102,241,0.35)  !important; }
+[data-theme='dark'] .border-emerald-300 { border-color: rgba(16,185,129,0.35)  !important; }
+[data-theme='dark'] .border-red-300     { border-color: rgba(239,68,68,0.35)   !important; }
+[data-theme='dark'] .border-orange-200  { border-color: rgba(249,115,22,0.25)  !important; }
+[data-theme='dark'] .border-orange-300  { border-color: rgba(249,115,22,0.35)  !important; }
 
 /* ─────────────────────────────────────────────────────────────────────
    LIGHT MODE — body text defaults; hero/CTA sections stay dark (brand)

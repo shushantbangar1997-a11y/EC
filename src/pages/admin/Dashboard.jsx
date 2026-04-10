@@ -4,7 +4,7 @@ import { FiBarChart2, FiUsers, FiTrendingUp, FiDollarSign } from 'react-icons/fi
 
 const AdminDashboard = () => {
   return (
-    <div className="min-h-screen bg-gray-50 section-padding">
+    <div className="min-h-screen bg-gray-50 section-padding" style={{ background: 'var(--bg-page)', transition: 'background 300ms ease' }}>
       <div className="container-custom">
         <h1 className="text-3xl font-bold text-gray-900 mb-8">Admin Dashboard</h1>
 

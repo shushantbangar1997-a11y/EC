@@ -215,7 +215,7 @@ export default function Requests() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
+    <div className="min-h-screen bg-gray-50 p-8" style={{ background: 'var(--bg-page)', transition: 'background 300ms ease' }}>
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-4xl font-bold text-gray-900">Ride Requests</h1>

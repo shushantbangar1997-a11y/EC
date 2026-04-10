@@ -23,7 +23,7 @@ export default function Quote() {
   }, [])
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50" style={{ background: 'var(--bg-page)', transition: 'background 300ms ease' }}>
       <div className="bg-gradient-to-r from-primary-900 to-primary-800 text-white py-16 px-4 text-center">
         <p className="text-yellow-400 font-semibold text-sm uppercase tracking-widest mb-3">No Registration Required</p>
         <h1 className="text-4xl md:text-5xl font-bold mb-4">Get a Free Quote</h1>
