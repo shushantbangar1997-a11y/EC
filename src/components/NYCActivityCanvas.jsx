@@ -63,8 +63,11 @@ export default function NYCActivityCanvas({ pickup, dropoff, isMobile }) {
   const animRef = useRef(null)
   const dotsRef = useRef([])
   const isMobileRef = useRef(isMobile)
+  const routeProgressRef = useRef(0)
 
   useEffect(() => { isMobileRef.current = isMobile }, [isMobile])
+
+  useEffect(() => { routeProgressRef.current = 0 }, [pickup, dropoff])
 
   const draw = useCallback(() => {
     const canvas = canvasRef.current
@@ -145,17 +148,29 @@ export default function NYCActivityCanvas({ pickup, dropoff, isMobile }) {
         ctx.fill()
         ctx.shadowBlur = 0
 
-        const grad = ctx.createLinearGradient(pos.x, pos.y, pos2.x, pos2.y)
-        grad.addColorStop(0, 'rgba(246,201,14,0.8)')
-        grad.addColorStop(1, 'rgba(255,255,255,0.6)')
-        ctx.beginPath()
-        ctx.moveTo(pos.x, pos.y)
-        ctx.lineTo(pos2.x, pos2.y)
-        ctx.strokeStyle = grad
-        ctx.lineWidth = 2
-        ctx.setLineDash([6, 4])
-        ctx.stroke()
-        ctx.setLineDash([])
+        const dx = pos2.x - pos.x
+        const dy = pos2.y - pos.y
+        const totalLen = Math.sqrt(dx * dx + dy * dy)
+        if (Number.isFinite(totalLen) && totalLen > 0) {
+          routeProgressRef.current = Math.min(routeProgressRef.current + 0.012, 1)
+          const drawLen = totalLen * routeProgressRef.current
+          const endX = pos.x + dx * routeProgressRef.current
+          const endY = pos.y + dy * routeProgressRef.current
+
+          const grad = ctx.createLinearGradient(pos.x, pos.y, endX, endY)
+          grad.addColorStop(0, 'rgba(246,201,14,0.9)')
+          grad.addColorStop(1, 'rgba(255,255,255,0.6)')
+          ctx.beginPath()
+          ctx.moveTo(pos.x, pos.y)
+          ctx.lineTo(endX, endY)
+          ctx.strokeStyle = grad
+          ctx.lineWidth = 2
+          ctx.setLineDash([8, 5])
+          ctx.lineDashOffset = -(routeProgressRef.current * 40)
+          ctx.stroke()
+          ctx.setLineDash([])
+          ctx.lineDashOffset = 0
+        }
       }
     }
 

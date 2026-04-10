@@ -46,15 +46,20 @@ function useTypewriter(text, speed = 35) {
 function useSimulatedStats() {
   const [stats, setStats] = useState({ vehicles: 17, response: 4, rides: 43 })
   useEffect(() => {
-    const tick = () => {
-      setStats(s => ({
-        vehicles: s.vehicles + (Math.random() > 0.6 ? (Math.random() > 0.5 ? 1 : -1) : 0),
-        response: Math.max(2, Math.min(8, s.response + (Math.random() > 0.7 ? (Math.random() > 0.5 ? 1 : -1) : 0))),
-        rides: s.rides + (Math.random() > 0.4 ? 1 : 0),
-      }))
+    let timerId
+    const schedule = () => {
+      const delay = Math.floor(Math.random() * 25000) + 15000
+      timerId = setTimeout(() => {
+        setStats(s => ({
+          vehicles: Math.max(10, Math.min(30, s.vehicles + 1)),
+          response: s.response,
+          rides: s.rides + 1,
+        }))
+        schedule()
+      }, delay)
     }
-    const id = setInterval(tick, Math.random() * 12000 + 15000)
-    return () => clearInterval(id)
+    schedule()
+    return () => clearTimeout(timerId)
   }, [])
   return stats
 }
@@ -144,17 +149,50 @@ function BidCard({ bid, onSelect, index, isLowest }) {
   )
 }
 
-function VoiceWaveform({ active }) {
+function VoiceWaveform({ active, analyserRef }) {
+  const barsRef = useRef([null, null, null, null, null])
+  const rafRef = useRef(null)
+  const dataRef = useRef(new Uint8Array(32))
+
+  useEffect(() => {
+    if (!active) {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current)
+      barsRef.current.forEach(el => { if (el) el.style.height = '20%' })
+      return
+    }
+    const draw = () => {
+      if (analyserRef?.current) {
+        analyserRef.current.getByteFrequencyData(dataRef.current)
+        barsRef.current.forEach((el, i) => {
+          if (!el) return
+          const bin = Math.floor((i + 1) * (dataRef.current.length / 6))
+          const v = dataRef.current[bin] / 255
+          el.style.height = `${Math.max(15, v * 100)}%`
+        })
+      } else {
+        barsRef.current.forEach((el, i) => {
+          if (!el) return
+          const v = 0.2 + Math.random() * 0.8
+          el.style.height = `${Math.max(15, v * 100)}%`
+        })
+      }
+      rafRef.current = requestAnimationFrame(draw)
+    }
+    rafRef.current = requestAnimationFrame(draw)
+    return () => { if (rafRef.current) cancelAnimationFrame(rafRef.current) }
+  }, [active, analyserRef])
+
   return (
-    <div className="flex items-end justify-center gap-1 h-8">
+    <div className="flex items-end justify-center gap-1.5" style={{ height: 40 }}>
       {[0,1,2,3,4].map(i => (
         <div
           key={i}
-          className="w-1.5 rounded-full transition-all"
+          ref={el => { barsRef.current[i] = el }}
+          className="w-2 rounded-full"
           style={{
             background: GOLD,
-            height: active ? `${Math.random() * 100}%` : '20%',
-            animation: active ? `waveBar 0.6s ease-in-out ${i * 0.1}s infinite alternate` : 'none',
+            height: '20%',
+            transition: 'height 80ms ease',
             opacity: active ? 0.9 : 0.4,
           }}
         />
@@ -184,6 +222,8 @@ export default function DispatchPanel({ onRouteChange }) {
   const [voiceActive, setVoiceActive] = useState(false)
   const [voiceTarget, setVoiceTarget] = useState(null)
   const recognitionRef = useRef(null)
+  const analyserRef = useRef(null)
+  const audioCtxRef = useRef(null)
   const pollRef = useRef(null)
   const countdownRef = useRef(null)
   const noOfferRef = useRef(null)
@@ -301,14 +341,40 @@ export default function DispatchPanel({ onRouteChange }) {
     const r = new SR(); r.lang = 'en-US'; r.interimResults = false; r.maxAlternatives = 1
     recognitionRef.current = r
     r.start(); setVoiceActive(true); setVoiceTarget(target)
+
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext
+      if (AudioCtx) {
+        navigator.mediaDevices?.getUserMedia({ audio: true }).then(stream => {
+          const ctx = new AudioCtx()
+          const source = ctx.createMediaStreamSource(stream)
+          const analyser = ctx.createAnalyser()
+          analyser.fftSize = 64
+          source.connect(analyser)
+          audioCtxRef.current = ctx
+          analyserRef.current = analyser
+        }).catch(() => {})
+      }
+    } catch {}
+
     r.onresult = (e) => {
       const t = e.results[0][0].transcript
       if (target === 'dropoff') setDropoff(t)
       else setPickup(t)
       setVoiceActive(false); setVoiceTarget(null)
+      try { audioCtxRef.current?.close() } catch {}
+      analyserRef.current = null
     }
-    r.onerror = () => { setVoiceActive(false); setVoiceTarget(null) }
-    r.onend = () => { setVoiceActive(false); setVoiceTarget(null) }
+    r.onerror = () => {
+      setVoiceActive(false); setVoiceTarget(null)
+      try { audioCtxRef.current?.close() } catch {}
+      analyserRef.current = null
+    }
+    r.onend = () => {
+      setVoiceActive(false); setVoiceTarget(null)
+      try { audioCtxRef.current?.close() } catch {}
+      analyserRef.current = null
+    }
   }
 
   const resetAll = () => {
@@ -341,7 +407,7 @@ export default function DispatchPanel({ onRouteChange }) {
             <p className="text-white/80 text-sm mb-6">
               {voiceTarget === 'dropoff' ? 'Say your destination...' : 'Say your pickup...'}
             </p>
-            <VoiceWaveform active={voiceActive} />
+            <VoiceWaveform active={voiceActive} analyserRef={analyserRef} />
             <button onClick={() => { recognitionRef.current?.stop(); setVoiceActive(false) }} className="mt-6 text-white/40 hover:text-white/70 text-xs transition-colors">
               Cancel
             </button>
