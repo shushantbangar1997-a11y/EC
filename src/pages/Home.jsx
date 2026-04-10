@@ -26,8 +26,14 @@ export default function Home() {
           <div className="absolute inset-y-0 left-0 w-32 pointer-events-none" style={{ background: 'linear-gradient(to right, #050a0f, transparent)' }} />
         </div>
 
-        <div className="relative z-10 w-full lg:w-[58%] min-h-screen flex items-center">
-          <DispatchPanel onRouteChange={handleRouteChange} />
+        <div className="relative z-10 w-full lg:w-[58%] min-h-screen flex flex-col">
+          <div className="block lg:hidden relative w-full overflow-hidden flex-shrink-0" style={{ height: 120, background: '#050a0f' }}>
+            <NYCActivityCanvas pickup={pickup} dropoff={dropoff} isMobile={true} />
+            <div className="absolute inset-0 pointer-events-none" style={{ background: 'linear-gradient(to bottom, rgba(5,10,15,0.5) 0%, transparent 40%, rgba(5,10,15,0.7) 100%)' }} />
+          </div>
+          <div className="flex-1 flex items-center">
+            <DispatchPanel onRouteChange={handleRouteChange} />
+          </div>
         </div>
       </section>
 

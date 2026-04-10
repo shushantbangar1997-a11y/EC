@@ -473,8 +473,8 @@ export default function DispatchPanel({ onRouteChange }) {
                     <div style={{ transition: 'opacity 220ms ease, transform 220ms ease' }}>
                       <div className="mb-0.5 flex items-center justify-between">
                         <span className="text-xs font-mono font-bold tracking-widest" style={{ color: ELECTRIC }}>PICKUP</span>
-                        <button type="button" onClick={() => startVoice('pickup')} className="p-1 rounded-full text-white/30 hover:text-yellow-400 transition-colors" title="Voice input">
-                          {voiceActive && voiceTarget === 'pickup' ? <FiMicOff size={13} className="text-red-400" /> : <FiMic size={13} />}
+                        <button type="button" onClick={() => startVoice('pickup')} className="flex items-center justify-center rounded-full text-white/30 hover:text-yellow-400 transition-colors" style={{ width: 44, height: 44 }} title="Voice input" aria-label="Voice input for pickup">
+                          {voiceActive && voiceTarget === 'pickup' ? <FiMicOff size={15} className="text-red-400" /> : <FiMic size={15} />}
                         </button>
                       </div>
                       <div className="dispatch-field-wrap">
@@ -502,8 +502,8 @@ export default function DispatchPanel({ onRouteChange }) {
                     <div style={{ transition: 'opacity 220ms ease 50ms, transform 220ms ease 50ms' }}>
                       <div className="mb-0.5 flex items-center justify-between">
                         <span className="text-xs font-mono font-bold tracking-widest" style={{ color: ELECTRIC }}>DESTINATION</span>
-                        <button type="button" onClick={() => startVoice('dropoff')} className="p-1 rounded-full text-white/30 hover:text-yellow-400 transition-colors" title="Voice input">
-                          {voiceActive && voiceTarget === 'dropoff' ? <FiMicOff size={13} className="text-red-400" /> : <FiMic size={13} />}
+                        <button type="button" onClick={() => startVoice('dropoff')} className="flex items-center justify-center rounded-full text-white/30 hover:text-yellow-400 transition-colors" style={{ width: 44, height: 44 }} title="Voice input" aria-label="Voice input for destination">
+                          {voiceActive && voiceTarget === 'dropoff' ? <FiMicOff size={15} className="text-red-400" /> : <FiMic size={15} />}
                         </button>
                       </div>
                       <div className="dispatch-field-wrap">
@@ -555,13 +555,13 @@ export default function DispatchPanel({ onRouteChange }) {
                     </div>
                     <div>
                       <span className="text-xs font-mono font-bold tracking-widest block mb-1.5" style={{ color: ELECTRIC }}>PAX</span>
-                      <div className="flex items-center gap-1.5">
-                        <button type="button" onClick={() => setPassengers(p => Math.max(1, p - 1))} className="w-8 h-9 rounded-lg flex items-center justify-center text-white/60 hover:text-white transition-colors flex-shrink-0" style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.1)' }}>
-                          <FiMinus size={13} />
+                      <div className="flex items-center gap-1">
+                        <button type="button" onClick={() => setPassengers(p => Math.max(1, p - 1))} className="flex items-center justify-center rounded-lg text-white/60 hover:text-white transition-colors flex-shrink-0" style={{ width: 44, height: 44, background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.1)', minWidth: 44 }}>
+                          <FiMinus size={15} />
                         </button>
-                        <span className="font-bold text-white text-sm font-mono w-6 text-center flex-shrink-0">{passengers}</span>
-                        <button type="button" onClick={() => setPassengers(p => Math.min(55, p + 1))} className="w-8 h-9 rounded-lg flex items-center justify-center text-white/60 hover:text-white transition-colors flex-shrink-0" style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.1)' }}>
-                          <FiPlus size={13} />
+                        <span className="font-bold text-white text-sm font-mono text-center flex-shrink-0" style={{ width: 28 }}>{passengers}</span>
+                        <button type="button" onClick={() => setPassengers(p => Math.min(55, p + 1))} className="flex items-center justify-center rounded-lg text-white/60 hover:text-white transition-colors flex-shrink-0" style={{ width: 44, height: 44, background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.1)', minWidth: 44 }}>
+                          <FiPlus size={15} />
                         </button>
                       </div>
                     </div>
