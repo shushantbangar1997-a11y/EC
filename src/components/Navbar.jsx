@@ -1,10 +1,16 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { FiMenu, FiX, FiUser, FiPhone, FiBriefcase, FiArrowRight } from 'react-icons/fi'
+import { FiMenu, FiX, FiUser, FiPhone, FiBriefcase, FiArrowRight, FiFacebook, FiInstagram, FiLinkedin, FiMessageCircle } from 'react-icons/fi'
 import { useAuth } from '../context/AuthContext'
 
 const PHONE = '(718) 658-6000'
 const PHONE_HREF = 'tel:+17186586000'
+const SOCIALS = [
+  { href: 'https://www.facebook.com/share/1CVi8FFsRs/', label: 'Facebook', Icon: FiFacebook },
+  { href: 'https://www.instagram.com/everywherecars20', label: 'Instagram', Icon: FiInstagram },
+  { href: 'https://www.linkedin.com/company/everywhere-transportation-inc', label: 'LinkedIn', Icon: FiLinkedin },
+  { href: 'http://wa.me/17182196683', label: 'WhatsApp', Icon: FiMessageCircle },
+]
 
 const Navbar = () => {
   const navigate = useNavigate()
@@ -230,8 +236,23 @@ const Navbar = () => {
             {getDesktopNavLinks()}
           </div>
 
-          {/* Desktop Right: Phone + Profile */}
+          {/* Desktop Right: Socials + Phone + Profile */}
           <div className="hidden md:flex items-center gap-4">
+            {/* Social icons */}
+            <div className="flex items-center gap-2 border-r border-white/20 pr-4">
+              {SOCIALS.map(({ href, label, Icon }) => (
+                <a
+                  key={label}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-300 hover:text-white transition-colors"
+                  aria-label={label}
+                >
+                  <Icon size={15} />
+                </a>
+              ))}
+            </div>
             {/* Phone number — always visible on desktop */}
             <a
               href={PHONE_HREF}
@@ -323,6 +344,24 @@ const Navbar = () => {
               </button>
             </>
           )}
+
+          <div className="border-t border-primary-700 my-1" />
+
+          {/* Social icons row — mobile */}
+          <div className="flex items-center gap-4 px-4 py-2">
+            {SOCIALS.map(({ href, label, Icon }) => (
+              <a
+                key={label}
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-300 hover:text-white transition-colors"
+                aria-label={label}
+              >
+                <Icon size={18} />
+              </a>
+            ))}
+          </div>
 
           <div className="border-t border-primary-700 my-1" />
 

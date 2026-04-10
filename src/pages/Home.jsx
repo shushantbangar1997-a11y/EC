@@ -59,6 +59,7 @@ const FLEET = [
     features: ['All-Electric Drive', 'Heated Leather Seats', 'Panoramic Roof'],
     bestFor: 'Eco-conscious executives & airport runs',
     image: '/images/fleet-electric.png',
+    bookingValue: 'Cadillac Lyriq (2-4 Passengers)',
   },
   {
     type: 'Luxury Sedans',
@@ -69,6 +70,7 @@ const FLEET = [
     features: ['Climate Control', 'Leather Interior', 'USB & Wireless Charging'],
     bestFor: 'Business meetings & airport transfers',
     image: '/images/fleet-sedan.png',
+    bookingValue: 'Mercedes S-Class (2-3 Passengers)',
   },
   {
     type: 'SUVs',
@@ -79,6 +81,7 @@ const FLEET = [
     features: ['Extended Luggage Space', 'Privacy Glass', 'Wi-Fi Hotspot'],
     bestFor: 'Groups, families & corporate travel',
     image: '/images/fleet-suv.png',
+    bookingValue: 'Cadillac Escalade (3-5 Passengers)',
   },
   {
     type: 'Sprinter Vans',
@@ -89,6 +92,7 @@ const FLEET = [
     features: ['Captain Seating', 'Overhead Storage', 'Climate Zones'],
     bestFor: 'Corporate groups, tours & weddings',
     image: '/images/fleet-sprinter.png',
+    bookingValue: 'Mercedes Sprinter Van (11-12 Passengers)',
   },
   {
     type: 'Coach Buses',
@@ -99,6 +103,7 @@ const FLEET = [
     features: ['Restroom On-Board', 'PA System', 'Wi-Fi & Power Outlets'],
     bestFor: 'Large events, conferences & tours',
     image: '/images/fleet-coach.png',
+    bookingValue: 'MCI Coach Bus (55 Passengers)',
   },
 ];
 
@@ -293,8 +298,8 @@ const Home = () => {
 
   const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
 
-  const bookVehicle = (vehicleType) => {
-    setFormData((prev) => ({ ...prev, vehicle_type: vehicleType }));
+  const bookVehicle = (bookingValue) => {
+    setFormData((prev) => ({ ...prev, vehicle_type: bookingValue }));
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -701,7 +706,7 @@ const Home = () => {
                     ))}
                   </ul>
                   <button
-                    onClick={() => bookVehicle(v.type)}
+                    onClick={() => bookVehicle(v.bookingValue)}
                     className="mt-auto w-full text-center text-sm font-semibold text-[#1a365d] border border-[#1a365d] rounded-lg py-2 hover:bg-[#1a365d] hover:text-white transition-all duration-200"
                   >
                     Book This Vehicle
