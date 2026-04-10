@@ -1,174 +1,63 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { FiShield, FiTruck, FiHeadphones } from 'react-icons/fi';
-import ConversationalBooker from '../components/ConversationalBooker';
-import LiveBidBoard from '../components/LiveBidBoard';
-
-function ParticleBackground() {
-  const canvasRef = useRef(null);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    let animId;
-
-    const resize = () => {
-      canvas.width = canvas.offsetWidth;
-      canvas.height = canvas.offsetHeight;
-    };
-    resize();
-    window.addEventListener('resize', resize);
-
-    const particles = Array.from({ length: 55 }, () => ({
-      x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height,
-      r: Math.random() * 1.5 + 0.4,
-      dx: (Math.random() - 0.5) * 0.25,
-      dy: (Math.random() - 0.5) * 0.25,
-      opacity: Math.random() * 0.35 + 0.05,
-    }));
-
-    const draw = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      particles.forEach(p => {
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(246, 201, 14, ${p.opacity})`;
-        ctx.fill();
-        p.x += p.dx;
-        p.y += p.dy;
-        if (p.x < 0) p.x = canvas.width;
-        if (p.x > canvas.width) p.x = 0;
-        if (p.y < 0) p.y = canvas.height;
-        if (p.y > canvas.height) p.y = 0;
-      });
-      animId = requestAnimationFrame(draw);
-    };
-    draw();
-
-    return () => {
-      cancelAnimationFrame(animId);
-      window.removeEventListener('resize', resize);
-    };
-  }, []);
-
-  return (
-    <canvas
-      ref={canvasRef}
-      className="absolute inset-0 w-full h-full pointer-events-none"
-      style={{ opacity: 0.6 }}
-    />
-  );
-}
+import React, { useState, useCallback } from 'react'
+import { FiShield, FiTruck, FiHeadphones } from 'react-icons/fi'
+import DispatchPanel from '../components/DispatchPanel'
+import NYCActivityCanvas from '../components/NYCActivityCanvas'
 
 export default function Home() {
-  const [phase, setPhase] = useState('booking');
-  const [rideData, setRideData] = useState(null);
+  const [pickup, setPickup] = useState('')
+  const [dropoff, setDropoff] = useState('')
 
-  const handleRidePosted = (data) => {
-    setRideData(data);
-    setPhase('bids');
-  };
-
-  const handleReset = () => {
-    setRideData(null);
-    setPhase('booking');
-  };
+  const handleRouteChange = useCallback((pu, do_) => {
+    setPickup(pu)
+    setDropoff(do_)
+  }, [])
 
   return (
-    <div className="bg-[#050d1a] overflow-x-hidden">
-      <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#0f1f3d] via-[#07111f] to-[#000810]" />
+    <div style={{ background: '#050a0f' }} className="overflow-x-hidden">
+      <section className="relative min-h-screen flex">
 
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          <div
-            className="absolute top-[-20%] right-[-10%] w-[700px] h-[700px] rounded-full opacity-[0.06]"
-            style={{ background: 'radial-gradient(circle, #3b82f6 0%, transparent 70%)' }}
-          />
-          <div
-            className="absolute bottom-[-15%] left-[-10%] w-[600px] h-[600px] rounded-full opacity-[0.07]"
-            style={{ background: 'radial-gradient(circle, #1e40af 0%, transparent 70%)' }}
-          />
-          <div
-            className="absolute top-[40%] left-[30%] w-[400px] h-[400px] rounded-full opacity-[0.04]"
-            style={{ background: 'radial-gradient(circle, #F6C90E 0%, transparent 70%)' }}
-          />
+          <div className="absolute top-0 left-0 w-full h-full" style={{ background: 'radial-gradient(ellipse 80% 60% at 50% 0%, rgba(26,54,93,0.35) 0%, transparent 70%)' }} />
+          <div className="absolute bottom-0 right-0 w-96 h-96" style={{ background: 'radial-gradient(circle, rgba(246,201,14,0.03) 0%, transparent 70%)' }} />
         </div>
 
-        <ParticleBackground />
+        <div className="hidden lg:block absolute inset-y-0 right-0 w-[42%]" style={{ background: '#050a0f' }}>
+          <NYCActivityCanvas pickup={pickup} dropoff={dropoff} isMobile={false} />
+          <div className="absolute inset-y-0 left-0 w-32 pointer-events-none" style={{ background: 'linear-gradient(to right, #050a0f, transparent)' }} />
+        </div>
 
-        <div className="relative z-10 w-full max-w-5xl mx-auto px-4 pt-12 pb-20">
-          {phase === 'booking' && (
-            <div>
-              <div className="text-center mb-14">
-                <div className="inline-flex items-center gap-2 bg-yellow-400/10 border border-yellow-400/25 rounded-full px-4 py-1.5 mb-6">
-                  <span className="w-1.5 h-1.5 rounded-full bg-yellow-400 animate-pulse" />
-                  <span className="text-yellow-400/90 text-sm font-medium">New York&rsquo;s Premier Luxury Chauffeur</span>
-                </div>
-                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight mb-4">
-                  Your Ride,{' '}
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-yellow-200">
-                    Your Price.
-                  </span>
-                </h1>
-                <p className="text-white/50 text-lg max-w-md mx-auto">
-                  Tell us where you're going — operators compete for your business in real time.
-                </p>
-              </div>
-
-              <ConversationalBooker onRidePosted={handleRidePosted} />
-            </div>
-          )}
-
-          {phase === 'bids' && (
-            <LiveBidBoard rideData={rideData} onReset={handleReset} />
-          )}
+        <div className="relative z-10 w-full lg:w-[58%] min-h-screen flex items-center">
+          <DispatchPanel onRouteChange={handleRouteChange} />
         </div>
       </section>
 
-      <section className="bg-[#070e1d] border-t border-white/5 py-12">
-        <div className="max-w-4xl mx-auto px-4">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 text-center">
+      <section className="py-10 border-t" style={{ background: '#070e1d', borderColor: 'rgba(255,255,255,0.05)' }}>
+        <div className="max-w-3xl mx-auto px-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-center">
             {[
-              {
-                icon: FiShield,
-                label: 'Licensed & Insured',
-                desc: 'Every driver fully vetted & covered',
-              },
-              {
-                icon: FiTruck,
-                label: '250+ Vehicles',
-                desc: 'Sedans, SUVs, Sprinters & Coaches',
-              },
-              {
-                icon: FiHeadphones,
-                label: '24 / 7 Support',
-                desc: 'Real humans, always available',
-              },
+              { icon: FiShield, label: 'Licensed & Insured', desc: 'Every driver vetted & covered' },
+              { icon: FiTruck, label: '250+ Vehicles', desc: 'Sedans, SUVs, Sprinters & Coaches' },
+              { icon: FiHeadphones, label: '24/7 Support', desc: 'Real humans, always available' },
             ].map(({ icon: Icon, label, desc }) => (
-              <div key={label} className="flex flex-col items-center gap-3">
-                <div className="w-11 h-11 rounded-full bg-yellow-400/10 border border-yellow-400/20 flex items-center justify-center">
-                  <Icon size={18} className="text-yellow-400" />
+              <div key={label} className="flex flex-col items-center gap-2.5">
+                <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ background: 'rgba(246,201,14,0.08)', border: '1px solid rgba(246,201,14,0.18)' }}>
+                  <Icon size={17} style={{ color: '#F6C90E' }} />
                 </div>
                 <div>
                   <div className="text-white font-semibold text-sm">{label}</div>
-                  <div className="text-white/40 text-xs mt-0.5">{desc}</div>
+                  <div className="text-xs mt-0.5" style={{ color: 'rgba(255,255,255,0.35)' }}>{desc}</div>
                 </div>
               </div>
             ))}
           </div>
-
-          <div className="text-center mt-8">
-            <a
-              href="tel:+17186586000"
-              className="inline-flex items-center gap-2 text-white/40 hover:text-yellow-400 transition-colors text-sm font-medium"
-            >
+          <div className="text-center mt-7">
+            <a href="tel:+17186586000" className="text-sm transition-colors" style={{ color: 'rgba(255,255,255,0.3)' }}>
               Need help?{' '}
-              <span className="text-yellow-400/80 font-bold">(718) 658-6000</span>
+              <span className="font-bold" style={{ color: 'rgba(246,201,14,0.8)' }}>(718) 658-6000</span>
             </a>
           </div>
         </div>
       </section>
     </div>
-  );
+  )
 }

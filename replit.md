@@ -40,12 +40,13 @@ A React + Vite frontend for "Everywhere Cars" — a NYC luxury car service. The 
 
 ## Key Features
 
-### Conversational AI Homepage (Task 11)
-- `Home.jsx` — Fully rebuilt as immersive booking experience. No below-fold content sections. Full-viewport dark navy/black gradient with animated gold particle background.
-- `ConversationalBooker.jsx` — Multi-step wizard (6 steps): destination → pickup → date/time → passenger count → vehicle type → contact info. Features typewriter question animation, address autocomplete with voice input (Web Speech API), single-click passenger buttons, vehicle card selection, smooth slide transitions, progress dots.
-- `LiveBidBoard.jsx` — Shown after ride post. Polls `GET /api/quote-requests/:id` every 5s for operator bids. Countdown timer (10 min), skeleton cards while waiting, animated bid cards slide in, "Book This Ride" CTA. Fallback after 2 min shows phone + WhatsApp.
-- `Navbar.jsx` — Upgraded with dual megamenus: "Services" + "Explore" (Fleet, How It Works, Corporate) + Popular Routes dropdown with 8 SEO links.
-- `QuoteRequestsTab.jsx` — Added "Send Bid" modal per lead: price, vehicle type, ETA, notes. Submits `PATCH /api/quote-requests/:id` with bid data.
+### Intelligent Dispatch Homepage (Task 12)
+- `Home.jsx` — Rebuilt as split-screen dispatch interface. Left 58%: `DispatchPanel`. Right 42%: `NYCActivityCanvas`. Shared pickup/dropoff state flows up and down to trigger route visualization on canvas. Below-fold trust strip (Licensed & Insured, 250+ Vehicles, 24/7 Support, phone). Dark `#050a0f` page background.
+- `DispatchPanel.jsx` — 5-state booking glass card (idle → route → details → contact → bids). Features: simulated live stats bar (vehicles/response/rides), voice input with waveform, smart badges (airport/hotel/peak-hour), vehicle selector with live price estimate, gold "DISPATCH MY RIDE" CTA with pulse, full bid board with countdown/skeleton/BidCards, typewriter text in bid state.
+- `NYCActivityCanvas.jsx` — Canvas-based NYC visualization: street grid, 28 animated electric-blue ride dots with trails, gold pickup marker and white dropoff marker with animated dashed route line between them (position mapped from city area keywords).
+- `src/utils/priceEstimator.js` — Client-side price lookup. `getPriceEstimate(vehicleType, routeType) → { low, high }`. Smart detection: airport keywords (JFK/LGA/EWR/FBO), hotel chains, peak hours, route type (local/airport/long). `approximatePosition(text, W, H)` maps city areas to canvas coordinates.
+- `Navbar.jsx` — Now transparent with `backdrop-filter: blur(4px)` on homepage only. On scroll past 60px: transitions to solid dark navy with shadow. Scroll listener + `useLocation` detection.
+- **Deleted:** `ConversationalBooker.jsx`, `LiveBidBoard.jsx` (replaced by DispatchPanel states 3/4).
 
 ### Lead Generation (Task 10)
 - `/quote` — Public quote form (no login required). Submits to `POST /api/quote-requests`.

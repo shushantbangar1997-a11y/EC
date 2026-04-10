@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import {
   FiMenu, FiX, FiUser, FiPhone, FiBriefcase, FiArrowRight,
   FiFacebook, FiInstagram, FiLinkedin, FiMessageCircle,
@@ -115,6 +115,7 @@ const ExploreDropdown = ({ onClose }) => (
 
 const Navbar = () => {
   const navigate = useNavigate()
+  const location = useLocation()
   const { user, isAuthenticated, logout } = useAuth()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false)
@@ -122,8 +123,17 @@ const Navbar = () => {
   const [isExploreOpen, setIsExploreOpen] = useState(false)
   const [isMobileServicesOpen, setIsMobileServicesOpen] = useState(false)
   const [isMobileExploreOpen, setIsMobileExploreOpen] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
   const servicesRef = useRef(null)
   const exploreRef = useRef(null)
+
+  const isHomePage = location.pathname === '/'
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 60)
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen)
   const toggleProfileDropdown = () => setIsProfileDropdownOpen(!isProfileDropdownOpen)
@@ -455,7 +465,17 @@ const Navbar = () => {
   }
 
   return (
-    <nav className="sticky top-0 z-50 bg-gradient-to-r from-primary-800 to-primary-900 shadow-lg">
+    <nav
+      className="sticky top-0 z-50 transition-all duration-300"
+      style={{
+        background: isHomePage && !scrolled
+          ? 'transparent'
+          : 'linear-gradient(to right, #1a365d, #0f1f3d)',
+        backdropFilter: isHomePage && !scrolled ? 'blur(4px)' : 'none',
+        WebkitBackdropFilter: isHomePage && !scrolled ? 'blur(4px)' : 'none',
+        boxShadow: isHomePage && !scrolled ? 'none' : '0 4px 24px rgba(0,0,0,0.5)',
+      }}
+    >
       <div className="container-custom px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <Link
