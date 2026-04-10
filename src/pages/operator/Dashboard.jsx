@@ -10,6 +10,7 @@ import {
   FiUsers,
   FiUserPlus,
   FiChevronRight,
+  FiMessageCircle,
 } from 'react-icons/fi';
 import { format } from 'date-fns';
 import { useAuth } from '../../context/AuthContext';
@@ -17,6 +18,7 @@ import api from '../../utils/api';
 import StatsCard from '../../components/StatsCard';
 import StatusBadge from '../../components/StatusBadge';
 import LoadingSpinner from '../../components/LoadingSpinner';
+import QuoteRequestsTab from '../../components/QuoteRequestsTab';
 import toast from 'react-hot-toast';
 
 export default function Dashboard() {
@@ -26,6 +28,7 @@ export default function Dashboard() {
   const [recentRequests, setRecentRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [activeTab, setActiveTab] = useState('overview');
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
@@ -88,12 +91,45 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       {/* Header */}
-      <div className="mb-8">
+      <div className="mb-6">
         <h1 className="text-4xl font-bold text-gray-900">Operations Center</h1>
         <p className="text-gray-600 mt-1">
           {format(currentTime, 'EEEE, MMMM d, yyyy h:mm a')}
         </p>
       </div>
+
+      {/* Tab Navigation */}
+      <div className="flex gap-2 mb-8 border-b border-gray-200">
+        <button
+          onClick={() => setActiveTab('overview')}
+          className={`flex items-center gap-2 px-5 py-3 text-sm font-semibold border-b-2 transition-colors -mb-px ${
+            activeTab === 'overview'
+              ? 'border-primary-800 text-primary-800'
+              : 'border-transparent text-gray-500 hover:text-gray-700'
+          }`}
+        >
+          <FiList size={15} />
+          Overview
+        </button>
+        <button
+          onClick={() => setActiveTab('quotes')}
+          className={`flex items-center gap-2 px-5 py-3 text-sm font-semibold border-b-2 transition-colors -mb-px ${
+            activeTab === 'quotes'
+              ? 'border-primary-800 text-primary-800'
+              : 'border-transparent text-gray-500 hover:text-gray-700'
+          }`}
+        >
+          <FiMessageCircle size={15} />
+          Quote Requests
+        </button>
+      </div>
+
+      {activeTab === 'quotes' && (
+        <QuoteRequestsTab />
+      )}
+
+      {activeTab === 'overview' && (
+      <>
 
       {/* Urgent Section - Pending Requests */}
       {pendingCount > 0 && (
@@ -313,6 +349,8 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
+      </>
+      )}
     </div>
   );
 }

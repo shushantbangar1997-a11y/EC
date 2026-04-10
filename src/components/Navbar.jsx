@@ -118,8 +118,11 @@ const Navbar = () => {
           <Link to="/login" className="text-gray-100 hover:text-white transition-colors text-sm">
             Login
           </Link>
-          <Link to="/signup" className="btn-primary text-sm">
-            Sign Up
+          <Link
+            to="/quote"
+            className="flex items-center gap-1.5 bg-yellow-400 hover:bg-yellow-300 text-primary-900 font-bold px-4 py-2 rounded-lg text-sm transition-colors"
+          >
+            Get a Quote <FiArrowRight size={13} />
           </Link>
         </>
       )
@@ -489,7 +492,7 @@ const Navbar = () => {
           {(!isAuthenticated || user?.role === 'customer') && (
             <div className="pt-1 pb-2">
               <Link
-                to={isAuthenticated ? '/book' : '/signup'}
+                to="/quote"
                 onClick={closeAll}
                 className="flex items-center justify-center gap-2 w-full bg-yellow-400 text-primary-900 font-bold py-3 rounded-xl text-sm hover:bg-yellow-300 transition-colors"
               >
