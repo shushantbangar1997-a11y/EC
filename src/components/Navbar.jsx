@@ -2,21 +2,14 @@ import React, { useState, useRef, useEffect } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import {
   FiMenu, FiX, FiUser, FiPhone, FiBriefcase, FiArrowRight,
-  FiFacebook, FiInstagram, FiLinkedin, FiMessageCircle,
   FiChevronDown, FiNavigation, FiClock, FiAward, FiTruck,
-  FiHelpCircle, FiSun, FiMoon,
+  FiHelpCircle, FiSun, FiMoon, FiLogOut, FiSettings,
 } from 'react-icons/fi'
 import { useAuth } from '../context/AuthContext'
 import { useTheme } from '../context/ThemeContext'
 
 const PHONE = '(718) 658-6000'
 const PHONE_HREF = 'tel:+17186586000'
-const SOCIALS = [
-  { href: 'https://www.facebook.com/share/1CVi8FFsRs/', label: 'Facebook', Icon: FiFacebook },
-  { href: 'https://www.instagram.com/everywherecars20', label: 'Instagram', Icon: FiInstagram },
-  { href: 'https://www.linkedin.com/company/everywhere-transportation-inc', label: 'LinkedIn', Icon: FiLinkedin },
-  { href: 'https://wa.me/17182196683', label: 'WhatsApp', Icon: FiMessageCircle },
-]
 
 const SERVICE_LINKS = [
   { to: '/services/airport-transfers', label: 'Airport Transfers', icon: FiNavigation, desc: 'JFK, LGA, EWR & more' },
@@ -128,6 +121,7 @@ const Navbar = () => {
   const [scrolled, setScrolled] = useState(false)
   const servicesRef = useRef(null)
   const exploreRef = useRef(null)
+  const profileRef = useRef(null)
 
   const isHomePage = location.pathname === '/'
 
@@ -163,107 +157,130 @@ const Navbar = () => {
       if (exploreRef.current && !exploreRef.current.contains(e.target)) {
         setIsExploreOpen(false)
       }
+      if (profileRef.current && !profileRef.current.contains(e.target)) {
+        setIsProfileDropdownOpen(false)
+      }
     }
     document.addEventListener('mousedown', handleClickOutside)
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
-  const ServicesMenuButton = () => (
-    <div className="relative" ref={servicesRef}>
-      <button
-        onClick={() => { setIsServicesOpen(!isServicesOpen); setIsExploreOpen(false); }}
-        className="flex items-center gap-1 text-gray-100 hover:text-white transition-colors text-sm"
-        aria-expanded={isServicesOpen}
-        aria-haspopup="true"
-      >
-        Services <FiChevronDown size={13} className={`transition-transform duration-200 ${isServicesOpen ? 'rotate-180' : ''}`} />
-      </button>
-      {isServicesOpen && <ServicesDropdown onClose={() => setIsServicesOpen(false)} />}
-    </div>
-  )
-
-  const ExploreMenuButton = () => (
-    <div className="relative" ref={exploreRef}>
-      <button
-        onClick={() => { setIsExploreOpen(!isExploreOpen); setIsServicesOpen(false); }}
-        className="flex items-center gap-1 text-gray-100 hover:text-white transition-colors text-sm"
-        aria-expanded={isExploreOpen}
-        aria-haspopup="true"
-      >
-        Explore <FiChevronDown size={13} className={`transition-transform duration-200 ${isExploreOpen ? 'rotate-180' : ''}`} />
-      </button>
-      {isExploreOpen && <ExploreDropdown onClose={() => setIsExploreOpen(false)} />}
-    </div>
-  )
-
-  const getDesktopNavLinks = () => {
-    if (!isAuthenticated) {
-      return (
-        <>
-          <ServicesMenuButton />
-          <ExploreMenuButton />
-          <Link to="/login" className="text-gray-100 hover:text-white transition-colors text-sm">
-            Login
-          </Link>
-          <Link
-            to="/quote"
-            className="flex items-center gap-1.5 bg-yellow-400 hover:bg-yellow-300 text-primary-900 font-bold px-4 py-2 rounded-lg text-sm transition-colors"
-          >
-            Get a Quote <FiArrowRight size={13} />
-          </Link>
-        </>
-      )
-    }
-
+  const getNavMiddleLinks = () => {
     if (user?.role === 'operator' || user?.role === 'admin') {
       return (
         <>
-          <Link to="/operator/dashboard" className="text-gray-100 hover:text-white transition-colors text-sm">
+          <Link to="/operator/dashboard" className="text-sm font-medium text-white/80 hover:text-white transition-colors px-1 py-1">
             Dashboard
           </Link>
-          <Link to="/operator/requests" className="text-gray-100 hover:text-white transition-colors text-sm">
+          <Link to="/operator/requests" className="text-sm font-medium text-white/80 hover:text-white transition-colors px-1 py-1">
             Requests
           </Link>
-          <Link to="/operator/drivers" className="text-gray-100 hover:text-white transition-colors text-sm">
+          <Link to="/operator/drivers" className="text-sm font-medium text-white/80 hover:text-white transition-colors px-1 py-1">
             Drivers
           </Link>
           {user?.role === 'admin' && (
             <>
-              <Link to="/admin/users" className="text-gray-100 hover:text-white transition-colors text-sm">
+              <Link to="/admin/users" className="text-sm font-medium text-white/80 hover:text-white transition-colors px-1 py-1">
                 Users
               </Link>
-              <Link to="/admin/revenue" className="text-gray-100 hover:text-white transition-colors text-sm">
+              <Link to="/admin/revenue" className="text-sm font-medium text-white/80 hover:text-white transition-colors px-1 py-1">
                 Revenue
               </Link>
             </>
           )}
-          <ServicesMenuButton />
+          <div className="relative" ref={servicesRef}>
+            <button
+              onClick={() => { setIsServicesOpen(!isServicesOpen); setIsExploreOpen(false) }}
+              className="flex items-center gap-1 text-sm font-medium text-white/80 hover:text-white transition-colors px-1 py-1"
+              aria-expanded={isServicesOpen}
+            >
+              Services <FiChevronDown size={13} className={`transition-transform duration-200 ${isServicesOpen ? 'rotate-180' : ''}`} />
+            </button>
+            {isServicesOpen && <ServicesDropdown onClose={() => setIsServicesOpen(false)} />}
+          </div>
+        </>
+      )
+    }
+
+    if (isAuthenticated) {
+      return (
+        <>
+          <Link to="/book" className="text-sm font-medium text-white/80 hover:text-white transition-colors px-1 py-1">
+            Book a Ride
+          </Link>
+          <Link to="/my-rides" className="text-sm font-medium text-white/80 hover:text-white transition-colors px-1 py-1">
+            My Rides
+          </Link>
+          <div className="relative" ref={servicesRef}>
+            <button
+              onClick={() => { setIsServicesOpen(!isServicesOpen); setIsExploreOpen(false) }}
+              className="flex items-center gap-1 text-sm font-medium text-white/80 hover:text-white transition-colors px-1 py-1"
+              aria-expanded={isServicesOpen}
+            >
+              Services <FiChevronDown size={13} className={`transition-transform duration-200 ${isServicesOpen ? 'rotate-180' : ''}`} />
+            </button>
+            {isServicesOpen && <ServicesDropdown onClose={() => setIsServicesOpen(false)} />}
+          </div>
+          <div className="relative" ref={exploreRef}>
+            <button
+              onClick={() => { setIsExploreOpen(!isExploreOpen); setIsServicesOpen(false) }}
+              className="flex items-center gap-1 text-sm font-medium text-white/80 hover:text-white transition-colors px-1 py-1"
+              aria-expanded={isExploreOpen}
+            >
+              Explore <FiChevronDown size={13} className={`transition-transform duration-200 ${isExploreOpen ? 'rotate-180' : ''}`} />
+            </button>
+            {isExploreOpen && <ExploreDropdown onClose={() => setIsExploreOpen(false)} />}
+          </div>
         </>
       )
     }
 
     return (
       <>
-        <Link to="/book" className="text-gray-100 hover:text-white transition-colors text-sm">
-          Book a Ride
+        <div className="relative" ref={servicesRef}>
+          <button
+            onClick={() => { setIsServicesOpen(!isServicesOpen); setIsExploreOpen(false) }}
+            className="flex items-center gap-1 text-sm font-medium text-white/80 hover:text-white transition-colors px-1 py-1"
+            aria-expanded={isServicesOpen}
+          >
+            Services <FiChevronDown size={13} className={`transition-transform duration-200 ${isServicesOpen ? 'rotate-180' : ''}`} />
+          </button>
+          {isServicesOpen && <ServicesDropdown onClose={() => setIsServicesOpen(false)} />}
+        </div>
+        <div className="relative" ref={exploreRef}>
+          <button
+            onClick={() => { setIsExploreOpen(!isExploreOpen); setIsServicesOpen(false) }}
+            className="flex items-center gap-1 text-sm font-medium text-white/80 hover:text-white transition-colors px-1 py-1"
+            aria-expanded={isExploreOpen}
+          >
+            Explore <FiChevronDown size={13} className={`transition-transform duration-200 ${isExploreOpen ? 'rotate-180' : ''}`} />
+          </button>
+          {isExploreOpen && <ExploreDropdown onClose={() => setIsExploreOpen(false)} />}
+        </div>
+        <Link to="/quote" className="text-sm font-medium text-white/80 hover:text-white transition-colors px-1 py-1">
+          Get a Quote
         </Link>
-        <Link to="/my-rides" className="text-gray-100 hover:text-white transition-colors text-sm">
-          My Rides
-        </Link>
-        <ServicesMenuButton />
-        <ExploreMenuButton />
       </>
     )
   }
 
   const getMobileNavLinks = () => {
-    if (!isAuthenticated) {
+    if (user?.role === 'operator' || user?.role === 'admin') {
       return (
         <>
+          <Link to="/operator/dashboard" className="block px-4 py-2.5 text-white/85 hover:text-white hover:bg-primary-800 rounded-lg transition-colors text-sm" onClick={closeAll}>Dashboard</Link>
+          <Link to="/operator/requests" className="block px-4 py-2.5 text-white/85 hover:text-white hover:bg-primary-800 rounded-lg transition-colors text-sm" onClick={closeAll}>Requests</Link>
+          <Link to="/operator/drivers" className="block px-4 py-2.5 text-white/85 hover:text-white hover:bg-primary-800 rounded-lg transition-colors text-sm" onClick={closeAll}>Drivers</Link>
+          {user?.role === 'admin' && (
+            <>
+              <Link to="/admin/users" className="block px-4 py-2.5 text-white/85 hover:text-white hover:bg-primary-800 rounded-lg transition-colors text-sm" onClick={closeAll}>Users</Link>
+              <Link to="/admin/revenue" className="block px-4 py-2.5 text-white/85 hover:text-white hover:bg-primary-800 rounded-lg transition-colors text-sm" onClick={closeAll}>Revenue</Link>
+            </>
+          )}
           <div>
             <button
               onClick={() => setIsMobileServicesOpen(!isMobileServicesOpen)}
-              className="flex items-center justify-between w-full px-4 py-2.5 text-gray-100 hover:text-white hover:bg-primary-800 rounded-lg transition-colors text-sm"
+              className="flex items-center justify-between w-full px-4 py-2.5 text-white/85 hover:text-white hover:bg-primary-800 rounded-lg transition-colors text-sm"
             >
               Services
               <FiChevronDown size={14} className={`transition-transform duration-200 ${isMobileServicesOpen ? 'rotate-180' : ''}`} />
@@ -271,23 +288,40 @@ const Navbar = () => {
             {isMobileServicesOpen && (
               <div className="ml-4 mt-1 space-y-0.5">
                 {SERVICE_LINKS.map(({ to, label }) => (
-                  <Link
-                    key={to}
-                    to={to}
-                    onClick={closeAll}
-                    className="block px-4 py-2 text-blue-200 hover:text-white hover:bg-primary-800 rounded-lg transition-colors text-sm"
-                  >
-                    {label}
-                  </Link>
+                  <Link key={to} to={to} onClick={closeAll} className="block px-4 py-2 text-blue-200 hover:text-white hover:bg-primary-800 rounded-lg transition-colors text-sm">{label}</Link>
                 ))}
               </div>
             )}
           </div>
+        </>
+      )
+    }
 
+    if (isAuthenticated) {
+      return (
+        <>
+          <Link to="/book" className="block px-4 py-2.5 text-white/85 hover:text-white hover:bg-primary-800 rounded-lg transition-colors text-sm" onClick={closeAll}>Book a Ride</Link>
+          <Link to="/my-rides" className="block px-4 py-2.5 text-white/85 hover:text-white hover:bg-primary-800 rounded-lg transition-colors text-sm" onClick={closeAll}>My Rides</Link>
+          <div>
+            <button
+              onClick={() => setIsMobileServicesOpen(!isMobileServicesOpen)}
+              className="flex items-center justify-between w-full px-4 py-2.5 text-white/85 hover:text-white hover:bg-primary-800 rounded-lg transition-colors text-sm"
+            >
+              Services
+              <FiChevronDown size={14} className={`transition-transform duration-200 ${isMobileServicesOpen ? 'rotate-180' : ''}`} />
+            </button>
+            {isMobileServicesOpen && (
+              <div className="ml-4 mt-1 space-y-0.5">
+                {SERVICE_LINKS.map(({ to, label }) => (
+                  <Link key={to} to={to} onClick={closeAll} className="block px-4 py-2 text-blue-200 hover:text-white hover:bg-primary-800 rounded-lg transition-colors text-sm">{label}</Link>
+                ))}
+              </div>
+            )}
+          </div>
           <div>
             <button
               onClick={() => setIsMobileExploreOpen(!isMobileExploreOpen)}
-              className="flex items-center justify-between w-full px-4 py-2.5 text-gray-100 hover:text-white hover:bg-primary-800 rounded-lg transition-colors text-sm"
+              className="flex items-center justify-between w-full px-4 py-2.5 text-white/85 hover:text-white hover:bg-primary-800 rounded-lg transition-colors text-sm"
             >
               Explore
               <FiChevronDown size={14} className={`transition-transform duration-200 ${isMobileExploreOpen ? 'rotate-180' : ''}`} />
@@ -295,103 +329,7 @@ const Navbar = () => {
             {isMobileExploreOpen && (
               <div className="ml-4 mt-1 space-y-0.5">
                 {EXPLORE_LINKS.map(({ to, label }) => (
-                  <Link
-                    key={to}
-                    to={to}
-                    onClick={closeAll}
-                    className="block px-4 py-2 text-blue-200 hover:text-white hover:bg-primary-800 rounded-lg transition-colors text-sm"
-                  >
-                    {label}
-                  </Link>
-                ))}
-                <div className="border-t border-primary-700 my-1" />
-                <p className="px-4 py-1 text-[10px] font-bold uppercase tracking-widest text-gray-500">Routes</p>
-                {ROUTE_LINKS.map(({ to, label }) => (
-                  <Link
-                    key={to}
-                    to={to}
-                    onClick={closeAll}
-                    className="block px-4 py-2 text-blue-200 hover:text-white hover:bg-primary-800 rounded-lg transition-colors text-sm"
-                  >
-                    {label}
-                  </Link>
-                ))}
-              </div>
-            )}
-          </div>
-
-          <Link
-            to="/login"
-            className="block px-4 py-2.5 text-gray-100 hover:text-white hover:bg-primary-800 rounded-lg transition-colors text-sm"
-            onClick={closeAll}
-          >
-            Login
-          </Link>
-        </>
-      )
-    }
-
-    if (user?.role === 'operator' || user?.role === 'admin') {
-      return (
-        <>
-          <Link
-            to="/operator/dashboard"
-            className="block px-4 py-2.5 text-gray-100 hover:text-white hover:bg-primary-800 rounded-lg transition-colors text-sm"
-            onClick={closeAll}
-          >
-            Dashboard
-          </Link>
-          <Link
-            to="/operator/requests"
-            className="block px-4 py-2.5 text-gray-100 hover:text-white hover:bg-primary-800 rounded-lg transition-colors text-sm"
-            onClick={closeAll}
-          >
-            Requests
-          </Link>
-          <Link
-            to="/operator/drivers"
-            className="block px-4 py-2.5 text-gray-100 hover:text-white hover:bg-primary-800 rounded-lg transition-colors text-sm"
-            onClick={closeAll}
-          >
-            Drivers
-          </Link>
-          {user?.role === 'admin' && (
-            <>
-              <Link
-                to="/admin/users"
-                className="block px-4 py-2.5 text-gray-100 hover:text-white hover:bg-primary-800 rounded-lg transition-colors text-sm"
-                onClick={closeAll}
-              >
-                Users
-              </Link>
-              <Link
-                to="/admin/revenue"
-                className="block px-4 py-2.5 text-gray-100 hover:text-white hover:bg-primary-800 rounded-lg transition-colors text-sm"
-                onClick={closeAll}
-              >
-                Revenue
-              </Link>
-            </>
-          )}
-          <div>
-            <button
-              onClick={() => setIsMobileServicesOpen(!isMobileServicesOpen)}
-              className="flex items-center justify-between w-full px-4 py-2.5 text-gray-100 hover:text-white hover:bg-primary-800 rounded-lg transition-colors text-sm"
-            >
-              Services
-              <FiChevronDown size={14} className={`transition-transform duration-200 ${isMobileServicesOpen ? 'rotate-180' : ''}`} />
-            </button>
-            {isMobileServicesOpen && (
-              <div className="ml-4 mt-1 space-y-0.5">
-                {SERVICE_LINKS.map(({ to, label }) => (
-                  <Link
-                    key={to}
-                    to={to}
-                    onClick={closeAll}
-                    className="block px-4 py-2 text-blue-200 hover:text-white hover:bg-primary-800 rounded-lg transition-colors text-sm"
-                  >
-                    {label}
-                  </Link>
+                  <Link key={to} to={to} onClick={closeAll} className="block px-4 py-2 text-blue-200 hover:text-white hover:bg-primary-800 rounded-lg transition-colors text-sm">{label}</Link>
                 ))}
               </div>
             )}
@@ -402,24 +340,10 @@ const Navbar = () => {
 
     return (
       <>
-        <Link
-          to="/book"
-          className="block px-4 py-2.5 text-gray-100 hover:text-white hover:bg-primary-800 rounded-lg transition-colors text-sm"
-          onClick={closeAll}
-        >
-          Book a Ride
-        </Link>
-        <Link
-          to="/my-rides"
-          className="block px-4 py-2.5 text-gray-100 hover:text-white hover:bg-primary-800 rounded-lg transition-colors text-sm"
-          onClick={closeAll}
-        >
-          My Rides
-        </Link>
         <div>
           <button
             onClick={() => setIsMobileServicesOpen(!isMobileServicesOpen)}
-            className="flex items-center justify-between w-full px-4 py-2.5 text-gray-100 hover:text-white hover:bg-primary-800 rounded-lg transition-colors text-sm"
+            className="flex items-center justify-between w-full px-4 py-2.5 text-white/85 hover:text-white hover:bg-primary-800 rounded-lg transition-colors text-sm"
           >
             Services
             <FiChevronDown size={14} className={`transition-transform duration-200 ${isMobileServicesOpen ? 'rotate-180' : ''}`} />
@@ -427,14 +351,7 @@ const Navbar = () => {
           {isMobileServicesOpen && (
             <div className="ml-4 mt-1 space-y-0.5">
               {SERVICE_LINKS.map(({ to, label }) => (
-                <Link
-                  key={to}
-                  to={to}
-                  onClick={closeAll}
-                  className="block px-4 py-2 text-blue-200 hover:text-white hover:bg-primary-800 rounded-lg transition-colors text-sm"
-                >
-                  {label}
-                </Link>
+                <Link key={to} to={to} onClick={closeAll} className="block px-4 py-2 text-blue-200 hover:text-white hover:bg-primary-800 rounded-lg transition-colors text-sm">{label}</Link>
               ))}
             </div>
           )}
@@ -442,7 +359,7 @@ const Navbar = () => {
         <div>
           <button
             onClick={() => setIsMobileExploreOpen(!isMobileExploreOpen)}
-            className="flex items-center justify-between w-full px-4 py-2.5 text-gray-100 hover:text-white hover:bg-primary-800 rounded-lg transition-colors text-sm"
+            className="flex items-center justify-between w-full px-4 py-2.5 text-white/85 hover:text-white hover:bg-primary-800 rounded-lg transition-colors text-sm"
           >
             Explore
             <FiChevronDown size={14} className={`transition-transform duration-200 ${isMobileExploreOpen ? 'rotate-180' : ''}`} />
@@ -450,17 +367,34 @@ const Navbar = () => {
           {isMobileExploreOpen && (
             <div className="ml-4 mt-1 space-y-0.5">
               {EXPLORE_LINKS.map(({ to, label }) => (
-                <Link
-                  key={to}
-                  to={to}
-                  onClick={closeAll}
-                  className="block px-4 py-2 text-blue-200 hover:text-white hover:bg-primary-800 rounded-lg transition-colors text-sm"
-                >
-                  {label}
-                </Link>
+                <Link key={to} to={to} onClick={closeAll} className="block px-4 py-2 text-blue-200 hover:text-white hover:bg-primary-800 rounded-lg transition-colors text-sm">{label}</Link>
+              ))}
+              <div className="border-t border-primary-700 my-1" />
+              <p className="px-4 py-1 text-[10px] font-bold uppercase tracking-widest text-gray-500">Routes</p>
+              {ROUTE_LINKS.map(({ to, label }) => (
+                <Link key={to} to={to} onClick={closeAll} className="block px-4 py-2 text-blue-200 hover:text-white hover:bg-primary-800 rounded-lg transition-colors text-sm">{label}</Link>
               ))}
             </div>
           )}
+        </div>
+        <Link to="/quote" className="block px-4 py-2.5 text-white/85 hover:text-white hover:bg-primary-800 rounded-lg transition-colors text-sm" onClick={closeAll}>
+          Get a Quote
+        </Link>
+        <div className="border-t border-primary-700 pt-3 mt-1 space-y-2">
+          <Link
+            to="/login"
+            onClick={closeAll}
+            className="block px-4 py-2.5 text-white/85 hover:text-white hover:bg-primary-800 rounded-lg transition-colors text-sm font-medium"
+          >
+            Log In
+          </Link>
+          <Link
+            to="/signup"
+            onClick={closeAll}
+            className="block px-4 py-2.5 bg-yellow-400 hover:bg-yellow-300 text-primary-900 font-bold rounded-lg transition-colors text-sm text-center"
+          >
+            Sign Up Free
+          </Link>
         </div>
       </>
     )
@@ -480,6 +414,7 @@ const Navbar = () => {
     >
       <div className="container-custom px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
+
           <Link
             to="/"
             className="flex items-center flex-shrink-0 group"
@@ -494,67 +429,81 @@ const Navbar = () => {
           </Link>
 
           <div className="hidden md:flex items-center gap-6">
-            {getDesktopNavLinks()}
+            {getNavMiddleLinks()}
           </div>
 
-          <div className="hidden md:flex items-center gap-4">
+          <div className="hidden md:flex items-center gap-2">
+            <a
+              href={PHONE_HREF}
+              className="flex items-center gap-1.5 text-white/65 hover:text-white transition-colors text-sm font-medium mr-1"
+              title="Call us"
+            >
+              <FiPhone size={14} />
+              <span className="hidden lg:inline">{PHONE}</span>
+            </a>
+
+            <div className="w-px h-5 bg-white/20 mx-1" />
+
             <button
               onClick={toggleTheme}
               className="p-2 rounded-lg transition-all text-white/70 hover:text-white hover:bg-white/10 flex-shrink-0"
               aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
               title={isDark ? 'Light mode' : 'Dark mode'}
             >
-              {isDark ? <FiSun size={17} /> : <FiMoon size={17} />}
+              {isDark ? <FiSun size={16} /> : <FiMoon size={16} />}
             </button>
-            <div className="flex items-center gap-2 border-r border-white/20 pr-4">
-              {SOCIALS.map(({ href, label, Icon }) => (
-                <a
-                  key={label}
-                  href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-300 hover:text-white transition-colors"
-                  aria-label={label}
-                >
-                  <Icon size={15} />
-                </a>
-              ))}
-            </div>
-            <a
-              href={PHONE_HREF}
-              className="flex items-center gap-1.5 text-blue-200 hover:text-white transition-colors text-sm font-medium"
-            >
-              <FiPhone size={14} />
-              Call Us: {PHONE}
-            </a>
 
-            {isAuthenticated && user && (
-              <div className="relative">
+            {isAuthenticated && user ? (
+              <div className="relative ml-1" ref={profileRef}>
                 <button
                   onClick={toggleProfileDropdown}
-                  className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-primary-700 transition-colors"
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-white/10 transition-colors border border-white/20"
                 >
-                  <FiUser className="w-5 h-5 text-white" />
-                  <span className="text-white text-sm font-medium">{user.name}</span>
+                  <div className="w-7 h-7 rounded-full bg-yellow-400 flex items-center justify-center flex-shrink-0">
+                    <span className="text-primary-900 font-bold text-xs">
+                      {user.name?.charAt(0)?.toUpperCase() || 'U'}
+                    </span>
+                  </div>
+                  <span className="text-white text-sm font-medium max-w-[100px] truncate">{user.name}</span>
+                  <FiChevronDown size={13} className={`text-white/70 transition-transform duration-200 ${isProfileDropdownOpen ? 'rotate-180' : ''}`} />
                 </button>
 
                 {isProfileDropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50">
+                  <div className="absolute right-0 mt-2 w-52 bg-white rounded-xl shadow-xl border border-gray-100 py-2 z-50 overflow-hidden">
+                    <div className="px-4 py-2.5 border-b border-gray-100 mb-1">
+                      <p className="text-xs font-semibold text-gray-900 truncate">{user.name}</p>
+                      <p className="text-xs text-gray-400 truncate">{user.email}</p>
+                    </div>
                     <Link
                       to="/profile"
-                      className="block px-4 py-2 text-gray-800 hover:bg-gray-100 transition-colors text-sm"
+                      className="flex items-center gap-2.5 px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors text-sm"
                       onClick={closeAll}
                     >
-                      My Profile
+                      <FiSettings size={14} /> My Profile
                     </Link>
                     <button
                       onClick={handleLogout}
-                      className="w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100 transition-colors text-sm"
+                      className="flex items-center gap-2.5 w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 transition-colors text-sm"
                     >
-                      Logout
+                      <FiLogOut size={14} /> Log Out
                     </button>
                   </div>
                 )}
+              </div>
+            ) : (
+              <div className="flex items-center gap-2 ml-1">
+                <Link
+                  to="/login"
+                  className="px-4 py-1.5 text-sm font-medium text-white/85 hover:text-white hover:bg-white/10 rounded-lg transition-colors border border-transparent hover:border-white/20"
+                >
+                  Log In
+                </Link>
+                <Link
+                  to="/signup"
+                  className="flex items-center gap-1.5 px-4 py-1.5 bg-yellow-400 hover:bg-yellow-300 text-primary-900 font-bold text-sm rounded-lg transition-colors"
+                >
+                  Sign Up <FiArrowRight size={13} />
+                </Link>
               </div>
             )}
           </div>
@@ -562,14 +511,14 @@ const Navbar = () => {
           <div className="flex items-center gap-2 md:hidden">
             <button
               onClick={toggleTheme}
-              className="p-2 rounded-lg transition-colors text-white hover:bg-primary-700"
+              className="p-2 rounded-lg transition-colors text-white hover:bg-white/10"
               aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
             >
               {isDark ? <FiSun size={18} /> : <FiMoon size={18} />}
             </button>
             <button
               onClick={toggleMenu}
-              className="p-2 hover:bg-primary-700 rounded-lg transition-colors text-white"
+              className="p-2 hover:bg-white/10 rounded-lg transition-colors text-white"
               aria-label="Toggle menu"
             >
               {isMenuOpen ? <FiX className="w-6 h-6" /> : <FiMenu className="w-6 h-6" />}
@@ -585,68 +534,33 @@ const Navbar = () => {
         aria-hidden={!isMenuOpen}
         {...(!isMenuOpen && { inert: '' })}
       >
-        <div className="container-custom px-4 sm:px-6 py-4 space-y-1">
-          <a
-            href={PHONE_HREF}
-            className="flex items-center gap-2 px-4 py-2.5 text-blue-200 hover:text-white hover:bg-primary-800 rounded-lg transition-colors text-sm font-medium"
-          >
-            <FiPhone size={14} />
-            Call Us: {PHONE}
-          </a>
-
-          <div className="border-t border-primary-700 my-1" />
-
+        <div className="px-4 py-4 space-y-1">
           {getMobileNavLinks()}
-
-          {isAuthenticated && user && (
-            <>
-              <div className="border-t border-primary-700 my-1" />
+          {isAuthenticated && (
+            <div className="border-t border-primary-700 pt-3 mt-1 space-y-1">
               <Link
                 to="/profile"
-                className="block px-4 py-2.5 text-gray-100 hover:text-white hover:bg-primary-800 rounded-lg transition-colors text-sm"
+                className="flex items-center gap-2.5 px-4 py-2.5 text-white/85 hover:text-white hover:bg-primary-800 rounded-lg transition-colors text-sm"
                 onClick={closeAll}
               >
-                My Profile
+                <FiUser size={15} /> My Profile
               </Link>
               <button
                 onClick={handleLogout}
-                className="w-full text-left px-4 py-2.5 text-gray-100 hover:text-white hover:bg-primary-800 rounded-lg transition-colors text-sm"
+                className="flex items-center gap-2.5 w-full text-left px-4 py-2.5 text-red-400 hover:text-red-300 hover:bg-primary-800 rounded-lg transition-colors text-sm"
               >
-                Logout
+                <FiLogOut size={15} /> Log Out
               </button>
-            </>
-          )}
-
-          <div className="border-t border-primary-700 my-1" />
-
-          <div className="flex items-center gap-4 px-4 py-2">
-            {SOCIALS.map(({ href, label, Icon }) => (
-              <a
-                key={label}
-                href={href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-300 hover:text-white transition-colors"
-                aria-label={label}
-              >
-                <Icon size={18} />
-              </a>
-            ))}
-          </div>
-
-          <div className="border-t border-primary-700 my-1" />
-
-          {(!isAuthenticated || user?.role === 'customer') && (
-            <div className="pt-1 pb-2">
-              <Link
-                to="/quote"
-                onClick={closeAll}
-                className="flex items-center justify-center gap-2 w-full bg-yellow-400 text-primary-900 font-bold py-3 rounded-xl text-sm hover:bg-yellow-300 transition-colors"
-              >
-                Get a Free Quote <FiArrowRight size={14} />
-              </Link>
             </div>
           )}
+          <div className="pt-3 border-t border-primary-700">
+            <a
+              href={PHONE_HREF}
+              className="flex items-center gap-2 px-4 py-2.5 text-blue-200 hover:text-white transition-colors text-sm"
+            >
+              <FiPhone size={15} /> {PHONE}
+            </a>
+          </div>
         </div>
       </div>
     </nav>
