@@ -1,21 +1,44 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { FiArrowLeft } from 'react-icons/fi'
+import { FiArrowLeft, FiPhone } from 'react-icons/fi'
 
 const NotFound = () => {
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center section-padding">
-      <div className="text-center">
-        <div className="mb-8">
-          <h1 className="text-9xl font-bold text-primary-800">404</h1>
-          <p className="text-2xl font-semibold text-gray-900 mt-4">Page Not Found</p>
+    <div className="min-h-screen bg-gradient-to-br from-[#0f1f3d] via-[#1a365d] to-[#1a3a6b] flex flex-col items-center justify-center text-white px-4 overflow-hidden relative">
+      {/* Decorative blurs */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-600 opacity-10 rounded-full blur-3xl translate-x-1/3 -translate-y-1/4" />
+        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-indigo-800 opacity-15 rounded-full blur-3xl -translate-x-1/4 translate-y-1/4" />
+      </div>
+
+      <div className="relative z-10 text-center max-w-lg">
+        {/* Logo */}
+        <div className="flex justify-center mb-8">
+          <img src="/logo.png?v=3" alt="Everywhere Cars" className="h-14 w-auto" />
         </div>
-        <p className="text-gray-600 text-lg mb-8 max-w-md mx-auto">
-          Sorry, the page you're looking for doesn't exist. Let's get you back on track.
+
+        {/* 404 */}
+        <div className="text-9xl font-bold text-white/20 leading-none mb-2">404</div>
+        <h1 className="text-3xl font-bold mb-4">Page Not Found</h1>
+        <p className="text-blue-200 text-lg mb-10 leading-relaxed">
+          Sorry, the page you're looking for doesn't exist. Let's get you back on the road.
         </p>
-        <Link to="/" className="btn-primary inline-flex items-center gap-2">
-          <FiArrowLeft /> Back to Home
-        </Link>
+
+        {/* Actions */}
+        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <Link
+            to="/"
+            className="inline-flex items-center justify-center gap-2 bg-yellow-400 text-[#0f1f3d] font-bold px-8 py-4 rounded-xl hover:bg-yellow-300 transition-colors text-base"
+          >
+            <FiArrowLeft size={16} /> Back to Home
+          </Link>
+          <a
+            href="tel:+17186586000"
+            className="inline-flex items-center justify-center gap-2 border border-white/30 text-white font-semibold px-8 py-4 rounded-xl hover:bg-white/10 transition-colors text-base"
+          >
+            <FiPhone size={16} /> Call (718) 658-6000
+          </a>
+        </div>
       </div>
     </div>
   )

@@ -109,7 +109,7 @@ const Footer = () => {
                 href={FACEBOOK}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-400 hover:text-accent-500 transition-colors"
+                className="text-gray-400 hover:text-yellow-400 transition-colors"
                 aria-label="Facebook"
               >
                 <FiFacebook className="w-5 h-5" />
@@ -118,7 +118,7 @@ const Footer = () => {
                 href={INSTAGRAM}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-400 hover:text-accent-500 transition-colors"
+                className="text-gray-400 hover:text-yellow-400 transition-colors"
                 aria-label="Instagram"
               >
                 <FiInstagram className="w-5 h-5" />
@@ -127,7 +127,7 @@ const Footer = () => {
                 href={LINKEDIN}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-400 hover:text-accent-500 transition-colors"
+                className="text-gray-400 hover:text-yellow-400 transition-colors"
                 aria-label="LinkedIn"
               >
                 <FiLinkedin className="w-5 h-5" />
@@ -136,7 +136,7 @@ const Footer = () => {
                 href={WHATSAPP}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-400 hover:text-accent-500 transition-colors"
+                className="text-gray-400 hover:text-yellow-400 transition-colors"
                 aria-label="WhatsApp"
               >
                 <FiMessageCircle className="w-5 h-5" />
@@ -149,31 +149,35 @@ const Footer = () => {
             <h4 className="text-base font-semibold text-white mb-4">Services</h4>
             <ul className="space-y-2.5">
               <li>
-                <Link to="/book" className="text-sm text-gray-400 hover:text-accent-500 transition-colors">
+                <Link to="/services/airport-transfers" className="text-sm text-gray-400 hover:text-yellow-400 transition-colors">
                   Airport Transfers
                 </Link>
               </li>
               <li>
-                <Link to="/book" className="text-sm text-gray-400 hover:text-accent-500 transition-colors">
+                <Link to="/services/hourly" className="text-sm text-gray-400 hover:text-yellow-400 transition-colors">
                   Hourly Chauffeur
                 </Link>
               </li>
               <li>
                 <Link
                   to="/corporate"
-                  className="text-sm text-gray-400 hover:text-accent-500 transition-colors flex items-center gap-1.5"
+                  className="text-sm text-gray-400 hover:text-yellow-400 transition-colors flex items-center gap-1.5"
                 >
                   <FiBriefcase size={12} />
                   Corporate Travel
                 </Link>
               </li>
               <li>
-                <Link to="/book" className="text-sm text-gray-400 hover:text-accent-500 transition-colors">
+                <Link to="/services/events" className="text-sm text-gray-400 hover:text-yellow-400 transition-colors">
                   Event Transportation
                 </Link>
               </li>
               <li>
-                <Link to="/book" className="text-sm text-gray-400 hover:text-accent-500 transition-colors">
+                <Link
+                  to="/signup"
+                  className="text-sm text-gray-400 hover:text-yellow-400 transition-colors"
+                  title="Create a free account to book"
+                >
                   Point-to-Point
                 </Link>
               </li>
@@ -187,7 +191,7 @@ const Footer = () => {
               <li>
                 <a
                   href={`mailto:${EMAIL}`}
-                  className="text-sm text-gray-400 hover:text-accent-500 transition-colors flex items-center gap-2"
+                  className="text-sm text-gray-400 hover:text-yellow-400 transition-colors flex items-center gap-2"
                 >
                   <FiMail className="w-4 h-4 flex-shrink-0" />
                   {EMAIL}
@@ -196,7 +200,7 @@ const Footer = () => {
               <li>
                 <a
                   href={PHONE_HREF}
-                  className="text-sm text-gray-400 hover:text-accent-500 transition-colors flex items-center gap-2"
+                  className="text-sm text-gray-400 hover:text-yellow-400 transition-colors flex items-center gap-2"
                 >
                   <FiPhone className="w-4 h-4 flex-shrink-0" />
                   {PHONE}
@@ -207,14 +211,14 @@ const Footer = () => {
                   href={WHATSAPP}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-sm text-gray-400 hover:text-accent-500 transition-colors flex items-center gap-2"
+                  className="text-sm text-gray-400 hover:text-yellow-400 transition-colors flex items-center gap-2"
                 >
                   <FiMessageCircle className="w-4 h-4 flex-shrink-0" />
                   WhatsApp Us
                 </a>
               </li>
               <li>
-                <a href="#faq" className="text-sm text-gray-400 hover:text-accent-500 transition-colors">
+                <a href="#faq" className="text-sm text-gray-400 hover:text-yellow-400 transition-colors">
                   FAQ
                 </a>
               </li>
@@ -226,24 +230,14 @@ const Footer = () => {
             <h4 className="text-base font-semibold text-white mb-4">Legal</h4>
             <ul className="space-y-2.5">
               <li>
-                <Link to="/privacy" className="text-sm text-gray-400 hover:text-accent-500 transition-colors">
+                <Link to="/privacy" className="text-sm text-gray-400 hover:text-yellow-400 transition-colors">
                   Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link to="/terms" className="text-sm text-gray-400 hover:text-accent-500 transition-colors">
+                <Link to="/terms" className="text-sm text-gray-400 hover:text-yellow-400 transition-colors">
                   Terms of Service
                 </Link>
-              </li>
-              <li>
-                <a href="#cookies" className="text-sm text-gray-400 hover:text-accent-500 transition-colors">
-                  Cookie Policy
-                </a>
-              </li>
-              <li>
-                <a href="#accessibility" className="text-sm text-gray-400 hover:text-accent-500 transition-colors">
-                  Accessibility
-                </a>
               </li>
             </ul>
           </div>

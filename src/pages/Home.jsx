@@ -22,7 +22,6 @@ import {
   FiUser,
   FiNavigation2,
   FiZap,
-  FiGlobe,
   FiAward,
   FiCheckCircle,
   FiBriefcase,
@@ -532,7 +531,7 @@ const Home = () => {
                 )}
 
                 <p className="text-center text-xs text-gray-400">
-                  Free to post. No payment required until you confirm a driver.
+                  No payment required until you confirm your booking.
                 </p>
               </form>
             </div>
@@ -546,7 +545,7 @@ const Home = () => {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             {[
               { value: vehiclesCount, suffix: '+', label: 'Luxury Vehicles', icon: FiTruck },
-              { value: sprintersCount, suffix: '+', label: 'Sprinter Vans', icon: FiGlobe },
+              { value: sprintersCount, suffix: '+', label: 'Sprinter Vans', icon: FiTruck },
               { value: coachesCount, suffix: '+', label: 'Coach Buses', icon: FiUser },
               { value: (ratingRaw / 10).toFixed(1), suffix: '★', label: 'Average Rating', icon: FiStar },
             ].map((stat, i) => (
@@ -584,7 +583,7 @@ const Home = () => {
                 step: '02',
                 icon: FiCheckCircle,
                 title: 'Receive Quotes',
-                description: 'Our verified drivers review your request and send competitive, all-inclusive fixed prices.',
+                description: 'Our reservations team reviews your request and sends you a fixed all-inclusive price.',
               },
               {
                 step: '03',
