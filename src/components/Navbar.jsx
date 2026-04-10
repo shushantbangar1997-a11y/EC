@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import {
   FiMenu, FiX, FiUser, FiPhone, FiBriefcase, FiArrowRight,
   FiFacebook, FiInstagram, FiLinkedin, FiMessageCircle,
-  FiChevronDown, FiNavigation, FiClock, FiAward,
+  FiChevronDown, FiNavigation, FiClock, FiAward, FiTruck,
 } from 'react-icons/fi'
 import { useAuth } from '../context/AuthContext'
 
@@ -111,6 +111,10 @@ const Navbar = () => {
             How It Works
           </Link>
           <ServicesMenuButton />
+          <Link to="/fleet" className="flex items-center gap-1 text-gray-100 hover:text-white transition-colors text-sm">
+            <FiTruck size={13} />
+            Our Fleet
+          </Link>
           <Link to="/login" className="text-gray-100 hover:text-white transition-colors text-sm">
             Login
           </Link>
@@ -157,6 +161,10 @@ const Navbar = () => {
           My Rides
         </Link>
         <ServicesMenuButton />
+        <Link to="/fleet" className="flex items-center gap-1 text-gray-100 hover:text-white transition-colors text-sm">
+          <FiTruck size={13} />
+          Our Fleet
+        </Link>
       </>
     )
   }
@@ -196,6 +204,14 @@ const Navbar = () => {
               </div>
             )}
           </div>
+
+          <Link
+            to="/fleet"
+            className="block px-4 py-2.5 text-gray-100 hover:text-white hover:bg-primary-800 rounded-lg transition-colors text-sm"
+            onClick={closeAll}
+          >
+            Our Fleet
+          </Link>
 
           <Link
             to="/login"
@@ -316,6 +332,13 @@ const Navbar = () => {
             </div>
           )}
         </div>
+        <Link
+          to="/fleet"
+          className="block px-4 py-2.5 text-gray-100 hover:text-white hover:bg-primary-800 rounded-lg transition-colors text-sm"
+          onClick={closeAll}
+        >
+          Our Fleet
+        </Link>
       </>
     )
   }

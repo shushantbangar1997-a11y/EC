@@ -673,6 +673,7 @@ const Home = () => {
           <div className="text-center mb-16">
             <span className="text-sm font-semibold uppercase tracking-widest text-[#1a365d] mb-2 block">250+ Luxury Vehicles</span>
             <h2 className="text-4xl font-bold text-gray-900">Choose Your Ride</h2>
+            <p className="text-gray-500 text-base mt-3 max-w-xl mx-auto">4 vehicle groups, 20+ models, from executive sedans to 55-passenger coaches.</p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5">
@@ -714,6 +715,16 @@ const Home = () => {
                 </div>
               </div>
             ))}
+          </div>
+
+          <div className="text-center mt-10">
+            <a
+              href="/fleet"
+              className="inline-flex items-center gap-2 bg-[#1a365d] text-white font-bold py-3.5 px-8 rounded-xl hover:bg-[#0f1f3d] transition-colors text-base shadow"
+            >
+              View Full Fleet <FiArrowRight size={16} />
+            </a>
+            <p className="text-xs text-gray-400 mt-3">250+ vehicles across 4 categories — sedans, SUVs, vans, and coach buses</p>
           </div>
         </div>
       </section>

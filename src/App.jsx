@@ -14,6 +14,7 @@ import Services from './pages/services/Services'
 import AirportTransfers from './pages/services/AirportTransfers'
 import Hourly from './pages/services/Hourly'
 import Events from './pages/services/Events'
+import Fleet from './pages/Fleet'
 import Login from './pages/auth/Login'
 import Signup from './pages/auth/Signup'
 import Profile from './pages/Profile'
@@ -57,6 +58,7 @@ function App() {
             <Route path="/services/airport-transfers" element={<AirportTransfers />} />
             <Route path="/services/hourly" element={<Hourly />} />
             <Route path="/services/events" element={<Events />} />
+            <Route path="/fleet" element={<Fleet />} />
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/terms" element={<Terms />} />
 
