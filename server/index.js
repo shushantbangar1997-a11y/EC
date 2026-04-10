@@ -2,14 +2,27 @@ import express from 'express'
 import cors from 'cors'
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcryptjs'
+import { fileURLToPath } from 'url'
+import { join, dirname } from 'path'
+import { existsSync } from 'fs'
 import { db } from './db.js'
 
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
+
 const app = express()
-const PORT = 3001
+const PORT = process.env.PORT || 3001
 const JWT_SECRET = process.env.JWT_SECRET || 'ec-secret-key-2024'
+const DIST = join(__dirname, '../dist')
 
 app.use(cors({ origin: true, credentials: true }))
 app.use(express.json())
+
+// ── Serve built frontend static files ────────────────────────────────────────
+
+app.use(express.static(DIST))
+
+// ── HELPERS ───────────────────────────────────────────────────────────────────
 
 function sign(user) {
   const { password, ...safe } = user
@@ -49,7 +62,7 @@ function qrToLead(qr) {
   }
 }
 
-// ── AUTH ─────────────────────────────────────────────────────────────────────
+// ── AUTH ──────────────────────────────────────────────────────────────────────
 
 app.post('/api/auth/register', async (req, res) => {
   try {
@@ -184,7 +197,7 @@ app.patch('/api/quote-requests/:id/status', auth, role('operator', 'admin'), (re
   }
 })
 
-// ── BIDS (explicit endpoint) ──────────────────────────────────────────────────
+// ── BIDS ──────────────────────────────────────────────────────────────────────
 
 app.post('/api/quote-requests/:id/bids', auth, role('operator', 'admin'), (req, res) => {
   try {
@@ -304,6 +317,21 @@ app.get('/api/revenue', auth, role('operator', 'admin'), (req, res) => {
 
 app.get('/api/health', (_, res) => res.json({ status: 'ok', time: new Date().toISOString() }))
 
+// ── SPA FALLBACK — must be last ───────────────────────────────────────────────
+
+app.use((req, res) => {
+  const indexPath = join(DIST, 'index.html')
+  if (existsSync(indexPath)) {
+    res.sendFile(indexPath)
+  } else {
+    res.status(503).send('Frontend not built. Run: npm run build')
+  }
+})
+
+// ── START ─────────────────────────────────────────────────────────────────────
+
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`[API] Server running on port ${PORT}`)
+  console.log(`[API] Serving frontend from: ${DIST}`)
+  console.log(`[API] NODE_ENV: ${process.env.NODE_ENV || 'development'}`)
 })

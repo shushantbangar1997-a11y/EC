@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync, existsSync } from 'fs'
+import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs'
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
 import bcrypt from 'bcryptjs'
@@ -6,6 +6,8 @@ import bcrypt from 'bcryptjs'
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const DATA_DIR = join(__dirname, 'data')
 const DB_FILE = join(DATA_DIR, 'db.json')
+
+mkdirSync(DATA_DIR, { recursive: true })
 
 function load() {
   if (!existsSync(DB_FILE)) return null

@@ -10,6 +10,9 @@ node_modules/
 /build
 /dist
 
+# Runtime database (auto-seeded on startup, not tracked in git)
+server/data/db.json
+
 # Misc
 .DS_Store
 .env.local
