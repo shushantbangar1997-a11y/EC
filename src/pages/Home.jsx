@@ -2,8 +2,10 @@ import React, { useState, useCallback } from 'react'
 import { FiShield, FiTruck, FiHeadphones } from 'react-icons/fi'
 import DispatchPanel from '../components/DispatchPanel'
 import NYCActivityCanvas from '../components/NYCActivityCanvas'
+import { useTheme } from '../context/ThemeContext'
 
 export default function Home() {
+  const { isDark } = useTheme()
   const [pickup, setPickup] = useState('')
   const [dropoff, setDropoff] = useState('')
 
@@ -29,7 +31,7 @@ export default function Home() {
         <div className="relative z-10 w-full lg:w-[58%] min-h-screen flex flex-col">
           <div className="block lg:hidden relative w-full overflow-hidden flex-shrink-0" style={{ height: 120, background: 'var(--canvas-bg)', transition: 'background 300ms ease' }}>
             <NYCActivityCanvas pickup={pickup} dropoff={dropoff} isMobile={true} />
-            <div className="absolute inset-0 pointer-events-none" style={{ background: 'linear-gradient(to bottom, rgba(5,10,15,0.3) 0%, transparent 40%, rgba(5,10,15,0.5) 100%)' }} />
+            {isDark && <div className="absolute inset-0 pointer-events-none" style={{ background: 'linear-gradient(to bottom, rgba(5,10,15,0.3) 0%, transparent 40%, rgba(5,10,15,0.5) 100%)' }} />}
           </div>
           <div className="flex-1 flex items-center">
             <DispatchPanel onRouteChange={handleRouteChange} />

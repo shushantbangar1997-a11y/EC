@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { useTheme } from '../context/ThemeContext'
 import api from '../utils/api'
 import toast from 'react-hot-toast'
 import {
@@ -18,11 +19,11 @@ const GOLD = '#F6C90E'
 const ELECTRIC = '#0EA5E9'
 
 const VEHICLES = [
-  { id: 'sedan',        label: 'Sedan',       capacity: '2–3',   image: '/images/fleet-sedan.png'    },
-  { id: 'suv',         label: 'SUV',          capacity: '3–5',   image: '/images/fleet-suv.png'      },
-  { id: 'sprinter_van', label: 'Sprinter',    capacity: '11–14', image: '/images/fleet-sprinter.png' },
-  { id: 'mini_bus',    label: 'Mini Bus',     capacity: 'Up to 20', image: '/images/fleet-sprinter.png' },
-  { id: 'coach',       label: 'Coach',        capacity: '20–55', image: '/images/fleet-coach.png'    },
+  { id: 'sedan',        label: 'Sedan',    capacity: '2–3',      image: '/images/fleet-sedan.png'    },
+  { id: 'suv',         label: 'SUV',       capacity: '3–5',      image: '/images/fleet-suv.png'      },
+  { id: 'sprinter_van', label: 'Sprinter', capacity: '11–14',    image: '/images/fleet-sprinter.png' },
+  { id: 'mini_bus',    label: 'Mini Bus',  capacity: 'Up to 20', image: '/images/fleet-sprinter.png' },
+  { id: 'coach',       label: 'Coach',     capacity: '20–55',    image: '/images/fleet-coach.png'    },
 ]
 
 function useTypewriter(text, speed = 35) {
@@ -72,8 +73,8 @@ function CountdownTimer({ seconds }) {
   const s = String(seconds % 60).padStart(2, '0')
   const urgent = seconds < 60
   return (
-    <span className={`font-mono text-xs font-bold tabular-nums ${urgent ? 'text-red-400' : ''}`}
-      style={{ color: urgent ? undefined : ELECTRIC }}>
+    <span className="font-mono text-xs font-bold tabular-nums"
+      style={{ color: urgent ? '#f87171' : ELECTRIC }}>
       {m}:{s}
     </span>
   )
@@ -81,14 +82,14 @@ function CountdownTimer({ seconds }) {
 
 function SkeletonCard() {
   return (
-    <div className="rounded-2xl p-4 animate-pulse" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
+    <div className="rounded-2xl p-4 animate-pulse" style={{ background: 'var(--bg-field)', border: 'var(--border-field)' }}>
       <div className="flex gap-4 items-center">
-        <div className="w-14 h-14 rounded-xl flex-shrink-0" style={{ background: 'rgba(255,255,255,0.07)' }} />
+        <div className="w-14 h-14 rounded-xl flex-shrink-0" style={{ background: 'var(--bg-field-hover)' }} />
         <div className="flex-1 space-y-2">
-          <div className="h-3 rounded w-1/3" style={{ background: 'rgba(255,255,255,0.08)' }} />
-          <div className="h-3 rounded w-1/4" style={{ background: 'rgba(255,255,255,0.06)' }} />
+          <div className="h-3 rounded w-1/3" style={{ background: 'var(--bg-field-hover)' }} />
+          <div className="h-3 rounded w-1/4" style={{ background: 'var(--bg-field)' }} />
         </div>
-        <div className="w-20 h-8 rounded-xl" style={{ background: 'rgba(255,255,255,0.07)' }} />
+        <div className="w-20 h-8 rounded-xl" style={{ background: 'var(--bg-field-hover)' }} />
       </div>
     </div>
   )
@@ -104,15 +105,15 @@ function BidCard({ bid, onSelect, index, isLowest }) {
     <div
       className="rounded-2xl p-4 transition-all duration-500"
       style={{
-        background: 'linear-gradient(135deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.03) 100%)',
-        border: `1px solid ${isLowest ? 'rgba(246,201,14,0.4)' : 'rgba(255,255,255,0.1)'}`,
+        background: 'var(--bg-field)',
+        border: isLowest ? `1px solid rgba(246,201,14,0.5)` : 'var(--border-field)',
         borderLeft: isLowest ? `3px solid ${GOLD}` : undefined,
         opacity: visible ? 1 : 0,
         transform: visible ? 'translateY(0)' : 'translateY(16px)',
       }}
     >
       <div className="flex items-start gap-3 mb-3">
-        <div className="w-14 h-14 rounded-xl overflow-hidden flex-shrink-0" style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)' }}>
+        <div className="w-14 h-14 rounded-xl overflow-hidden flex-shrink-0" style={{ background: 'var(--bg-field-hover)', border: 'var(--border-field)' }}>
           <img src={`/images/fleet-${bid.vehicle_type?.toLowerCase().includes('suv') ? 'suv' : bid.vehicle_type?.toLowerCase().includes('coach') || bid.vehicle_type?.toLowerCase().includes('bus') ? 'coach' : bid.vehicle_type?.toLowerCase().includes('sprinter') || bid.vehicle_type?.toLowerCase().includes('van') ? 'sprinter' : 'sedan'}.png`}
             alt="" className="w-full h-full object-cover" loading="lazy" />
         </div>
@@ -120,7 +121,7 @@ function BidCard({ bid, onSelect, index, isLowest }) {
           <div className="font-bold text-sm truncate" style={{ color: 'var(--text-primary)' }}>{bid.operator_name || 'Everywhere Cars'}</div>
           <div className="flex items-center gap-0.5 mt-0.5">
             {[1,2,3,4,5].map(i => (
-              <FiStar key={i} size={10} className={i <= Math.round(bid.rating || 5) ? 'text-yellow-400' : 'text-white/20'} style={{ fill: i <= Math.round(bid.rating || 5) ? GOLD : 'transparent' }} />
+              <FiStar key={i} size={10} style={{ color: i <= Math.round(bid.rating || 5) ? GOLD : 'var(--text-muted)', fill: i <= Math.round(bid.rating || 5) ? GOLD : 'transparent' }} />
             ))}
             <span className="text-xs ml-1 font-mono" style={{ color: 'var(--text-muted)' }}>{(bid.rating || 5.0).toFixed(1)}</span>
           </div>
@@ -137,7 +138,7 @@ function BidCard({ bid, onSelect, index, isLowest }) {
         </div>
       </div>
       {(bid.notes || bid.message) && (
-        <p className="text-xs italic mb-3 px-2 py-1.5 rounded-lg" style={{ color: 'var(--text-secondary)', background: 'var(--bg-field)' }}>
+        <p className="text-xs italic mb-3 px-2 py-1.5 rounded-lg" style={{ color: 'var(--text-secondary)', background: 'var(--bg-field-hover)' }}>
           "{bid.notes || bid.message}"
         </p>
       )}
@@ -156,7 +157,7 @@ function VoicePrompt({ target }) {
   const text = target === 'dropoff' ? 'Say where you\'re going...' : 'Say your pickup location...'
   const { displayed } = useTypewriter(text, 30)
   return (
-    <p className="text-white/80 text-sm mb-6 min-h-[1.25rem]">
+    <p className="text-sm mb-6 min-h-[1.25rem]" style={{ color: 'rgba(255,255,255,0.8)' }}>
       {displayed}<span className="inline-block w-0.5 h-3.5 ml-0.5 align-middle animate-pulse" style={{ background: GOLD, opacity: displayed.length < text.length ? 1 : 0 }} />
     </p>
   )
@@ -183,7 +184,7 @@ function VoiceWaveform({ active, analyserRef }) {
           el.style.height = `${Math.max(15, v * 100)}%`
         })
       } else {
-        barsRef.current.forEach((el, i) => {
+        barsRef.current.forEach((el) => {
           if (!el) return
           const v = 0.2 + Math.random() * 0.8
           el.style.height = `${Math.max(15, v * 100)}%`
@@ -217,6 +218,7 @@ function VoiceWaveform({ active, analyserRef }) {
 export default function DispatchPanel({ onRouteChange }) {
   const { user } = useAuth()
   const navigate = useNavigate()
+  const { isDark } = useTheme()
   const stats = useSimulatedStats()
   const [phase, setPhase] = useState('idle')
   const [pickup, setPickup] = useState('')
@@ -413,7 +415,7 @@ export default function DispatchPanel({ onRouteChange }) {
             </div>
             <VoicePrompt target={voiceTarget} />
             <VoiceWaveform active={voiceActive} analyserRef={analyserRef} />
-            <button onClick={() => { recognitionRef.current?.stop(); setVoiceActive(false) }} className="mt-6 text-white/40 hover:text-white/70 text-xs transition-colors">
+            <button onClick={() => { recognitionRef.current?.stop(); setVoiceActive(false) }} style={{ color: 'rgba(255,255,255,0.4)' }} className="mt-6 hover:opacity-80 text-xs transition-opacity">
               Cancel
             </button>
           </div>
@@ -429,8 +431,10 @@ export default function DispatchPanel({ onRouteChange }) {
           WebkitBackdropFilter: 'blur(24px)',
           border: 'var(--border-panel)',
           borderRadius: 20,
-          boxShadow: '0 0 80px rgba(246,201,14,0.04), 0 25px 60px rgba(0,0,0,0.3)',
-          transition: 'background 300ms ease, border 300ms ease',
+          boxShadow: isDark
+            ? '0 0 80px rgba(246,201,14,0.04), 0 25px 60px rgba(0,0,0,0.3)'
+            : '0 0 40px rgba(26,54,93,0.08), 0 25px 60px rgba(0,0,0,0.12)',
+          transition: 'background 300ms ease, border 300ms ease, box-shadow 300ms ease',
         }}
       >
         <div className="px-4 py-2.5 flex items-center gap-3 border-b" style={{ borderColor: 'var(--bg-field)', background: 'var(--stats-bg)' }}>
@@ -451,32 +455,40 @@ export default function DispatchPanel({ onRouteChange }) {
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full animate-pulse" style={{ background: '#22c55e' }} />
-                  <span className="text-xs font-bold tracking-widest text-white/60 uppercase font-mono">Ride Dispatched</span>
+                  <span className="text-xs font-bold tracking-widest uppercase font-mono" style={{ color: 'var(--text-secondary)' }}>Ride Dispatched</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-white/40 text-xs font-mono">Expires</span>
+                  <span className="text-xs font-mono" style={{ color: 'var(--text-muted)' }}>Expires</span>
                   <CountdownTimer seconds={countdown} />
                 </div>
               </div>
 
-              <h2 className="text-lg font-bold text-white mb-3 leading-snug min-h-[1.75rem]">{bidHero}<span className="inline-block w-0.5 h-4 ml-0.5 align-middle animate-pulse" style={{ background: GOLD, opacity: bidHero.length < 40 ? 1 : 0 }} /></h2>
+              <h2 className="text-lg font-bold mb-3 leading-snug min-h-[1.75rem]" style={{ color: 'var(--text-primary)' }}>
+                {bidHero}<span className="inline-block w-0.5 h-4 ml-0.5 align-middle animate-pulse" style={{ background: GOLD, opacity: bidHero.length < 40 ? 1 : 0 }} />
+              </h2>
 
-              <div className="flex items-center gap-3 mb-5 p-3 rounded-xl" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)' }}>
+              <div className="flex items-center gap-3 mb-5 p-3 rounded-xl" style={{ background: 'var(--bg-field)', border: 'var(--border-field)' }}>
                 <div className="flex flex-col items-center gap-1 flex-shrink-0">
                   <div className="w-2.5 h-2.5 rounded-full" style={{ background: GOLD, boxShadow: `0 0 8px ${GOLD}` }} />
                   <div className="flex flex-col gap-0.5">
                     {[0,1,2].map(i => <div key={i} className="w-0.5 h-1.5 rounded-full mx-auto" style={{ background: 'rgba(246,201,14,0.4)', animation: `dashFlow 1.4s ease-in-out ${i * 0.2}s infinite` }} />)}
                   </div>
-                  <div className="w-2.5 h-2.5 rounded-full" style={{ background: 'rgba(255,255,255,0.6)' }} />
+                  <div className="w-2.5 h-2.5 rounded-full" style={{ background: 'var(--text-secondary)' }} />
                 </div>
                 <div className="flex-1 min-w-0 space-y-1.5">
-                  <p className="text-white/80 text-sm font-medium truncate">{postedRide?.pickup}</p>
-                  <p className="text-white/50 text-sm truncate">{postedRide?.dropoff}</p>
+                  <p className="text-sm font-medium truncate" style={{ color: 'var(--text-primary)' }}>{postedRide?.pickup}</p>
+                  <p className="text-sm truncate" style={{ color: 'var(--text-muted)' }}>{postedRide?.dropoff}</p>
                 </div>
               </div>
 
               <div className="space-y-3">
-                {bids.length === 0 && (<><SkeletonCard /><SkeletonCard /><p className="text-center text-white/30 text-xs font-mono animate-pulse py-2">Reviewing your request...</p></>)}
+                {bids.length === 0 && (
+                  <>
+                    <SkeletonCard />
+                    <SkeletonCard />
+                    <p className="text-center text-xs font-mono animate-pulse py-2" style={{ color: 'var(--text-muted)' }}>Reviewing your request...</p>
+                  </>
+                )}
                 {bids.map((bid, i) => {
                   const isLowest = bids.length > 1 && bid.price === Math.min(...bids.map(b => b.price))
                   return <BidCard key={bid.id || i} bid={bid} onSelect={handleSelectBid} index={i} isLowest={isLowest} />
@@ -484,8 +496,8 @@ export default function DispatchPanel({ onRouteChange }) {
               </div>
 
               {noOffersMsg && !bids.length && (
-                <div className="mt-4 p-4 rounded-2xl text-center" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
-                  <p className="text-white/60 text-sm mb-3">Our team is reviewing your request. You'll hear from us shortly.</p>
+                <div className="mt-4 p-4 rounded-2xl text-center" style={{ background: 'var(--bg-field)', border: 'var(--border-field)' }}>
+                  <p className="text-sm mb-3" style={{ color: 'var(--text-secondary)' }}>Our team is reviewing your request. You will hear from us shortly.</p>
                   <div className="flex gap-2 justify-center">
                     <a href="tel:+17186586000" className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl font-bold text-xs transition-all hover:brightness-110" style={{ background: `linear-gradient(135deg, ${GOLD}, #E8B800)`, color: '#050a0f' }}>
                       <FiPhone size={12} /> (718) 658-6000
@@ -498,11 +510,11 @@ export default function DispatchPanel({ onRouteChange }) {
               )}
 
               <div className="mt-4 text-center">
-                <p className="text-white/30 text-xs mb-1">
+                <p className="text-xs mb-1" style={{ color: 'var(--text-muted)' }}>
                   Need help now?{' '}
-                  <a href="tel:+17186586000" className="text-white/60 hover:text-yellow-400 transition-colors font-semibold">(718) 658-6000</a>
+                  <a href="tel:+17186586000" className="font-semibold transition-colors hover:opacity-80" style={{ color: 'var(--text-secondary)' }}>(718) 658-6000</a>
                 </p>
-                <button onClick={resetAll} className="text-white/25 hover:text-white/50 text-xs transition-colors underline">Start new search</button>
+                <button onClick={resetAll} className="text-xs transition-colors underline" style={{ color: 'var(--text-muted)' }}>Start new search</button>
               </div>
             </div>
           ) : (
@@ -538,7 +550,7 @@ export default function DispatchPanel({ onRouteChange }) {
                       <button
                         type="button"
                         onClick={(e) => { e.stopPropagation(); startVoice('dropoff') }}
-                        className="p-1.5 rounded-full transition-colors hover:text-yellow-400 ml-2 flex-shrink-0"
+                        className="p-1.5 rounded-full transition-colors hover:opacity-80 ml-2 flex-shrink-0"
                         style={{ color: 'var(--text-muted)' }}
                         aria-label="Voice input"
                       >
@@ -554,7 +566,7 @@ export default function DispatchPanel({ onRouteChange }) {
                     <div style={{ transition: 'opacity 220ms ease, transform 220ms ease' }}>
                       <div className="mb-0.5 flex items-center justify-between">
                         <span className="text-xs font-mono font-bold tracking-widest" style={{ color: ELECTRIC }}>PICKUP</span>
-                        <button type="button" onClick={() => startVoice('pickup')} className="flex items-center justify-center rounded-full text-white/30 hover:text-yellow-400 transition-colors" style={{ width: 44, height: 44 }} title="Voice input" aria-label="Voice input for pickup">
+                        <button type="button" onClick={() => startVoice('pickup')} className="flex items-center justify-center rounded-full transition-colors hover:opacity-80" style={{ width: 44, height: 44, color: 'var(--text-muted)' }} title="Voice input" aria-label="Voice input for pickup">
                           {voiceActive && voiceTarget === 'pickup' ? <FiMicOff size={15} className="text-red-400" /> : <FiMic size={15} />}
                         </button>
                       </div>
@@ -572,18 +584,18 @@ export default function DispatchPanel({ onRouteChange }) {
                       </div>
                       {(pickupAirport || pickupHotel) && (
                         <div className="flex flex-wrap gap-1.5 mt-1.5">
-                          {pickupAirport && <span className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-full font-medium" style={{ background: 'rgba(34,197,94,0.12)', border: '1px solid rgba(34,197,94,0.25)', color: '#4ade80' }}>✈ Flight tracking included</span>}
-                          {pickupHotel && <span className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-full font-medium" style={{ background: `rgba(14,165,233,0.12)`, border: `1px solid rgba(14,165,233,0.25)`, color: '#38bdf8' }}>Hotel pickup confirmed</span>}
+                          {pickupAirport && <span className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-full font-medium" style={{ background: 'rgba(34,197,94,0.12)', border: '1px solid rgba(34,197,94,0.3)', color: '#16a34a' }}>Flight tracking included</span>}
+                          {pickupHotel && <span className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-full font-medium" style={{ background: 'rgba(14,165,233,0.12)', border: '1px solid rgba(14,165,233,0.3)', color: ELECTRIC }}>Hotel pickup confirmed</span>}
                         </div>
                       )}
                     </div>
 
-                    <div className="h-px" style={{ background: 'rgba(255,255,255,0.06)' }} />
+                    <div className="h-px" style={{ background: 'var(--border-field)' }} />
 
                     <div style={{ transition: 'opacity 220ms ease 50ms, transform 220ms ease 50ms' }}>
                       <div className="mb-0.5 flex items-center justify-between">
                         <span className="text-xs font-mono font-bold tracking-widest" style={{ color: ELECTRIC }}>DESTINATION</span>
-                        <button type="button" onClick={() => startVoice('dropoff')} className="flex items-center justify-center rounded-full text-white/30 hover:text-yellow-400 transition-colors" style={{ width: 44, height: 44 }} title="Voice input" aria-label="Voice input for destination">
+                        <button type="button" onClick={() => startVoice('dropoff')} className="flex items-center justify-center rounded-full transition-colors hover:opacity-80" style={{ width: 44, height: 44, color: 'var(--text-muted)' }} title="Voice input" aria-label="Voice input for destination">
                           {voiceActive && voiceTarget === 'dropoff' ? <FiMicOff size={15} className="text-red-400" /> : <FiMic size={15} />}
                         </button>
                       </div>
@@ -595,14 +607,14 @@ export default function DispatchPanel({ onRouteChange }) {
                           onChange={setDropoff}
                           placeholder="Manhattan, Brooklyn, airport..."
                           className="dispatch-field pl-10"
-                          icon={<FiNavigation2 size={15} style={{ color: 'rgba(255,255,255,0.4)' }} />}
+                          icon={<FiNavigation2 size={15} style={{ color: 'var(--text-muted)' }} />}
                           aria-label="Dropoff location"
                         />
                       </div>
                       {(dropoffAirport || dropoffHotel) && (
                         <div className="flex flex-wrap gap-1.5 mt-1.5">
-                          {dropoffAirport && <span className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-full font-medium" style={{ background: 'rgba(34,197,94,0.12)', border: '1px solid rgba(34,197,94,0.25)', color: '#4ade80' }}>✈ Flight tracking included</span>}
-                          {dropoffHotel && <span className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-full font-medium" style={{ background: `rgba(14,165,233,0.12)`, border: `1px solid rgba(14,165,233,0.25)`, color: '#38bdf8' }}>Hotel dropoff confirmed</span>}
+                          {dropoffAirport && <span className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-full font-medium" style={{ background: 'rgba(34,197,94,0.12)', border: '1px solid rgba(34,197,94,0.3)', color: '#16a34a' }}>Flight tracking included</span>}
+                          {dropoffHotel && <span className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-full font-medium" style={{ background: 'rgba(14,165,233,0.12)', border: '1px solid rgba(14,165,233,0.3)', color: ELECTRIC }}>Hotel dropoff confirmed</span>}
                         </div>
                       )}
                     </div>
@@ -621,7 +633,7 @@ export default function DispatchPanel({ onRouteChange }) {
                         value={date}
                         onChange={e => setDate(e.target.value)}
                         className="dispatch-field text-sm"
-                        style={{ colorScheme: 'dark' }}
+                        style={{ colorScheme: isDark ? 'dark' : 'light' }}
                       />
                     </div>
                     <div>
@@ -631,17 +643,17 @@ export default function DispatchPanel({ onRouteChange }) {
                         value={time}
                         onChange={e => setTime(e.target.value)}
                         className="dispatch-field text-sm"
-                        style={{ colorScheme: 'dark' }}
+                        style={{ colorScheme: isDark ? 'dark' : 'light' }}
                       />
                     </div>
                     <div>
                       <span className="text-xs font-mono font-bold tracking-widest block mb-1.5" style={{ color: ELECTRIC }}>PAX</span>
                       <div className="flex items-center gap-1">
-                        <button type="button" onClick={() => setPassengers(p => Math.max(1, p - 1))} className="flex items-center justify-center rounded-lg text-white/60 hover:text-white transition-colors flex-shrink-0" style={{ width: 44, height: 44, background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.1)', minWidth: 44 }}>
+                        <button type="button" onClick={() => setPassengers(p => Math.max(1, p - 1))} className="flex items-center justify-center rounded-lg transition-colors flex-shrink-0" style={{ width: 44, height: 44, background: 'var(--bg-field)', border: 'var(--border-field)', color: 'var(--text-secondary)', minWidth: 44 }}>
                           <FiMinus size={15} />
                         </button>
-                        <span className="font-bold text-white text-sm font-mono text-center flex-shrink-0" style={{ width: 28 }}>{passengers}</span>
-                        <button type="button" onClick={() => setPassengers(p => Math.min(55, p + 1))} className="flex items-center justify-center rounded-lg text-white/60 hover:text-white transition-colors flex-shrink-0" style={{ width: 44, height: 44, background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.1)', minWidth: 44 }}>
+                        <span className="font-bold text-sm font-mono text-center flex-shrink-0" style={{ width: 28, color: 'var(--text-primary)' }}>{passengers}</span>
+                        <button type="button" onClick={() => setPassengers(p => Math.min(55, p + 1))} className="flex items-center justify-center rounded-lg transition-colors flex-shrink-0" style={{ width: 44, height: 44, background: 'var(--bg-field)', border: 'var(--border-field)', color: 'var(--text-secondary)', minWidth: 44 }}>
                           <FiPlus size={15} />
                         </button>
                       </div>
@@ -649,7 +661,7 @@ export default function DispatchPanel({ onRouteChange }) {
                   </div>
 
                   {peakHour && (
-                    <div className="flex items-center gap-2 text-xs px-3 py-2 rounded-lg" style={{ background: 'rgba(251,191,36,0.08)', border: '1px solid rgba(251,191,36,0.2)', color: '#fbbf24' }}>
+                    <div className="flex items-center gap-2 text-xs px-3 py-2 rounded-lg" style={{ background: 'rgba(251,191,36,0.1)', border: '1px solid rgba(251,191,36,0.25)', color: '#d97706' }}>
                       <FiZap size={12} />
                       Peak hour — allow 15 extra min
                     </div>
@@ -674,8 +686,8 @@ export default function DispatchPanel({ onRouteChange }) {
                             onClick={() => setVehicle(v.id)}
                             className="flex-shrink-0 snap-start rounded-xl overflow-hidden text-left transition-all duration-200 w-24"
                             style={{
-                              border: sel ? `2px solid ${GOLD}` : '2px solid rgba(255,255,255,0.1)',
-                              background: sel ? 'rgba(246,201,14,0.08)' : 'rgba(255,255,255,0.04)',
+                              border: sel ? `2px solid ${GOLD}` : 'var(--border-field)',
+                              background: sel ? 'rgba(246,201,14,0.1)' : 'var(--bg-field)',
                               transform: sel ? 'translateY(-2px) scale(1.02)' : 'none',
                               boxShadow: sel ? `0 8px 20px rgba(246,201,14,0.2)` : 'none',
                             }}
@@ -684,11 +696,11 @@ export default function DispatchPanel({ onRouteChange }) {
                               <img src={v.image} alt={v.label} className="w-full h-full object-cover" loading="lazy" />
                             </div>
                             <div className="px-2 py-1.5">
-                              <div className="font-bold text-white text-xs flex items-center justify-between">
+                              <div className="font-bold text-xs flex items-center justify-between" style={{ color: 'var(--text-primary)' }}>
                                 {v.label}
                                 {sel && <FiCheckCircle size={10} style={{ color: GOLD }} />}
                               </div>
-                              <div className="text-xs font-mono" style={{ color: 'rgba(255,255,255,0.4)', fontSize: 10 }}>{v.capacity} pax</div>
+                              <div className="font-mono" style={{ color: 'var(--text-muted)', fontSize: 10 }}>{v.capacity} pax</div>
                             </div>
                           </button>
                         )
@@ -700,7 +712,7 @@ export default function DispatchPanel({ onRouteChange }) {
 
               {isPhaseVisible('contact') && phase !== 'idle' && (
                 <div className="mt-4 space-y-3" style={{ animation: 'slideInUp 280ms ease forwards' }}>
-                  <div className="h-px" style={{ background: 'rgba(255,255,255,0.06)' }} />
+                  <div className="h-px" style={{ background: 'var(--bg-field)' }} />
                   <div className="grid grid-cols-2 gap-2">
                     <div>
                       <span className="text-xs font-mono font-bold tracking-widest block mb-1.5" style={{ color: ELECTRIC }}>NAME</span>
@@ -732,9 +744,9 @@ export default function DispatchPanel({ onRouteChange }) {
                     style={{
                       background: canSubmit && !submitting
                         ? `linear-gradient(135deg, ${GOLD} 0%, #E8B800 100%)`
-                        : 'rgba(255,255,255,0.08)',
-                      color: canSubmit && !submitting ? '#050a0f' : 'rgba(255,255,255,0.3)',
-                      boxShadow: canSubmit && !submitting ? '0 0 24px rgba(246,201,14,0.35), 0 8px 20px rgba(0,0,0,0.3)' : 'none',
+                        : 'var(--bg-field)',
+                      color: canSubmit && !submitting ? '#050a0f' : 'var(--text-muted)',
+                      boxShadow: canSubmit && !submitting ? '0 0 24px rgba(246,201,14,0.35), 0 8px 20px rgba(0,0,0,0.18)' : 'none',
                       letterSpacing: '0.05em',
                       cursor: canSubmit && !submitting ? 'pointer' : 'not-allowed',
                       animation: canSubmit && !submitting ? 'goldPulse 2.5s ease-in-out infinite' : 'none',
@@ -750,7 +762,7 @@ export default function DispatchPanel({ onRouteChange }) {
               )}
 
               {phase !== 'idle' && phase !== 'bids' && (
-                <p className="text-center text-white/25 text-xs mt-3 font-mono">
+                <p className="text-center text-xs mt-3 font-mono" style={{ color: 'var(--text-muted)' }}>
                   No payment required · Price confirmed in minutes
                 </p>
               )}
