@@ -53,7 +53,7 @@ const AirportTransfers = () => {
   const navigate = useNavigate()
 
   return (
-    <div className="bg-white overflow-x-hidden">
+    <div className="overflow-x-hidden" style={{ background: 'var(--bg-page)', transition: 'background 300ms ease' }}>
 
       <section className="relative min-h-[75vh] flex items-end bg-[#0f1f3d] overflow-hidden">
         <img

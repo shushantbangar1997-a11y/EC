@@ -37,7 +37,7 @@ export default function RoutePageTemplate({
   }, [metaTitle, metaDescription])
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen" style={{ background: 'var(--bg-page)', transition: 'background 300ms ease' }}>
       <div className="bg-gradient-to-r from-primary-900 to-primary-800 text-white py-20 px-4">
         <div className="container-custom max-w-4xl text-center">
           <p className="text-yellow-400 font-semibold text-sm uppercase tracking-widest mb-4">NYC Car Service</p>

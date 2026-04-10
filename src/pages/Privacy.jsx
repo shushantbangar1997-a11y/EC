@@ -2,7 +2,7 @@ import React from 'react'
 
 const Privacy = () => {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen" style={{ background: 'var(--bg-page)', transition: 'background 300ms ease' }}>
 
       {/* Branded Hero */}
       <section className="relative bg-gradient-to-br from-[#0f1f3d] via-[#1a365d] to-[#1a3a6b] text-white overflow-hidden">

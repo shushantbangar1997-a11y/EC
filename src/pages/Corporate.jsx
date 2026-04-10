@@ -147,7 +147,7 @@ const Corporate = () => {
   }
 
   return (
-    <div className="bg-white overflow-x-hidden">
+    <div className="overflow-x-hidden" style={{ background: 'var(--bg-page)', transition: 'background 300ms ease' }}>
 
       {/* ── Hero ─────────────────────────────────────────────── */}
       <section className="relative min-h-[80vh] flex items-center bg-gradient-to-br from-[#0f1f3d] via-[#1a365d] to-[#1a3a6b] overflow-hidden">

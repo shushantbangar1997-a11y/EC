@@ -235,3 +235,113 @@ body {
     display: none;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   GLOBAL DARK MODE OVERRIDES
+   Fixes every page that uses hardcoded light Tailwind classes.
+   Applied only when <html data-theme="dark"> is set.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ── White / gray page backgrounds ──────────────────────────────────── */
+[data-theme='dark'] .bg-white    { background-color: #0a1628 !important; }
+[data-theme='dark'] .bg-gray-50  { background-color: #060d1a !important; }
+[data-theme='dark'] .bg-gray-100 { background-color: rgba(255,255,255,0.05) !important; }
+[data-theme='dark'] .bg-gray-200 { background-color: rgba(255,255,255,0.08) !important; }
+
+/* ── Hover state backgrounds ────────────────────────────────────────── */
+[data-theme='dark'] .hover\:bg-white:hover    { background-color: #0f1f3d !important; }
+[data-theme='dark'] .hover\:bg-gray-50:hover  { background-color: rgba(255,255,255,0.04) !important; }
+[data-theme='dark'] .hover\:bg-gray-100:hover { background-color: rgba(255,255,255,0.08) !important; }
+
+/* ── Coloured tinted backgrounds (stats, badges, callout blocks) ─────── */
+[data-theme='dark'] .bg-blue-50    { background-color: rgba(59,130,246,0.12)  !important; }
+[data-theme='dark'] .bg-blue-100   { background-color: rgba(59,130,246,0.22)  !important; }
+[data-theme='dark'] .bg-green-50   { background-color: rgba(34,197,94,0.12)   !important; }
+[data-theme='dark'] .bg-green-100  { background-color: rgba(34,197,94,0.22)   !important; }
+[data-theme='dark'] .bg-red-50     { background-color: rgba(239,68,68,0.12)   !important; }
+[data-theme='dark'] .bg-red-100    { background-color: rgba(239,68,68,0.22)   !important; }
+[data-theme='dark'] .bg-orange-50  { background-color: rgba(249,115,22,0.12)  !important; }
+[data-theme='dark'] .bg-orange-100 { background-color: rgba(249,115,22,0.22)  !important; }
+[data-theme='dark'] .bg-amber-50   { background-color: rgba(245,158,11,0.12)  !important; }
+[data-theme='dark'] .bg-amber-100  { background-color: rgba(245,158,11,0.22)  !important; }
+[data-theme='dark'] .bg-yellow-50  { background-color: rgba(234,179,8,0.12)   !important; }
+[data-theme='dark'] .bg-yellow-100 { background-color: rgba(234,179,8,0.22)   !important; }
+[data-theme='dark'] .bg-purple-50  { background-color: rgba(168,85,247,0.12)  !important; }
+[data-theme='dark'] .bg-purple-100 { background-color: rgba(168,85,247,0.22)  !important; }
+[data-theme='dark'] .bg-indigo-50  { background-color: rgba(99,102,241,0.12)  !important; }
+[data-theme='dark'] .bg-indigo-100 { background-color: rgba(99,102,241,0.22)  !important; }
+[data-theme='dark'] .bg-teal-50    { background-color: rgba(20,184,166,0.12)  !important; }
+[data-theme='dark'] .bg-teal-100   { background-color: rgba(20,184,166,0.22)  !important; }
+[data-theme='dark'] .bg-emerald-50 { background-color: rgba(16,185,129,0.12)  !important; }
+
+/* ── Gray text — adapt to readable white-alpha variants ─────────────── */
+[data-theme='dark'] .text-gray-900 { color: rgba(255,255,255,0.95) !important; }
+[data-theme='dark'] .text-gray-800 { color: rgba(255,255,255,0.88) !important; }
+[data-theme='dark'] .text-gray-700 { color: rgba(255,255,255,0.78) !important; }
+[data-theme='dark'] .text-gray-600 { color: rgba(255,255,255,0.65) !important; }
+[data-theme='dark'] .text-gray-500 { color: rgba(255,255,255,0.50) !important; }
+[data-theme='dark'] .text-gray-400 { color: rgba(255,255,255,0.40) !important; }
+[data-theme='dark'] .text-gray-300 { color: rgba(255,255,255,0.34) !important; }
+
+/* ── Borders ─────────────────────────────────────────────────────────── */
+[data-theme='dark'] .border-gray-50  { border-color: rgba(255,255,255,0.06) !important; }
+[data-theme='dark'] .border-gray-100 { border-color: rgba(255,255,255,0.08) !important; }
+[data-theme='dark'] .border-gray-200 { border-color: rgba(255,255,255,0.11) !important; }
+[data-theme='dark'] .border-gray-300 { border-color: rgba(255,255,255,0.15) !important; }
+
+/* ── Divide utilities ────────────────────────────────────────────────── */
+[data-theme='dark'] .divide-gray-100 > * + * { border-color: rgba(255,255,255,0.08) !important; }
+[data-theme='dark'] .divide-gray-200 > * + * { border-color: rgba(255,255,255,0.11) !important; }
+
+/* ── @layer component classes ────────────────────────────────────────── */
+[data-theme='dark'] .card,
+[data-theme='dark'] .card-md {
+  background-color: #0a1628 !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.45) !important;
+}
+
+[data-theme='dark'] .btn-secondary {
+  background-color: rgba(255,255,255,0.08) !important;
+  color: rgba(255,255,255,0.88) !important;
+  border-color: rgba(255,255,255,0.16) !important;
+}
+
+[data-theme='dark'] .input-base {
+  background-color: rgba(255,255,255,0.06) !important;
+  border-color: rgba(255,255,255,0.12) !important;
+  color: rgba(255,255,255,0.95) !important;
+}
+
+[data-theme='dark'] .label-base { color: rgba(255,255,255,0.70) !important; }
+[data-theme='dark'] .divider     { border-color: rgba(255,255,255,0.08) !important; }
+
+/* ── Form inputs without explicit bg class ───────────────────────────── */
+[data-theme='dark'] input[class*='border-gray'],
+[data-theme='dark'] textarea[class*='border-gray'],
+[data-theme='dark'] select[class*='border-gray'] {
+  background-color: rgba(255,255,255,0.06) !important;
+  border-color: rgba(255,255,255,0.13) !important;
+  color: rgba(255,255,255,0.95) !important;
+}
+
+[data-theme='dark'] input::placeholder,
+[data-theme='dark'] textarea::placeholder {
+  color: rgba(255,255,255,0.30) !important;
+}
+
+/* ── Arbitrary navy value classes — invisible on dark backgrounds ─────── */
+[data-theme='dark'] .text-\[#1a365d\]        { color: rgba(147,197,253,0.90) !important; }
+[data-theme='dark'] .text-\[#0f1f3d\]        { color: rgba(147,197,253,0.90) !important; }
+[data-theme='dark'] .border-\[#1a365d\]      { border-color: rgba(147,197,253,0.28) !important; }
+[data-theme='dark'] .hover\:border-\[#1a365d\]:hover { border-color: rgba(147,197,253,0.55) !important; }
+[data-theme='dark'] .hover\:bg-\[#1a365d\]:hover     { background-color: rgba(59,130,246,0.18) !important; }
+[data-theme='dark'] .hover\:bg-\[#0f1f3d\]:hover     { background-color: rgba(59,130,246,0.22) !important; }
+
+/* Focus rings on dark bg */
+[data-theme='dark'] .focus\:ring-\[#1a365d\]:focus { --tw-ring-color: rgba(96,165,250,0.4) !important; }
+[data-theme='dark'] .focus\:ring-2:focus            { box-shadow: 0 0 0 2px rgba(96,165,250,0.4) !important; }
+
+/* ─────────────────────────────────────────────────────────────────────
+   LIGHT MODE — body text defaults; hero/CTA sections stay dark (brand)
+   ───────────────────────────────────────────────────────────────────── */
+[data-theme='light'] body { color: #0f1f3d; }
