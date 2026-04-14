@@ -54,6 +54,42 @@ uri = "file://public/images/service-corporate.png"
 type = "image"
 title = "generated_image"
 
+[[generated]]
+id = "KK7Q3AoL8pqukoMtLybQT"
+uri = "file://public/images/fleet-sedan2.png"
+type = "image"
+title = "black mercedes sedan"
+
+[[generated]]
+id = "FMeE1QNR5-B3W99CoHNX7"
+uri = "file://public/images/fleet-suv2.png"
+type = "image"
+title = "white escalade suv"
+
+[[generated]]
+id = "F8VdZ2m6F2eK4KKAtcgyM"
+uri = "file://public/images/fleet-limo.png"
+type = "image"
+title = "black stretch limousine"
+
+[[generated]]
+id = "J0zn0eim_lzX3hQgTYJVH"
+uri = "file://public/images/fleet-sprinter2.png"
+type = "image"
+title = "black sprinter executive van"
+
+[[generated]]
+id = "YNu-AbB6GHf9BGEQXi2Mm"
+uri = "file://public/images/fleet-minibus.png"
+type = "image"
+title = "luxury black mini bus"
+
+[[generated]]
+id = "pDwmapC8A3AMtgJHIRqIg"
+uri = "file://public/images/fleet-suv3.png"
+type = "image"
+title = "black lincoln navigator"
+
 [[outputs]]
 id = "r7Z0jb9dHXujQvN9sq3u4"
 uri = "file://attached_assets/stock_images/escalade-airport.jpg"

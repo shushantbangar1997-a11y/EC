@@ -1,11 +1,16 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 
 const DEFAULT_SLIDES = [
-  { src: '/images/fleet-sedan.png',    alt: 'Luxury sedan — Mercedes, Lincoln, Dodge Charger' },
-  { src: '/images/fleet-suv.png',      alt: 'Luxury SUV — Cadillac Escalade, Suburban, Tahoe' },
+  { src: '/images/fleet-sedan.png',    alt: 'Luxury sedan' },
+  { src: '/images/fleet-sedan2.png',   alt: 'Black Mercedes-Benz S-Class sedan' },
+  { src: '/images/fleet-suv.png',      alt: 'Luxury SUV — Cadillac Escalade' },
+  { src: '/images/fleet-suv2.png',     alt: 'White Cadillac Escalade SUV' },
+  { src: '/images/fleet-suv3.png',     alt: 'Black Lincoln Navigator SUV' },
   { src: '/images/fleet-sprinter.png', alt: 'Sprinter van — up to 14 passengers' },
+  { src: '/images/fleet-sprinter2.png', alt: 'Executive black Sprinter van' },
+  { src: '/images/fleet-limo.png',     alt: 'Black stretch limousine' },
+  { src: '/images/fleet-minibus.png',  alt: 'Luxury mini bus — group transportation' },
   { src: '/images/fleet-coach.png',    alt: 'Coach bus — 20 to 55 passengers' },
-  { src: '/images/fleet-electric.png', alt: 'Luxury electric vehicle — Tesla, Cadillac Lyriq' },
 ]
 
 const DEFAULT_SLIDE_MS = 5500
