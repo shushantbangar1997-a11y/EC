@@ -86,3 +86,4 @@ outputType = "console"
 [userenv.shared]
 GMAIL_USER = "edsindustries1@gmail.com"
 GMAIL_APP_PASSWORD = "ulwqsdzlropnenul"
+RESEND_API_KEY = "re_Z6PU2hPG_6S1MLrzZiAPRPJig55JTfULk"
