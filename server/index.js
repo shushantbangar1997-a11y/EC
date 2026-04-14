@@ -6,6 +6,7 @@ import { fileURLToPath } from 'url'
 import { join, dirname } from 'path'
 import { existsSync } from 'fs'
 import { db } from './db.js'
+import { sendWelcomeEmail, sendQuoteConfirmation } from './emailService.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
@@ -71,6 +72,7 @@ app.post('/api/auth/register', async (req, res) => {
     if (db.getUserByEmail(email)) return res.status(409).json({ message: 'Email already registered' })
     const hashed = bcrypt.hashSync(password, 10)
     const user = db.createUser({ name, email, password: hashed, phone: phone || '', role: 'customer' })
+    sendWelcomeEmail(name, email).catch(err => console.error('[email] welcome failed:', err.message))
     res.status(201).json(sign(user))
   } catch (e) {
     res.status(500).json({ message: 'Registration failed', error: e.message })
@@ -119,6 +121,10 @@ app.post('/api/quote-requests', (req, res) => {
       vehicle_type: vehicle_type || 'sedan',
       status: 'pending',
     })
+    if (email) {
+      sendQuoteConfirmation(name || 'Guest', email, pickup, dropoff, vehicle_type || 'sedan')
+        .catch(err => console.error('[email] quote confirmation failed:', err.message))
+    }
     res.status(201).json({ success: true, data: qr })
   } catch (e) {
     res.status(500).json({ message: 'Could not create quote request', error: e.message })
