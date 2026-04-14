@@ -3,7 +3,7 @@ export function buildWelcomeEmail(name, baseUrl) {
   const bookUrl = `${baseUrl}/#book`
 
   return {
-    subject: 'Welcome to Everywhere Cars — Your NYC Travel Partner',
+    subject: 'Welcome to Everywhere Cars \u2014 Your NYC Travel Partner \uD83D\uDE97',
     html: `<!DOCTYPE html>
 <html lang="en">
 <head>

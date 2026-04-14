@@ -3,7 +3,7 @@ import { buildWelcomeEmail } from './emailTemplates/welcome.js'
 import { buildQuoteConfirmationEmail } from './emailTemplates/quoteConfirmation.js'
 
 const BASE_URL = process.env.BASE_URL || 'https://everywherecars.com'
-const FROM_EMAIL = process.env.FROM_EMAIL || 'Everywhere Cars <onboarding@resend.dev>'
+const FROM_EMAIL = process.env.FROM_EMAIL || 'Everywhere Cars <booking@everywherecars.com>'
 
 async function getResendClient() {
   const hostname = process.env.REPLIT_CONNECTORS_HOSTNAME
