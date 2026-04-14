@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext'
 import { useTheme } from '../context/ThemeContext'
 import api from '../utils/api'
 import toast from 'react-hot-toast'
+import useSimulatedStats from '../hooks/useSimulatedStats'
 import {
   FiMic, FiMicOff, FiArrowRight, FiPlus, FiMinus,
   FiStar, FiPhone, FiMessageCircle, FiClock, FiZap,
@@ -44,29 +45,6 @@ function useTypewriter(text, speed = 35) {
   return { displayed, done }
 }
 
-function useSimulatedStats() {
-  const [stats, setStats] = useState({ vehicles: 17, response: 4, rides: 43 })
-  useEffect(() => {
-    let timerId
-    const schedule = () => {
-      const delay = Math.floor(Math.random() * 25000) + 15000
-      timerId = setTimeout(() => {
-        setStats(s => {
-          const rDelta = Math.random() > 0.7 ? (Math.random() > 0.5 ? 1 : -1) : 0
-          return {
-            vehicles: Math.max(10, Math.min(30, s.vehicles + 1)),
-            response: Math.max(2, Math.min(8, s.response + rDelta)),
-            rides: s.rides + 1,
-          }
-        })
-        schedule()
-      }, delay)
-    }
-    schedule()
-    return () => clearTimeout(timerId)
-  }, [])
-  return stats
-}
 
 function CountdownTimer({ seconds }) {
   const m = String(Math.floor(seconds / 60)).padStart(2, '0')
@@ -215,7 +193,7 @@ function VoiceWaveform({ active, analyserRef }) {
   )
 }
 
-export default function DispatchPanel({ onRouteChange }) {
+export default function DispatchPanel({ onRouteChange, presetVehicle, hideStats }) {
   const { user } = useAuth()
   const navigate = useNavigate()
   const { isDark } = useTheme()
@@ -226,7 +204,12 @@ export default function DispatchPanel({ onRouteChange }) {
   const [date, setDate] = useState('')
   const [time, setTime] = useState('')
   const [passengers, setPassengers] = useState(1)
-  const [vehicle, setVehicle] = useState('sedan')
+  const [vehicle, setVehicle] = useState(presetVehicle || 'sedan')
+
+  useEffect(() => {
+    if (presetVehicle) setVehicle(presetVehicle)
+  }, [presetVehicle])
+
   const [name, setName] = useState('')
   const [contact, setContact] = useState('')
   const [submitting, setSubmitting] = useState(false)
@@ -437,16 +420,18 @@ export default function DispatchPanel({ onRouteChange }) {
           transition: 'background 300ms ease, border 300ms ease, box-shadow 300ms ease',
         }}
       >
-        <div className="px-4 py-2.5 flex items-center gap-3 border-b" style={{ borderColor: 'var(--bg-field)', background: 'var(--stats-bg)' }}>
-          <span className="w-1.5 h-1.5 rounded-full flex-shrink-0 animate-pulse" style={{ background: '#22c55e' }} />
-          <div className="flex items-center gap-3 text-xs font-mono overflow-hidden" style={{ color: ELECTRIC }}>
-            <span className="whitespace-nowrap"><span className="font-bold">{stats.vehicles}</span> vehicles ready near NYC</span>
-            <span style={{ color: 'var(--text-muted)' }}>|</span>
-            <span className="whitespace-nowrap">Avg response: <span className="font-bold">{stats.response} min</span></span>
-            <span className="hidden sm:block" style={{ color: 'var(--text-muted)' }}>|</span>
-            <span className="whitespace-nowrap hidden sm:block">Rides today: <span className="font-bold">{stats.rides}</span></span>
+        {!hideStats && (
+          <div className="px-4 py-2.5 flex items-center gap-3 border-b" style={{ borderColor: 'var(--bg-field)', background: 'var(--stats-bg)' }}>
+            <span className="w-1.5 h-1.5 rounded-full flex-shrink-0 animate-pulse" style={{ background: '#22c55e' }} />
+            <div className="flex items-center gap-3 text-xs font-mono overflow-hidden" style={{ color: ELECTRIC }}>
+              <span className="whitespace-nowrap"><span className="font-bold">{stats.vehicles}</span> vehicles ready near NYC</span>
+              <span style={{ color: 'var(--text-muted)' }}>|</span>
+              <span className="whitespace-nowrap">Avg response: <span className="font-bold">{stats.response} min</span></span>
+              <span className="hidden sm:block" style={{ color: 'var(--text-muted)' }}>|</span>
+              <span className="whitespace-nowrap hidden sm:block">Rides today: <span className="font-bold">{stats.rides}</span></span>
+            </div>
           </div>
-        </div>
+        )}
 
         <div className="p-6 sm:p-8">
 

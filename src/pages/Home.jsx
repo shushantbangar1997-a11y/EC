@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import React, { useState, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import {
   FiShield, FiTruck, FiHeadphones, FiNavigation, FiCalendar,
@@ -6,13 +6,14 @@ import {
 } from 'react-icons/fi'
 import DispatchPanel from '../components/DispatchPanel'
 import HeroSlideshow from '../components/HeroSlideshow'
+import useSimulatedStats from '../hooks/useSimulatedStats'
 import { useTheme } from '../context/ThemeContext'
 
-const VEHICLE_TYPES = [
-  { label: 'Sedan', icon: '🚗', desc: '2–3 passengers', href: '/services/airport-transfers' },
-  { label: 'SUV', icon: '🚙', desc: '3–5 passengers', href: '/services/airport-transfers' },
-  { label: 'Sprinter', icon: '🚐', desc: 'Up to 14 passengers', href: '/services/events' },
-  { label: 'Coach Bus', icon: '🚌', desc: '20–55 passengers', href: '/corporate' },
+const VEHICLE_OPTIONS = [
+  { id: 'sedan',        label: 'Sedan',    icon: '🚗', desc: '2–3 passengers' },
+  { id: 'suv',         label: 'SUV',       icon: '🚙', desc: '3–5 passengers' },
+  { id: 'sprinter_van', label: 'Sprinter', icon: '🚐', desc: 'Up to 14 passengers' },
+  { id: 'coach',       label: 'Coach Bus', icon: '🚌', desc: '20–55 passengers' },
 ]
 
 const TRUST_ITEMS = [
@@ -25,7 +26,7 @@ const TRUST_ITEMS = [
   {
     icon: FiTruck,
     label: '250+ Vehicles',
-    desc: 'Sedans, SUVs, Sprinters & luxury coaches',
+    desc: 'Sedans, SUVs, Sprinters and luxury coaches',
     color: '#F6C90E',
   },
   {
@@ -43,13 +44,33 @@ const SERVICE_PILLS = [
   { label: 'Corporate', icon: FiBriefcase, href: '/corporate' },
 ]
 
+const ELECTRIC = '#0EA5E9'
+const GOLD = '#F6C90E'
+
 export default function Home() {
   const { isDark } = useTheme()
+  const stats = useSimulatedStats()
+  const [presetVehicle, setPresetVehicle] = useState(null)
   const panelRef = useRef(null)
+
+  const handleVehicleSelect = (vehicleId) => {
+    setPresetVehicle(vehicleId)
+    setTimeout(() => {
+      panelRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }, 50)
+  }
 
   const scrollToBook = () => {
     panelRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
   }
+
+  const overlayBase = isDark ? 'rgba(4,8,14,0.40)' : 'rgba(20,30,60,0.22)'
+  const overlayTop = isDark
+    ? 'linear-gradient(to bottom, rgba(4,8,14,0.65) 0%, transparent 100%)'
+    : 'linear-gradient(to bottom, rgba(10,20,50,0.45) 0%, transparent 100%)'
+  const overlayBottom = isDark
+    ? 'linear-gradient(to top, rgba(4,8,14,0.80) 0%, transparent 100%)'
+    : 'linear-gradient(to top, rgba(10,20,50,0.40) 0%, transparent 100%)'
 
   return (
     <div style={{ background: 'var(--bg-page)', transition: 'background 300ms ease' }}>
@@ -64,18 +85,9 @@ export default function Home() {
           className="absolute inset-0 pointer-events-none"
           style={{ zIndex: 3 }}
         >
-          <div style={{
-            position: 'absolute', top: 0, left: 0, right: 0, height: '35%',
-            background: 'linear-gradient(to bottom, rgba(4,8,14,0.62) 0%, transparent 100%)',
-          }} />
-          <div style={{
-            position: 'absolute', inset: 0,
-            background: 'rgba(4,8,14,0.38)',
-          }} />
-          <div style={{
-            position: 'absolute', bottom: 0, left: 0, right: 0, height: '45%',
-            background: 'linear-gradient(to top, rgba(4,8,14,0.78) 0%, transparent 100%)',
-          }} />
+          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '35%', background: overlayTop }} />
+          <div style={{ position: 'absolute', inset: 0, background: overlayBase }} />
+          <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '45%', background: overlayBottom }} />
         </div>
 
         <div
@@ -83,7 +95,38 @@ export default function Home() {
           className="relative flex-1 flex flex-col items-center justify-center px-4"
           style={{ zIndex: 4, paddingTop: '5rem', paddingBottom: '6rem' }}
         >
-          <DispatchPanel />
+          <div
+            className="flex items-center gap-3 mb-4 px-4 py-2 rounded-full"
+            style={{
+              background: 'rgba(0,0,0,0.50)',
+              backdropFilter: 'blur(14px)',
+              WebkitBackdropFilter: 'blur(14px)',
+              border: '1px solid rgba(255,255,255,0.13)',
+            }}
+          >
+            <span
+              className="w-1.5 h-1.5 rounded-full flex-shrink-0 animate-pulse"
+              style={{ background: '#22c55e' }}
+            />
+            <div
+              className="flex items-center gap-3 text-xs font-mono"
+              style={{ color: ELECTRIC }}
+            >
+              <span className="whitespace-nowrap">
+                <span className="font-bold text-white">{stats.vehicles}</span> vehicles ready near NYC
+              </span>
+              <span className="text-white/25">|</span>
+              <span className="whitespace-nowrap">
+                Avg response: <span className="font-bold text-white">{stats.response} min</span>
+              </span>
+              <span className="hidden sm:inline text-white/25">|</span>
+              <span className="whitespace-nowrap hidden sm:inline">
+                Rides today: <span className="font-bold text-white">{stats.rides}</span>
+              </span>
+            </div>
+          </div>
+
+          <DispatchPanel presetVehicle={presetVehicle} hideStats />
         </div>
       </section>
 
@@ -140,57 +183,50 @@ export default function Home() {
               className="text-xs font-bold uppercase tracking-widest mb-5 text-center"
               style={{ color: 'var(--text-muted)' }}
             >
-              Choose your vehicle
+              Choose your vehicle — we will pre-select it in the booking form above
             </p>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              {VEHICLE_TYPES.map(({ label, icon, desc, href }) => (
-                <Link
-                  key={label}
-                  to={href}
-                  className="flex flex-col items-center gap-2 p-4 rounded-xl transition-all group"
-                  style={{
-                    background: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(26,54,93,0.05)',
-                    border: '1px solid var(--border-color)',
-                    textDecoration: 'none',
-                  }}
-                  onMouseEnter={e => {
-                    e.currentTarget.style.borderColor = 'rgba(246,201,14,0.45)'
-                    e.currentTarget.style.background = isDark
-                      ? 'rgba(246,201,14,0.06)'
-                      : 'rgba(246,201,14,0.08)'
-                  }}
-                  onMouseLeave={e => {
-                    e.currentTarget.style.borderColor = 'var(--border-color)'
-                    e.currentTarget.style.background = isDark
-                      ? 'rgba(255,255,255,0.04)'
-                      : 'rgba(26,54,93,0.05)'
-                  }}
-                >
-                  <span className="text-2xl">{icon}</span>
-                  <div className="text-center">
-                    <div
-                      className="text-sm font-semibold"
-                      style={{ color: 'var(--text-primary)' }}
-                    >
-                      {label}
+              {VEHICLE_OPTIONS.map(({ id, label, icon, desc }) => {
+                const isSelected = presetVehicle === id
+                return (
+                  <button
+                    key={id}
+                    onClick={() => handleVehicleSelect(id)}
+                    className="flex flex-col items-center gap-2 p-4 rounded-xl transition-all text-center"
+                    style={{
+                      background: isSelected
+                        ? (isDark ? 'rgba(246,201,14,0.10)' : 'rgba(246,201,14,0.12)')
+                        : (isDark ? 'rgba(255,255,255,0.04)' : 'rgba(26,54,93,0.05)'),
+                      border: isSelected
+                        ? `1.5px solid ${GOLD}`
+                        : '1px solid var(--border-color)',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    <span className="text-2xl">{icon}</span>
+                    <div>
+                      <div
+                        className="text-sm font-semibold"
+                        style={{ color: isSelected ? GOLD : 'var(--text-primary)' }}
+                      >
+                        {label}
+                      </div>
+                      <div
+                        className="text-xs mt-0.5"
+                        style={{ color: 'var(--text-muted)' }}
+                      >
+                        {desc}
+                      </div>
                     </div>
-                    <div
-                      className="text-xs mt-0.5"
-                      style={{ color: 'var(--text-muted)' }}
-                    >
-                      {desc}
-                    </div>
-                  </div>
-                </Link>
-              ))}
+                  </button>
+                )
+              })}
             </div>
           </div>
 
           <div
             className="rounded-2xl overflow-hidden"
-            style={{
-              background: 'linear-gradient(135deg, #1a365d 0%, #0f1f3d 100%)',
-            }}
+            style={{ background: 'linear-gradient(135deg, #1a365d 0%, #0f1f3d 100%)' }}
           >
             <div className="px-6 sm:px-10 py-8 sm:py-10 flex flex-col sm:flex-row items-center justify-between gap-6">
               <div>
@@ -220,9 +256,9 @@ export default function Home() {
                   onClick={scrollToBook}
                   className="flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-sm transition-all hover:scale-105"
                   style={{
-                    background: '#F6C90E',
+                    background: GOLD,
                     color: '#0f1f3d',
-                    boxShadow: '0 4px 20px rgba(246,201,14,0.35)',
+                    boxShadow: `0 4px 20px rgba(246,201,14,0.35)`,
                   }}
                 >
                   Book Now <FiArrowRight size={15} />
