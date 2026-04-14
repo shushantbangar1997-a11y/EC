@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 
 const DEFAULT_SLIDES = [
-  { src: '/hero/slide1.jpg', alt: 'Luxury black sedan at hotel entrance' },
-  { src: '/hero/slide2.jpg', alt: 'Cadillac Escalade at JFK airport' },
-  { src: '/hero/slide3.jpg', alt: 'Executive van in New York City' },
-  { src: '/hero/slide4.jpg', alt: 'Luxury coach for corporate travel' },
-  { src: '/hero/slide5.jpg', alt: 'Premium limousine interior' },
+  { src: '/images/fleet-sedan.png',    alt: 'Luxury sedan — Mercedes, Lincoln, Dodge Charger' },
+  { src: '/images/fleet-suv.png',      alt: 'Luxury SUV — Cadillac Escalade, Suburban, Tahoe' },
+  { src: '/images/fleet-sprinter.png', alt: 'Sprinter van — up to 14 passengers' },
+  { src: '/images/fleet-coach.png',    alt: 'Coach bus — 20 to 55 passengers' },
+  { src: '/images/fleet-electric.png', alt: 'Luxury electric vehicle — Tesla, Cadillac Lyriq' },
 ]
 
 const DEFAULT_SLIDE_MS = 5500

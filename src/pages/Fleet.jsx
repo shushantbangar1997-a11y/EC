@@ -9,6 +9,7 @@ import {
   FiZap,
   FiChevronDown,
 } from 'react-icons/fi'
+import HeroSlideshow from '../components/HeroSlideshow'
 
 const STATS = [
   { value: '250+', label: 'SUVs & Sedans' },
@@ -326,14 +327,13 @@ const Fleet = () => {
     <div className="overflow-x-hidden" style={{ background: 'var(--bg-page)', transition: 'background 300ms ease' }}>
 
       <section className="relative min-h-[65vh] flex items-end bg-[#0f1f3d] overflow-hidden">
-        <img
-          src="/images/fleet-suv.png"
-          alt="Everywhere Cars luxury fleet"
-          className="absolute inset-0 w-full h-full object-cover opacity-35"
+        <HeroSlideshow />
+        <div
+          className="absolute inset-0 bg-gradient-to-t from-[#0f1f3d] via-[#0f1f3d]/60 to-transparent"
+          style={{ zIndex: 4 }}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0f1f3d] via-[#0f1f3d]/60 to-transparent" />
 
-        <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="relative w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16" style={{ zIndex: 5 }}>
           <div className="max-w-3xl">
             <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 mb-6 text-sm font-medium text-blue-100 backdrop-blur-sm">
               <FiZap size={14} className="text-yellow-400" />
