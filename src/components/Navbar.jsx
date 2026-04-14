@@ -404,12 +404,12 @@ const Navbar = () => {
     <nav
       className="sticky top-0 z-50 transition-all duration-300"
       style={{
-        background: isHomePage && !scrolled && isDark
+        background: isHomePage && !scrolled
           ? 'transparent'
           : 'linear-gradient(to right, #1a365d, #0f1f3d)',
-        backdropFilter: isHomePage && !scrolled && isDark ? 'blur(4px)' : 'none',
-        WebkitBackdropFilter: isHomePage && !scrolled && isDark ? 'blur(4px)' : 'none',
-        boxShadow: isHomePage && !scrolled && isDark ? 'none' : '0 4px 24px rgba(0,0,0,0.5)',
+        backdropFilter: isHomePage && !scrolled ? 'blur(4px)' : 'none',
+        WebkitBackdropFilter: isHomePage && !scrolled ? 'blur(4px)' : 'none',
+        boxShadow: isHomePage && !scrolled ? 'none' : '0 4px 24px rgba(0,0,0,0.5)',
       }}
     >
       <div className="container-custom px-4 sm:px-6 lg:px-8">

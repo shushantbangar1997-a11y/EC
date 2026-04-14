@@ -1,5 +1,4 @@
 uploads = []
-outputs = []
 
 [[generated]]
 id = "-Mx_YwX3bzcjXpIrYqZX-"
@@ -54,3 +53,33 @@ id = "0ySuBzFjtUokwmKipI0RJ"
 uri = "file://public/images/service-corporate.png"
 type = "image"
 title = "generated_image"
+
+[[outputs]]
+id = "r7Z0jb9dHXujQvN9sq3u4"
+uri = "file://attached_assets/stock_images/escalade-airport.jpg"
+type = "image"
+title = "black Cadillac Escalade SUV luxury chauffeur airport terminal JFK pickup zone professional driver"
+
+[[outputs]]
+id = "Y0Q976wcLASFMKvi-l4gT"
+uri = "file://attached_assets/stock_images/limo-interior.jpg"
+type = "image"
+title = "limousine interior luxury leather seats black car service premium chauffeur interior"
+
+[[outputs]]
+id = "F4r8k84rFldQInY9QLB5V"
+uri = "file://attached_assets/stock_images/coach-bus-corporate.jpg"
+type = "image"
+title = "luxury coach bus black corporate executive transportation corporate campus exterior professional"
+
+[[outputs]]
+id = "18Un6_4gvqy-_QrRG7S9H"
+uri = "file://attached_assets/stock_images/black-luxury-sedan-hotel.jpg"
+type = "image"
+title = "black luxury sedan limousine parked grand hotel entrance valet parking night"
+
+[[outputs]]
+id = "OmtH4Ws8gA1vqRa3bmygj"
+uri = "file://attached_assets/stock_images/executive-van-city.jpg"
+type = "image"
+title = "executive black van shuttle bus night city street professional driver transportation"
