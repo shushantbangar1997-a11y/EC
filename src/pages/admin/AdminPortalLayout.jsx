@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import {
   FiInbox, FiTag, FiTruck, FiDollarSign, FiUser,
-  FiLogOut, FiBell,
+  FiLogOut, FiBell, FiZap,
 } from 'react-icons/fi'
 import toast from 'react-hot-toast'
 import { useAuth } from '../../context/AuthContext'
@@ -14,17 +14,18 @@ const GOLD = '#F6C90E'
 const ELECTRIC = '#0EA5E9'
 
 const NAV_ITEMS = [
-  { to: '/admin/orders',  label: 'New Orders', icon: FiInbox,      badgeKey: 'newOrders' },
-  { to: '/admin/offers',  label: 'My Offers',  icon: FiTag,        badgeKey: 'pendingOffers' },
-  { to: '/admin/trips',   label: 'Trips',      icon: FiTruck,      badgeKey: 'confirmedTrips' },
-  { to: '/admin/earnings',label: 'Earnings',   icon: FiDollarSign },
-  { to: '/admin/profile', label: 'Profile',    icon: FiUser },
+  { to: '/admin/live-feed', label: 'Live Feed',   icon: FiZap,       badgeKey: 'liveFeed', liveDot: true },
+  { to: '/admin/orders',    label: 'New Orders',  icon: FiInbox,     badgeKey: 'newOrders' },
+  { to: '/admin/offers',    label: 'My Offers',   icon: FiTag,       badgeKey: 'pendingOffers' },
+  { to: '/admin/trips',     label: 'Trips',       icon: FiTruck,     badgeKey: 'confirmedTrips' },
+  { to: '/admin/earnings',  label: 'Earnings',    icon: FiDollarSign },
+  { to: '/admin/profile',   label: 'Profile',     icon: FiUser },
 ]
 
 export default function AdminPortalLayout() {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
-  const [counts, setCounts] = useState({ newOrders: 0, pendingOffers: 0, confirmedTrips: 0 })
+  const [counts, setCounts] = useState({ liveFeed: 0, newOrders: 0, pendingOffers: 0, confirmedTrips: 0 })
   const lastSeenRef = useRef(localStorage.getItem('adminLastSeen') || new Date().toISOString())
   const knownIdsRef = useRef(new Set(JSON.parse(localStorage.getItem('adminKnownOrderIds') || '[]')))
 
@@ -72,7 +73,12 @@ export default function AdminPortalLayout() {
           return !myBid && o.status !== 'confirmed' && o.status !== 'completed' && o.status !== 'booked'
         }).length
 
+        const liveFeedCount = orders.filter(o => {
+          const myBid = bids.find(b => b.quote_request_id === o.id)
+          return !myBid && o.status !== 'confirmed' && o.status !== 'completed' && o.status !== 'booked'
+        }).length
         setCounts({
+          liveFeed: liveFeedCount,
           newOrders: newOrdersCount,
           pendingOffers: bids.filter(b => b.status === 'pending').length,
           confirmedTrips: bids.filter(b => b.status === 'accepted').length,
@@ -102,6 +108,12 @@ export default function AdminPortalLayout() {
 
   return (
     <div style={{ background: '#f4f5f8', minHeight: '100vh', display: 'flex' }}>
+      <style>{`
+        @keyframes liveDotPulse {
+          0%, 100% { box-shadow: 0 0 0 2px rgba(34,197,94,0.35); }
+          50% { box-shadow: 0 0 0 5px rgba(34,197,94,0.0); }
+        }
+      `}</style>
       {/* Sidebar */}
       <aside
         style={{
@@ -166,21 +178,19 @@ export default function AdminPortalLayout() {
               >
                 <item.icon size={18} />
                 <span style={{ flex: 1 }}>{item.label}</span>
-                {badge > 0 && (
-                  <span
-                    style={{
-                      background: '#ef4444',
-                      color: '#fff',
-                      fontSize: 10,
-                      fontWeight: 800,
-                      padding: '2px 7px',
-                      borderRadius: 999,
-                      minWidth: 20,
-                      textAlign: 'center',
-                      lineHeight: '14px',
-                    }}
-                  >{badge}</span>
-                )}
+                {item.liveDot && badge > 0 ? (
+                  <span style={{
+                    width: 9, height: 9, borderRadius: 999, background: '#22c55e',
+                    boxShadow: '0 0 0 2px rgba(34,197,94,0.35)',
+                    animation: 'liveDotPulse 1.4s ease infinite',
+                    flexShrink: 0,
+                  }} />
+                ) : !item.liveDot && badge > 0 ? (
+                  <span style={{
+                    background: '#ef4444', color: '#fff', fontSize: 10, fontWeight: 800,
+                    padding: '2px 7px', borderRadius: 999, minWidth: 20, textAlign: 'center', lineHeight: '14px',
+                  }}>{badge}</span>
+                ) : null}
               </NavLink>
             )
           })}

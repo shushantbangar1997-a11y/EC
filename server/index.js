@@ -318,6 +318,19 @@ app.post('/api/quote-requests/:id/accept-bid', (req, res) => {
 
 // ── ADMIN PORTAL ──────────────────────────────────────────────────────────────
 
+// Compute urgency score from ride_date
+function computeUrgency(rideDate) {
+  if (!rideDate) return { urgency_score: 0, urgency_label: 'ASAP' }
+  const ms = Date.parse(rideDate)
+  if (Number.isNaN(ms)) return { urgency_score: 0, urgency_label: 'ASAP' }
+  const hoursUntil = (ms - Date.now()) / 36e5
+  if (hoursUntil < 0) return { urgency_score: 0, urgency_label: 'ASAP' }
+  if (hoursUntil < 2)  return { urgency_score: 4, urgency_label: 'Critical' }
+  if (hoursUntil < 6)  return { urgency_score: 3, urgency_label: 'Soon' }
+  if (hoursUntil < 24) return { urgency_score: 2, urgency_label: 'Today' }
+  return { urgency_score: 1, urgency_label: 'Flexible' }
+}
+
 // New orders feed (with optional `since` ISO timestamp for badge polling)
 app.get('/api/admin/orders', auth, role('admin', 'operator'), (req, res) => {
   try {
@@ -331,6 +344,7 @@ app.get('/api/admin/orders', auth, role('admin', 'operator'), (req, res) => {
     }
     const items = list.slice(0, Number(limit)).map(qr => ({
       ...qrToLead(qr),
+      ...computeUrgency(qr.ride_date),
       bids: db.getBidsForRequest(qr.id),
     }))
     res.json({ data: items, count: items.length, server_time: new Date().toISOString() })

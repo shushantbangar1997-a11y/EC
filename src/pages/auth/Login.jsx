@@ -49,7 +49,7 @@ const Login = () => {
 
       // Redirect based on role — admins land on the new bidding portal
       if (response?.user?.role === 'admin') {
-        navigate('/admin/orders');
+        navigate('/admin/live-feed');
       } else if (response?.user?.role === 'operator') {
         navigate('/operator/dashboard');
       } else {

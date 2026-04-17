@@ -58,6 +58,7 @@ import AdminMyOffers from './pages/admin/MyOffers'
 import AdminTrips from './pages/admin/Trips'
 import AdminEarnings from './pages/admin/Earnings'
 import AdminProfile from './pages/admin/Profile'
+import AdminLiveFeed from './pages/admin/LiveFeed'
 
 function AppContent() {
   const location = useLocation()
@@ -215,7 +216,8 @@ function AppContent() {
                 </ProtectedRoute>
               }
             >
-              <Route index element={<AdminOrders />} />
+              <Route index element={<AdminLiveFeed />} />
+              <Route path="live-feed" element={<AdminLiveFeed />} />
               <Route path="orders" element={<AdminOrders />} />
               <Route path="offers" element={<AdminMyOffers />} />
               <Route path="trips" element={<AdminTrips />} />
