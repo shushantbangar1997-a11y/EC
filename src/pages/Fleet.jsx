@@ -220,25 +220,25 @@ const FLEET_GROUPS = [
 ]
 
 const VehicleCard = ({ vehicle, onBook }) => (
-  <div className="bg-white rounded-2xl border border-gray-100 hover:border-white/20 hover:shadow-lg transition-all duration-200 p-6 flex flex-col">
+  <div className="bg-white rounded-2xl border border-gray-200 hover:border-black hover:shadow-lg transition-all duration-200 p-6 flex flex-col">
     <div className="flex items-start justify-between mb-3">
-      <h3 className="text-base font-bold text-white leading-tight">{vehicle.name}</h3>
+      <h3 className="text-base font-bold text-black leading-tight">{vehicle.name}</h3>
     </div>
 
-    <div className="flex items-center gap-4 mb-4 text-sm text-gray-500">
+    <div className="flex items-center gap-4 mb-4 text-sm text-gray-600">
       <div className="flex items-center gap-1.5">
-        <FiUsers size={13} className="text-white" />
+        <FiUsers size={13} className="text-black" />
         <span>{vehicle.pax} pax</span>
       </div>
       {vehicle.bags !== null && (
         <div className="flex items-center gap-1.5">
-          <FiPackage size={13} className="text-white" />
+          <FiPackage size={13} className="text-black" />
           <span>{vehicle.bags} bags</span>
         </div>
       )}
       {vehicle.bags === null && (
         <div className="flex items-center gap-1.5">
-          <FiPackage size={13} className="text-white" />
+          <FiPackage size={13} className="text-black" />
           <span>Luggage bay</span>
         </div>
       )}
@@ -246,8 +246,8 @@ const VehicleCard = ({ vehicle, onBook }) => (
 
     <ul className="space-y-1.5 flex-grow mb-5">
       {vehicle.amenities.map((a) => (
-        <li key={a} className="flex items-center gap-2 text-xs text-gray-600">
-          <FiCheck size={12} className="text-green-500 flex-shrink-0" />
+        <li key={a} className="flex items-center gap-2 text-xs text-gray-700">
+          <FiCheck size={12} className="text-black flex-shrink-0" />
           {a}
         </li>
       ))}
@@ -255,7 +255,7 @@ const VehicleCard = ({ vehicle, onBook }) => (
 
     <button
       onClick={() => onBook(vehicle.bookingValue)}
-      className="w-full text-center text-sm font-semibold text-white border border-white/20 rounded-xl py-2.5 hover:bg-black hover:text-white transition-all duration-200 flex items-center justify-center gap-1.5"
+      className="w-full text-center text-sm font-semibold text-black border border-black rounded-xl py-2.5 hover:bg-black hover:text-white transition-all duration-200 flex items-center justify-center gap-1.5"
     >
       Book This Vehicle <FiArrowRight size={13} />
     </button>
@@ -288,15 +288,15 @@ const GroupSection = ({ group, onBook }) => {
                 />
               </div>
             )}
-            <div className="inline-flex items-center gap-1.5 bg-black/10 text-white text-xs font-bold uppercase tracking-widest px-3 py-1.5 rounded-full mb-2">
+            <div className="inline-flex items-center gap-1.5 bg-black text-white text-xs font-bold uppercase tracking-widest px-3 py-1.5 rounded-full mb-2">
               {group.id === 'electric' && <FiZap size={11} />}
               {group.badge}
             </div>
-            <h2 className="text-2xl font-bold text-white mb-2">{group.label}</h2>
-            <p className="text-gray-500 text-sm leading-relaxed">{group.tagline}</p>
+            <h2 className="text-2xl font-bold text-black mb-2">{group.label}</h2>
+            <p className="text-gray-600 text-sm leading-relaxed">{group.tagline}</p>
             <button
               onClick={() => setExpanded(!expanded)}
-              className="mt-4 flex items-center gap-1 text-xs font-semibold text-white hover:underline lg:hidden"
+              className="mt-4 flex items-center gap-1 text-xs font-semibold text-black hover:underline lg:hidden"
             >
               {expanded ? 'Collapse' : 'Show vehicles'}
               <FiChevronDown size={13} className={`transition-transform duration-200 ${expanded ? 'rotate-180' : ''}`} />

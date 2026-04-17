@@ -24,15 +24,15 @@ export default function Quote() {
 
   return (
     <div className="min-h-screen bg-gray-50" style={{ background: 'var(--bg-page)', transition: 'background 300ms ease' }}>
-      <div className="bg-black text-white py-16 px-4 text-center">
-        <p className="text-white font-semibold text-sm uppercase tracking-widest mb-3">No Registration Required</p>
+      <div className="bg-gradient-to-r from-primary-900 to-primary-800 text-white py-16 px-4 text-center">
+        <p className="text-yellow-400 font-semibold text-sm uppercase tracking-widest mb-3">No Registration Required</p>
         <h1 className="text-4xl md:text-5xl font-bold mb-4">Get a Free Quote</h1>
-        <p className="text-white/70 text-lg max-w-xl mx-auto">
+        <p className="text-blue-200 text-lg max-w-xl mx-auto">
           NYC's premier car service. Fixed prices, professional drivers, instant confirmation.
         </p>
         <div className="flex flex-wrap justify-center gap-6 mt-8">
           {TRUST_BADGES.map(b => (
-            <div key={b.label} className="flex items-center gap-2 text-sm text-white/80">
+            <div key={b.label} className="flex items-center gap-2 text-sm text-blue-100">
               <span>{b.icon}</span>
               <span>{b.label}</span>
             </div>
@@ -47,7 +47,7 @@ export default function Quote() {
 
         <div className="mt-8 text-center">
           <p className="text-gray-500 text-sm">Prefer to call?</p>
-          <a href="tel:+17186586000" className="text-primary-800 font-bold text-lg hover:text-black">
+          <a href="tel:+17186586000" className="text-primary-800 font-bold text-lg hover:text-primary-900">
             (718) 658-6000
           </a>
         </div>

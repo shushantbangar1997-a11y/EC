@@ -55,18 +55,18 @@ const AirportTransfers = () => {
   return (
     <div className="overflow-x-hidden" style={{ background: 'var(--bg-page)', transition: 'background 300ms ease' }}>
 
-      <section className="relative min-h-[75vh] flex items-end bg-black overflow-hidden">
+      <section className="relative min-h-[75vh] flex items-end bg-[#0f1f3d] overflow-hidden">
         <img
           src="/images/service-airport.png"
           alt="Airport transfer service — luxury car at terminal"
           className="absolute inset-0 w-full h-full object-cover opacity-50"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0f1f3d] via-[#0f1f3d]/60 to-transparent" />
 
         <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
           <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 mb-6 text-sm font-medium text-white/80 backdrop-blur-sm">
-              <FiNavigation2 size={14} className="text-white" />
+            <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 mb-6 text-sm font-medium text-blue-100 backdrop-blur-sm">
+              <FiNavigation2 size={14} className="text-yellow-400" />
               Airport Transfer Service
             </div>
 
@@ -78,14 +78,14 @@ const AirportTransfers = () => {
               </span>
             </h1>
 
-            <p className="text-xl text-white/80 mb-10 max-w-xl leading-relaxed">
+            <p className="text-xl text-blue-100 mb-10 max-w-xl leading-relaxed">
               JFK, LGA, EWR and private FBO terminals — we track your flight, wait for you, and get you where you need to be. Fixed pricing, no surprises.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4">
               <button
                 onClick={() => navigate('/signup')}
-                className="inline-flex items-center justify-center gap-2 bg-white text-black font-bold py-3.5 px-8 rounded-xl hover:bg-white/90 transition-colors text-base shadow-lg"
+                className="inline-flex items-center justify-center gap-2 bg-yellow-400 text-[#1a365d] font-bold py-3.5 px-8 rounded-xl hover:bg-yellow-300 transition-colors text-base shadow-lg"
               >
                 Book a Transfer <FiArrowRight />
               </button>
@@ -100,8 +100,8 @@ const AirportTransfers = () => {
 
             <div className="flex flex-wrap gap-6 mt-10">
               {['Free 60-min airport wait', 'Flight tracking included', 'Fixed pricing — no surge'].map((item) => (
-                <div key={item} className="flex items-center gap-2 text-white/80 text-sm">
-                  <FiCheckCircle size={15} className="text-white" />
+                <div key={item} className="flex items-center gap-2 text-blue-100 text-sm">
+                  <FiCheckCircle size={15} className="text-yellow-400" />
                   {item}
                 </div>
               ))}
@@ -113,7 +113,7 @@ const AirportTransfers = () => {
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-14">
-            <span className="text-sm font-semibold uppercase tracking-widest text-white mb-2 block">Airports We Serve</span>
+            <span className="text-sm font-semibold uppercase tracking-widest text-[#1a365d] mb-2 block">Airports We Serve</span>
             <h2 className="text-4xl font-bold text-gray-900">Every Major New York Area Airport</h2>
           </div>
 
@@ -121,11 +121,11 @@ const AirportTransfers = () => {
             {AIRPORTS.map((a) => (
               <div
                 key={a.code}
-                className="bg-gradient-to-br from-black to-black rounded-2xl p-6 text-white text-center"
+                className="bg-gradient-to-br from-[#0f1f3d] to-[#1a365d] rounded-2xl p-6 text-white text-center"
               >
-                <div className="text-3xl font-bold text-white mb-2">{a.code}</div>
+                <div className="text-3xl font-bold text-yellow-400 mb-2">{a.code}</div>
                 <div className="font-semibold text-sm mb-1">{a.name}</div>
-                <div className="text-white/60 text-xs">{a.location}</div>
+                <div className="text-blue-300 text-xs">{a.location}</div>
               </div>
             ))}
           </div>
@@ -135,7 +135,7 @@ const AirportTransfers = () => {
       <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-14">
-            <span className="text-sm font-semibold uppercase tracking-widest text-white mb-2 block">What's Included</span>
+            <span className="text-sm font-semibold uppercase tracking-widest text-[#1a365d] mb-2 block">What's Included</span>
             <h2 className="text-4xl font-bold text-gray-900">Every Transfer Comes Standard With</h2>
           </div>
 
@@ -143,13 +143,13 @@ const AirportTransfers = () => {
             {FEATURES.map((f) => (
               <div
                 key={f.title}
-                className="bg-white rounded-2xl p-7 border border-gray-100 hover:border-white/20 hover:shadow-md transition-all flex gap-5"
+                className="bg-white rounded-2xl p-7 border border-gray-100 hover:border-[#1a365d] hover:shadow-md transition-all flex gap-5"
               >
-                <div className="flex items-center justify-center w-12 h-12 bg-black rounded-xl flex-shrink-0">
+                <div className="flex items-center justify-center w-12 h-12 bg-[#1a365d] rounded-xl flex-shrink-0">
                   <f.icon size={22} className="text-white" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-white mb-2">{f.title}</h3>
+                  <h3 className="text-lg font-bold text-[#1a365d] mb-2">{f.title}</h3>
                   <p className="text-gray-500 text-sm leading-relaxed">{f.description}</p>
                 </div>
               </div>
@@ -161,7 +161,7 @@ const AirportTransfers = () => {
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-14">
-            <span className="text-sm font-semibold uppercase tracking-widest text-white mb-2 block">Fleet Options</span>
+            <span className="text-sm font-semibold uppercase tracking-widest text-[#1a365d] mb-2 block">Fleet Options</span>
             <h2 className="text-4xl font-bold text-gray-900">Choose the Right Vehicle</h2>
           </div>
 
@@ -169,13 +169,13 @@ const AirportTransfers = () => {
             {VEHICLES.map((v) => (
               <div
                 key={v.type}
-                className="border border-gray-100 rounded-2xl p-6 hover:border-white/20 hover:shadow-md transition-all"
+                className="border border-gray-100 rounded-2xl p-6 hover:border-[#1a365d] hover:shadow-md transition-all"
               >
                 <div className="flex items-center justify-center w-10 h-10 bg-primary-50 rounded-xl mb-4">
-                  <FiUsers className="text-white" size={18} />
+                  <FiUsers className="text-[#1a365d]" size={18} />
                 </div>
                 <h3 className="font-bold text-gray-900 mb-1">{v.type}</h3>
-                <p className="text-xs text-white font-semibold mb-1">{v.pax} passengers</p>
+                <p className="text-xs text-[#1a365d] font-semibold mb-1">{v.pax} passengers</p>
                 <p className="text-xs text-gray-400">{v.ideal}</p>
               </div>
             ))}
@@ -183,16 +183,16 @@ const AirportTransfers = () => {
         </div>
       </section>
 
-      <section className="bg-gradient-to-br from-black to-black py-20">
+      <section className="bg-gradient-to-br from-[#0f1f3d] to-[#1a365d] py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="text-white">
               <div className="flex gap-1 mb-5">
                 {[1,2,3,4,5].map(i => (
-                  <FiStar key={i} size={18} className="text-white fill-yellow-400" />
+                  <FiStar key={i} size={18} className="text-yellow-400 fill-yellow-400" />
                 ))}
               </div>
-              <blockquote className="text-white/80 text-lg leading-relaxed mb-6 italic">
+              <blockquote className="text-blue-100 text-lg leading-relaxed mb-6 italic">
                 "After my 11 PM red-eye into JFK the driver was already waiting in arrivals. No hunting for a pickup pin, no surge fee — just walked straight into a clean Escalade. This is what airport service should feel like."
               </blockquote>
               <div className="flex items-center gap-3">
@@ -201,13 +201,13 @@ const AirportTransfers = () => {
                 </div>
                 <div>
                   <p className="text-white font-semibold text-sm">Dr. Kenji M.</p>
-                  <p className="text-white/60 text-xs">Medical Conference Attendee · JFK to Brooklyn</p>
+                  <p className="text-blue-300 text-xs">Medical Conference Attendee · JFK to Brooklyn</p>
                 </div>
               </div>
             </div>
 
             <div className="bg-white rounded-2xl p-8">
-              <h3 className="text-2xl font-bold text-white mb-2">Ready to Book Your Transfer?</h3>
+              <h3 className="text-2xl font-bold text-[#1a365d] mb-2">Ready to Book Your Transfer?</h3>
               <p className="text-gray-500 text-sm mb-6">Get a fixed quote in seconds. No account required to get started.</p>
               <ul className="space-y-3 mb-8">
                 {[
@@ -224,21 +224,21 @@ const AirportTransfers = () => {
               </ul>
               <button
                 onClick={() => navigate('/signup')}
-                className="w-full bg-black text-white font-bold py-3.5 rounded-xl hover:bg-black transition-colors flex items-center justify-center gap-2"
+                className="w-full bg-[#1a365d] text-white font-bold py-3.5 rounded-xl hover:bg-[#0f1f3d] transition-colors flex items-center justify-center gap-2"
               >
                 Book an Airport Transfer <FiArrowRight />
               </button>
               <p className="text-center text-xs text-gray-400 mt-3">
-                Or call us at <a href="tel:+17186586000" className="font-semibold text-white hover:underline">(718) 658-6000</a>
+                Or call us at <a href="tel:+17186586000" className="font-semibold text-[#1a365d] hover:underline">(718) 658-6000</a>
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      <div className="bg-black border-t border-blue-900 py-4">
+      <div className="bg-[#0f1f3d] border-t border-blue-900 py-4">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <nav className="flex items-center gap-2 text-sm text-white/60">
+          <nav className="flex items-center gap-2 text-sm text-blue-300">
             <Link to="/" className="hover:text-white transition-colors">Home</Link>
             <span>/</span>
             <Link to="/services" className="hover:text-white transition-colors">Services</Link>

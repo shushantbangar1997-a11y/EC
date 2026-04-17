@@ -38,23 +38,23 @@ export default function RoutePageTemplate({
 
   return (
     <div className="min-h-screen" style={{ background: 'var(--bg-page)', transition: 'background 300ms ease' }}>
-      <div className="bg-black text-white py-20 px-4">
+      <div className="bg-gradient-to-r from-primary-900 to-primary-800 text-white py-20 px-4">
         <div className="container-custom max-w-4xl text-center">
-          <p className="text-white/60 font-semibold text-sm uppercase tracking-widest mb-4">NYC Car Service</p>
+          <p className="text-yellow-400 font-semibold text-sm uppercase tracking-widest mb-4">NYC Car Service</p>
           <h1 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">{h1}</h1>
-          <p className="text-white/70 text-lg max-w-2xl mx-auto mb-8">{description}</p>
+          <p className="text-blue-200 text-lg max-w-2xl mx-auto mb-8">{description}</p>
 
           <div className="flex flex-wrap justify-center gap-6">
             <div className="bg-white/10 backdrop-blur-sm rounded-xl px-6 py-4 text-center">
-              <p className="text-white font-bold text-2xl">{priceRange}</p>
-              <p className="text-white/60 text-xs mt-1 uppercase tracking-wide">Estimated Price</p>
+              <p className="text-yellow-400 font-bold text-2xl">{priceRange}</p>
+              <p className="text-blue-200 text-xs mt-1 uppercase tracking-wide">Estimated Price</p>
             </div>
             <div className="bg-white/10 backdrop-blur-sm rounded-xl px-6 py-4 text-center">
-              <p className="text-white font-bold text-2xl">{travelTime}</p>
+              <p className="text-yellow-400 font-bold text-2xl">{travelTime}</p>
               <p className="text-blue-200 text-xs mt-1 uppercase tracking-wide">Typical Travel Time</p>
             </div>
             <div className="bg-white/10 backdrop-blur-sm rounded-xl px-6 py-4 text-center">
-              <p className="text-white font-bold text-2xl">{vehicleRecommendation}</p>
+              <p className="text-yellow-400 font-bold text-2xl">{vehicleRecommendation}</p>
               <p className="text-blue-200 text-xs mt-1 uppercase tracking-wide">Recommended Vehicle</p>
             </div>
           </div>
@@ -102,7 +102,7 @@ export default function RoutePageTemplate({
 
             <div className="bg-primary-50 border border-primary-200 rounded-xl p-5 text-center">
               <p className="text-primary-800 font-semibold text-sm mb-2">Need help? Call us directly</p>
-              <a href="tel:+17186586000" className="text-black font-bold text-xl hover:underline">
+              <a href="tel:+17186586000" className="text-primary-900 font-bold text-xl hover:underline">
                 (718) 658-6000
               </a>
             </div>
@@ -138,7 +138,7 @@ export default function RoutePageTemplate({
           <p className="text-blue-200 mb-6">Get your free quote now. No account needed, no credit card required.</p>
           <Link
             to="/quote"
-            className="inline-flex items-center gap-2 bg-white text-black font-bold px-8 py-4 rounded-xl hover:bg-white/90 transition-colors text-lg"
+            className="inline-flex items-center gap-2 bg-yellow-400 text-primary-900 font-bold px-8 py-4 rounded-xl hover:bg-yellow-300 transition-colors text-lg"
           >
             Get a Free Quote <FiArrowRight size={20} />
           </Link>

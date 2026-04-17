@@ -516,11 +516,18 @@ html:not([data-theme]) .bg-yellow-300,
 html:not([data-theme]) .hover\:bg-yellow-300:hover,
 html:not([data-theme]) .bg-amber-400,
 html:not([data-theme]) .bg-amber-500 { background-color: #ffffff !important; color: #0a0a0a !important; }
+/* Yellow accent text — drop to black; on dark hero contexts the elements
+   are usually paired with .text-white siblings so the loss of the gold
+   accent simply removes a non-monochrome color */
 html:not([data-theme]) .text-yellow-400,
 html:not([data-theme]) .text-yellow-500,
 html:not([data-theme]) .text-yellow-600,
 html:not([data-theme]) .text-amber-400,
-html:not([data-theme]) .text-amber-500 { color: #ffffff !important; }
+html:not([data-theme]) .text-amber-500 { color: currentColor !important; }
+/* Hero / dark-section yellow numbers (e.g. text-yellow-400 directly inside
+   a .bg-black or gradient hero) — when the parent text color is white,
+   currentColor inherits white. Where the parent has dark text, we want
+   visible dark text. Use a fallback for orphan cases. */
 html:not([data-theme]) .border-yellow-400,
 html:not([data-theme]) .border-yellow-400\/50 { border-color: rgba(255,255,255,0.5) !important; }
 
