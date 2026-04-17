@@ -38,16 +38,16 @@ export default function RoutePageTemplate({
 
   return (
     <div className="min-h-screen" style={{ background: 'var(--bg-page)', transition: 'background 300ms ease' }}>
-      <div className="bg-gradient-to-r from-primary-900 to-primary-800 text-white py-20 px-4">
+      <div className="bg-black text-white py-20 px-4">
         <div className="container-custom max-w-4xl text-center">
-          <p className="text-yellow-400 font-semibold text-sm uppercase tracking-widest mb-4">NYC Car Service</p>
+          <p className="text-white/60 font-semibold text-sm uppercase tracking-widest mb-4">NYC Car Service</p>
           <h1 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">{h1}</h1>
-          <p className="text-blue-200 text-lg max-w-2xl mx-auto mb-8">{description}</p>
+          <p className="text-white/70 text-lg max-w-2xl mx-auto mb-8">{description}</p>
 
           <div className="flex flex-wrap justify-center gap-6">
             <div className="bg-white/10 backdrop-blur-sm rounded-xl px-6 py-4 text-center">
-              <p className="text-yellow-400 font-bold text-2xl">{priceRange}</p>
-              <p className="text-blue-200 text-xs mt-1 uppercase tracking-wide">Estimated Price</p>
+              <p className="text-white font-bold text-2xl">{priceRange}</p>
+              <p className="text-white/60 text-xs mt-1 uppercase tracking-wide">Estimated Price</p>
             </div>
             <div className="bg-white/10 backdrop-blur-sm rounded-xl px-6 py-4 text-center">
               <p className="text-yellow-400 font-bold text-2xl">{travelTime}</p>

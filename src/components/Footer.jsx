@@ -109,9 +109,7 @@ export default function Footer() {
 
           {/* Brand */}
           <div style={{ gridColumn: 'span 1' }}>
-            <div style={{ overflow: 'hidden', height: 40, marginBottom: 16 }}>
-              <img src="/logo.png" alt="Everywhere Transfers" style={{ width: 160, display: 'block', filter: 'brightness(0) invert(1)', opacity: 0.88 }} />
-            </div>
+            <img src="/logo.png?v=4" alt="Everywhere Transfers" style={{ height: 40, width: 'auto', display: 'block', marginBottom: 16, filter: 'brightness(0) invert(1)', opacity: 0.92 }} />
             <p style={{ fontSize: 13, color: BODY, lineHeight: 1.7, marginBottom: 20, maxWidth: 230 }}>
               New York's luxury chauffeur marketplace. Post your ride free — operators compete, you choose the best price.
             </p>

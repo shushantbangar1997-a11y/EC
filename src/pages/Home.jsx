@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useRef } from 'react'
 import { Link } from 'react-router-dom'
 import {
   FiShield, FiTruck, FiHeadphones, FiNavigation, FiCalendar,
@@ -6,14 +6,8 @@ import {
 } from 'react-icons/fi'
 import DispatchPanel from '../components/DispatchPanel'
 import HeroSlideshow from '../components/HeroSlideshow'
+import FleetSlider from '../components/FleetSlider'
 import useSimulatedStats from '../hooks/useSimulatedStats'
-
-const VEHICLE_OPTIONS = [
-  { id: 'sedan',        label: 'Sedan',    icon: '🚗', desc: '2–3 passengers' },
-  { id: 'suv',         label: 'SUV',       icon: '🚙', desc: '3–5 passengers' },
-  { id: 'sprinter_van', label: 'Sprinter', icon: '🚐', desc: 'Up to 14 passengers' },
-  { id: 'coach',       label: 'Coach Bus', icon: '🚌', desc: '20–55 passengers' },
-]
 
 const TRUST_ITEMS = [
   { icon: FiShield,      label: 'Licensed & Insured',  desc: 'Every driver fully vetted, licensed, and covered' },
@@ -30,13 +24,8 @@ const SERVICE_PILLS = [
 
 export default function Home() {
   const stats = useSimulatedStats()
-  const [presetVehicle, setPresetVehicle] = useState(null)
   const panelRef = useRef(null)
 
-  const handleVehicleSelect = (vehicleId) => {
-    setPresetVehicle(vehicleId)
-    setTimeout(() => { panelRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }) }, 50)
-  }
   const scrollToBook = () => { panelRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }) }
 
   return (
@@ -95,7 +84,7 @@ export default function Home() {
             '--text-muted': 'rgba(255, 255, 255, 0.45)',
             width: '100%', maxWidth: 660,
           }}>
-            <DispatchPanel presetVehicle={presetVehicle} hideStats />
+            <DispatchPanel hideStats />
           </div>
         </div>
       </section>
@@ -119,34 +108,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── Vehicle picker ──────────────────────────────────────────────── */}
-      <section style={{ background: '#fafafa', borderTop: '1px solid #e5e5e5', padding: '56px 24px' }}>
-        <div style={{ maxWidth: 900, margin: '0 auto' }}>
-          <p style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 2, color: '#a3a3a3', textAlign: 'center', marginBottom: 20 }}>
-            Choose your vehicle — we'll pre-select it in the booking form
-          </p>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 10 }} className="sm:grid-cols-4">
-            {VEHICLE_OPTIONS.map(({ id, label, icon, desc }) => {
-              const selected = presetVehicle === id
-              return (
-                <button key={id} onClick={() => handleVehicleSelect(id)} style={{
-                  display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8,
-                  padding: '20px 12px', borderRadius: 12, cursor: 'pointer',
-                  background: selected ? '#0a0a0a' : '#ffffff',
-                  border: `1.5px solid ${selected ? '#0a0a0a' : '#e5e5e5'}`,
-                  transition: 'all 150ms',
-                }}>
-                  <span style={{ fontSize: 28 }}>{icon}</span>
-                  <div style={{ textAlign: 'center' }}>
-                    <div style={{ fontSize: 13, fontWeight: 600, color: selected ? '#ffffff' : '#171717', marginBottom: 2 }}>{label}</div>
-                    <div style={{ fontSize: 11, color: selected ? 'rgba(255,255,255,0.6)' : '#a3a3a3' }}>{desc}</div>
-                  </div>
-                </button>
-              )
-            })}
-          </div>
-        </div>
-      </section>
+      {/* ── Fleet auto-slider ───────────────────────────────────────────── */}
+      <FleetSlider />
 
       {/* ── Services CTA ────────────────────────────────────────────────── */}
       <section style={{ background: '#0a0a0a', padding: '60px 24px' }}>

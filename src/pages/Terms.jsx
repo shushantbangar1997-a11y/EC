@@ -5,17 +5,17 @@ const Terms = () => {
     <div className="min-h-screen" style={{ background: 'var(--bg-page)', transition: 'background 300ms ease' }}>
 
       {/* Branded Hero */}
-      <section className="relative bg-gradient-to-br from-[#0f1f3d] via-[#1a365d] to-[#1a3a6b] text-white overflow-hidden">
+      <section className="relative bg-black text-white overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-600 opacity-10 rounded-full blur-3xl translate-x-1/3 -translate-y-1/4" />
           <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-indigo-800 opacity-15 rounded-full blur-3xl -translate-x-1/4 translate-y-1/4" />
         </div>
         <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
           <div className="flex justify-center mb-6">
-            <img src="/logo.png?v=3" alt="Everywhere Cars" className="h-14 w-auto" />
+            <img src="/logo.png?v=4" alt="Everywhere Cars" className="h-12 w-auto" style={{ filter: 'brightness(0) invert(1)' }} />
           </div>
           <h1 className="text-5xl font-bold tracking-tight mb-4">Terms of Service</h1>
-          <p className="text-blue-200 text-lg max-w-xl mx-auto">
+          <p className="text-white/70 text-lg max-w-xl mx-auto">
             Please read these terms carefully before using the Everywhere Cars platform or services.
           </p>
         </div>

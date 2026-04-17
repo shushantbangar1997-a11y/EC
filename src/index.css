@@ -455,3 +455,83 @@ body {
    LIGHT MODE — body text defaults; hero/CTA sections stay dark (brand)
    ───────────────────────────────────────────────────────────────────── */
 [data-theme='light'] body { color: #0f1f3d; }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   CUSTOMER-FACING MONOCHROME OVERRIDES
+   Maps every legacy navy/gold token to pure black & white.
+   Scoped to html WITHOUT data-theme — so admin portal is untouched.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+html:not([data-theme]) .bg-\[\#1a365d\],
+html:not([data-theme]) .bg-\[\#0f1f3d\],
+html:not([data-theme]) .bg-\[\#1a3a6b\],
+html:not([data-theme]) .bg-\[\#2d5a8c\] { background-color: #0a0a0a !important; }
+
+html:not([data-theme]) .hover\:bg-\[\#1a365d\]:hover,
+html:not([data-theme]) .hover\:bg-\[\#0f1f3d\]:hover { background-color: #171717 !important; }
+
+html:not([data-theme]) .text-\[\#1a365d\],
+html:not([data-theme]) .text-\[\#0f1f3d\] { color: #0a0a0a !important; }
+
+html:not([data-theme]) .border-\[\#1a365d\],
+html:not([data-theme]) .border-\[\#0f1f3d\] { border-color: #0a0a0a !important; }
+
+html:not([data-theme]) .focus\:ring-\[\#1a365d\]:focus { --tw-ring-color: #0a0a0a !important; }
+
+/* Tailwind palette tokens used as brand navy / gold */
+html:not([data-theme]) .from-primary-900,
+html:not([data-theme]) .from-primary-800,
+html:not([data-theme]) .via-primary-800,
+html:not([data-theme]) .to-primary-800,
+html:not([data-theme]) .to-primary-700,
+html:not([data-theme]) .to-primary-900,
+html:not([data-theme]) .bg-primary-900,
+html:not([data-theme]) .bg-primary-800,
+html:not([data-theme]) .bg-primary-700 { --tw-gradient-from: #0a0a0a !important; --tw-gradient-to: #0a0a0a !important; --tw-gradient-stops: #0a0a0a, #0a0a0a !important; background-color: #0a0a0a !important; }
+html:not([data-theme]) .text-primary-900,
+html:not([data-theme]) .text-primary-800,
+html:not([data-theme]) .text-primary-700 { color: #0a0a0a !important; }
+html:not([data-theme]) .border-primary-200,
+html:not([data-theme]) .border-primary-300,
+html:not([data-theme]) .border-primary-800 { border-color: #e5e5e5 !important; }
+
+/* Gradient hero sections — navy → black */
+html:not([data-theme]) [class*="from-[#0f1f3d]"],
+html:not([data-theme]) [class*="from-[#1a365d]"] { --tw-gradient-from: #0a0a0a !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(10,10,10,0)) !important; }
+html:not([data-theme]) [class*="via-[#1a365d]"],
+html:not([data-theme]) [class*="via-[#2d5a8c]"] { --tw-gradient-stops: var(--tw-gradient-from), #171717, var(--tw-gradient-to, rgba(23,23,23,0)) !important; }
+html:not([data-theme]) [class*="to-[#1a3a6b]"],
+html:not([data-theme]) [class*="to-[#1a365d]"] { --tw-gradient-to: #0a0a0a !important; }
+
+/* Decorative blue blurs in heroes — neutralise to white tint */
+html:not([data-theme]) .bg-blue-600,
+html:not([data-theme]) .bg-indigo-800,
+html:not([data-theme]) .bg-blue-700,
+html:not([data-theme]) .bg-indigo-700,
+html:not([data-theme]) .bg-indigo-600 { background-color: #ffffff !important; }
+
+/* Yellow / gold accents → white on dark, black on light */
+html:not([data-theme]) .bg-yellow-400,
+html:not([data-theme]) .bg-yellow-300,
+html:not([data-theme]) .hover\:bg-yellow-300:hover,
+html:not([data-theme]) .bg-amber-400,
+html:not([data-theme]) .bg-amber-500 { background-color: #ffffff !important; color: #0a0a0a !important; }
+html:not([data-theme]) .text-yellow-400,
+html:not([data-theme]) .text-yellow-500,
+html:not([data-theme]) .text-yellow-600,
+html:not([data-theme]) .text-amber-400,
+html:not([data-theme]) .text-amber-500 { color: #ffffff !important; }
+html:not([data-theme]) .border-yellow-400,
+html:not([data-theme]) .border-yellow-400\/50 { border-color: rgba(255,255,255,0.5) !important; }
+
+/* Blue-tinted body text inside dark heroes → soft white */
+html:not([data-theme]) .text-blue-100,
+html:not([data-theme]) .text-blue-200,
+html:not([data-theme]) .text-blue-300,
+html:not([data-theme]) .text-indigo-100,
+html:not([data-theme]) .text-indigo-200 { color: rgba(255,255,255,0.72) !important; }
+
+/* Light blue hover backgrounds (icons inside cards) */
+html:not([data-theme]) .bg-blue-50 { background-color: #f5f5f5 !important; }
+html:not([data-theme]) .group:hover .group-hover\:bg-\[\#1a365d\] { background-color: #0a0a0a !important; }
+html:not([data-theme]) .group:hover .group-hover\:text-white { color: #ffffff !important; }

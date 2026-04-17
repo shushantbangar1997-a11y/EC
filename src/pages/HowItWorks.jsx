@@ -50,19 +50,19 @@ const HowItWorks = () => {
     <div className="min-h-screen" style={{ background: 'var(--bg-page)', transition: 'background 300ms ease' }}>
 
       {/* Hero */}
-      <section className="relative bg-gradient-to-br from-[#0f1f3d] via-[#1a365d] to-[#1a3a6b] text-white overflow-hidden">
+      <section className="relative bg-black text-white overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-600 opacity-10 rounded-full blur-3xl translate-x-1/3 -translate-y-1/4" />
           <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-indigo-800 opacity-15 rounded-full blur-3xl -translate-x-1/4 translate-y-1/4" />
         </div>
         <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-24 text-center">
-          <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 mb-6 text-sm font-medium text-blue-100">
+          <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 mb-6 text-sm font-medium text-white/80">
             Simple &amp; Transparent
           </div>
           <h1 className="text-5xl lg:text-6xl font-bold tracking-tight mb-6">
             How It Works
           </h1>
-          <p className="text-xl text-blue-100 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-xl text-white/70 max-w-2xl mx-auto leading-relaxed">
             Booking a premium chauffeur with Everywhere Cars is fast, simple, and completely transparent — from your first request to the moment you arrive.
           </p>
         </div>
@@ -123,16 +123,16 @@ const HowItWorks = () => {
       </section>
 
       {/* CTA */}
-      <section className="bg-gradient-to-br from-[#0f1f3d] to-[#1a365d] text-white py-20">
+      <section className="bg-black text-white py-20">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-4xl font-bold mb-4">Ready to Book Your Ride?</h2>
-          <p className="text-blue-200 text-lg mb-10">
+          <p className="text-white/70 text-lg mb-10">
             Join thousands of travellers who trust Everywhere Cars for premium, stress-free ground transportation.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               to="/signup"
-              className="inline-flex items-center justify-center gap-2 bg-yellow-400 text-[#0f1f3d] font-bold px-8 py-4 rounded-xl hover:bg-yellow-300 transition-colors text-base"
+              className="inline-flex items-center justify-center gap-2 bg-white text-black font-bold px-8 py-4 rounded-xl hover:bg-gray-200 transition-colors text-base"
             >
               Get a Free Quote <FiArrowRight />
             </Link>

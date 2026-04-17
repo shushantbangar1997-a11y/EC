@@ -93,7 +93,7 @@ const Signup = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#1a365d] via-[#2d5a8c] to-[#1a365d] flex items-center justify-center px-4 py-12">
+    <div className="min-h-screen bg-black flex items-center justify-center px-4 py-12">
       {/* Background pattern */}
       <div className="absolute inset-0 opacity-10">
         <div className="absolute top-20 right-10 w-96 h-96 bg-white rounded-full blur-3xl"></div>

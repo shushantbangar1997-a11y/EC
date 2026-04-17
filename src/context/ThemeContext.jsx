@@ -13,13 +13,8 @@ export function ThemeProvider({ children }) {
 
   useEffect(() => {
     const root = document.documentElement
-    if (isDark) {
-      root.classList.add('dark')
-      root.setAttribute('data-theme', 'dark')
-    } else {
-      root.classList.remove('dark')
-      root.setAttribute('data-theme', 'light')
-    }
+    root.classList.remove('dark')
+    root.removeAttribute('data-theme')
     try { localStorage.setItem('theme', isDark ? 'dark' : 'light') } catch {}
   }, [isDark])
 

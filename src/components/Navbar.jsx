@@ -192,9 +192,7 @@ const Navbar = () => {
 
         {/* Logo */}
         <Link to="/" onClick={closeAll} style={{ display: 'flex', alignItems: 'center', flexShrink: 0, textDecoration: 'none' }}>
-          <div style={{ overflow: 'hidden', height: 36 }}>
-            <img src="/logo.png" alt="Everywhere Transfers" style={{ width: 152, display: 'block', filter: 'brightness(0) invert(1)', opacity: 0.92 }} />
-          </div>
+          <img src="/logo.png?v=4" alt="Everywhere Transfers" style={{ height: 34, width: 'auto', display: 'block', filter: 'brightness(0) invert(1)', opacity: 0.95 }} />
         </Link>
 
         {/* Desktop nav */}
