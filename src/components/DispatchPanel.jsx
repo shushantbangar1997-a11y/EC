@@ -8,9 +8,10 @@ import useSimulatedStats from '../hooks/useSimulatedStats'
 import {
   FiMic, FiMicOff, FiArrowRight, FiPlus, FiMinus,
   FiStar, FiPhone, FiMessageCircle, FiClock, FiZap,
-  FiNavigation2, FiMapPin, FiCheckCircle, FiRefreshCw,
+  FiNavigation2, FiMapPin, FiCheckCircle,
 } from 'react-icons/fi'
 import PlaceAutocomplete from './PlaceAutocomplete'
+import SlideButton from './SlideButton'
 import {
   detectRouteType, getPriceEstimate, formatPriceRange,
   detectAirport, detectHotel, isPeakHour,
@@ -214,6 +215,7 @@ export default function DispatchPanel({ onRouteChange, presetVehicle, hideStats 
   const [name, setName] = useState('')
   const [contact, setContact] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  const [sliderStatus, setSliderStatus] = useState('idle')
   const [bids, setBids] = useState([])
   const [countdown, setCountdown] = useState(600)
   const [noOffersMsg, setNoOffersMsg] = useState(false)
@@ -266,6 +268,7 @@ export default function DispatchPanel({ onRouteChange, presetVehicle, hideStats 
   const handleSubmit = async () => {
     if (!canSubmit || submitting) return
     setSubmitting(true)
+    setSliderStatus('loading')
     try {
       const isEmail = contact.includes('@')
       const payload = {
@@ -282,13 +285,19 @@ export default function DispatchPanel({ onRouteChange, presetVehicle, hideStats 
       const created = res.data?.data || res.data || {}
       const id = created.id || null
       const quote_token = created.quote_token || null
+      setSliderStatus('success')
       setPostedRide({ id, quote_token, pickup, dropoff, date, time, passengers, vehicle_type: vehicle })
-      setPhase('bids')
-      setCountdown(600)
-      setBids([])
-      setNoOffersMsg(false)
+      setTimeout(() => {
+        setPhase('bids')
+        setCountdown(600)
+        setBids([])
+        setNoOffersMsg(false)
+        setSliderStatus('idle')
+      }, 600)
     } catch (err) {
+      setSliderStatus('error')
       toast.error(err.response?.data?.message || 'Could not post ride. Please try again or call us.')
+      setTimeout(() => setSliderStatus('idle'), 2000)
     } finally {
       setSubmitting(false)
     }
@@ -398,6 +407,7 @@ export default function DispatchPanel({ onRouteChange, presetVehicle, hideStats 
     setPhase('idle'); setPickup(''); setDropoff(''); setDate(''); setTime('')
     setPassengers(1); setVehicle('sedan'); setName(''); setContact('')
     setBids([]); setPostedRide(null); setNoOffersMsg(false); setCountdown(600); setAcceptedBid(null)
+    setSliderStatus('idle')
   }
 
   const { displayed: bidHero } = useTypewriter(
@@ -785,28 +795,12 @@ export default function DispatchPanel({ onRouteChange, presetVehicle, hideStats 
                     </div>
                   </div>
 
-                  <button
-                    type="button"
-                    onClick={handleSubmit}
-                    disabled={!canSubmit || submitting}
-                    className="w-full py-4 rounded-2xl font-black text-sm tracking-wider flex items-center justify-center gap-2 transition-all duration-220 active:scale-[0.98]"
-                    style={{
-                      background: canSubmit && !submitting
-                        ? `linear-gradient(135deg, ${GOLD} 0%, #e5e5e5 100%)`
-                        : 'var(--bg-field)',
-                      color: canSubmit && !submitting ? '#050a0f' : 'var(--text-muted)',
-                      boxShadow: canSubmit && !submitting ? '0 0 24px rgba(255,255,255,0.2), 0 8px 20px rgba(0,0,0,0.18)' : 'none',
-                      letterSpacing: '0.05em',
-                      cursor: canSubmit && !submitting ? 'pointer' : 'not-allowed',
-                      animation: canSubmit && !submitting ? 'goldPulse 2.5s ease-in-out infinite' : 'none',
-                    }}
-                  >
-                    {submitting ? (
-                      <><FiRefreshCw size={16} className="animate-spin" /> Dispatching...</>
-                    ) : (
-                      <>DISPATCH MY RIDE <FiArrowRight size={16} /></>
-                    )}
-                  </button>
+                  <SlideButton
+                    onConfirm={handleSubmit}
+                    disabled={!canSubmit}
+                    status={sliderStatus}
+                    label="Slide to dispatch"
+                  />
                 </div>
               )}
 
