@@ -601,21 +601,35 @@ html:not([data-theme]) .border-indigo-200,
 html:not([data-theme]) .border-indigo-300,
 html:not([data-theme]) .border-indigo-500 { border-color: #e5e5e5 !important; }
 
-/* Gradient stops referencing blue/sky/indigo/primary */
-html:not([data-theme]) .from-blue-500,
-html:not([data-theme]) .from-blue-600,
-html:not([data-theme]) .from-blue-700,
-html:not([data-theme]) .from-sky-500,
-html:not([data-theme]) .from-sky-600,
-html:not([data-theme]) .from-indigo-500,
-html:not([data-theme]) .from-indigo-600 { --tw-gradient-from: #0a0a0a !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(10,10,10,0)) !important; }
-html:not([data-theme]) .to-blue-500,
-html:not([data-theme]) .to-blue-600,
-html:not([data-theme]) .to-blue-700,
-html:not([data-theme]) .to-sky-500,
-html:not([data-theme]) .to-sky-600,
-html:not([data-theme]) .to-indigo-500,
-html:not([data-theme]) .to-indigo-600 { --tw-gradient-to: #0a0a0a !important; }
-html:not([data-theme]) .via-blue-500,
-html:not([data-theme]) .via-blue-600,
-html:not([data-theme]) .via-indigo-500 { --tw-gradient-stops: var(--tw-gradient-from), #171717, var(--tw-gradient-to, rgba(23,23,23,0)) !important; }
+/* Gradient stops referencing blue/sky/indigo — every numeric variant.
+   Light variants (50–300) collapse to white so bg-clip-text reads as
+   plain white on dark heroes; dark variants collapse to black. */
+html:not([data-theme]) [class*="from-blue-"],
+html:not([data-theme]) [class*="from-sky-"],
+html:not([data-theme]) [class*="from-indigo-"] { --tw-gradient-from: #ffffff !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(255,255,255,0)) !important; }
+html:not([data-theme]) [class*="to-blue-"],
+html:not([data-theme]) [class*="to-sky-"],
+html:not([data-theme]) [class*="to-indigo-"] { --tw-gradient-to: #ffffff !important; }
+html:not([data-theme]) [class*="via-blue-"],
+html:not([data-theme]) [class*="via-sky-"],
+html:not([data-theme]) [class*="via-indigo-"] { --tw-gradient-stops: var(--tw-gradient-from), #ffffff, var(--tw-gradient-to, rgba(255,255,255,0)) !important; }
+
+/* Solid blue/indigo/sky backgrounds (any numeric) → black surface */
+html:not([data-theme]) .bg-blue-400,
+html:not([data-theme]) .bg-blue-500,
+html:not([data-theme]) .bg-blue-600,
+html:not([data-theme]) .bg-blue-700,
+html:not([data-theme]) .bg-blue-800,
+html:not([data-theme]) .bg-blue-900,
+html:not([data-theme]) .bg-sky-400,
+html:not([data-theme]) .bg-sky-500,
+html:not([data-theme]) .bg-sky-600,
+html:not([data-theme]) .bg-sky-700,
+html:not([data-theme]) .bg-sky-800,
+html:not([data-theme]) .bg-sky-900,
+html:not([data-theme]) .bg-indigo-400,
+html:not([data-theme]) .bg-indigo-500,
+html:not([data-theme]) .bg-indigo-600,
+html:not([data-theme]) .bg-indigo-700,
+html:not([data-theme]) .bg-indigo-800,
+html:not([data-theme]) .bg-indigo-900 { background-color: #0a0a0a !important; color: #ffffff !important; }
