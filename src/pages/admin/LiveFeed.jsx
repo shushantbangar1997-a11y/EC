@@ -25,7 +25,7 @@ const VEHICLE_LABEL = {
   mini_bus: 'Mini Bus', coach: 'Coach',
 }
 
-// Short browser chime via Web Audio API
+// Short 440 Hz browser chime via Web Audio API (~150 ms)
 function playChime() {
   try {
     const ctx = new (window.AudioContext || window.webkitAudioContext)()
@@ -34,13 +34,12 @@ function playChime() {
     osc.connect(gain)
     gain.connect(ctx.destination)
     osc.type = 'sine'
-    osc.frequency.setValueAtTime(880, ctx.currentTime)
-    osc.frequency.exponentialRampToValueAtTime(440, ctx.currentTime + 0.15)
+    osc.frequency.setValueAtTime(440, ctx.currentTime)
     gain.gain.setValueAtTime(0.25, ctx.currentTime)
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35)
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15)
     osc.start(ctx.currentTime)
-    osc.stop(ctx.currentTime + 0.4)
-    setTimeout(() => ctx.close(), 600)
+    osc.stop(ctx.currentTime + 0.18)
+    setTimeout(() => ctx.close(), 400)
   } catch {}
 }
 
@@ -147,7 +146,7 @@ const inputStyle = {
 
 // ── Single feed card ─────────────────────────────────────────────────────────
 
-function FeedCard({ order, myBid, isNew, criticalRef }) {
+function FeedCard({ order, myBid, isNew, criticalRef, highlighted }) {
   const [open, setOpen] = useState(false)
   const [flash, setFlash] = useState(isNew)
   const [bidFlash, setBidFlash] = useState(false)
@@ -166,8 +165,8 @@ function FeedCard({ order, myBid, isNew, criticalRef }) {
     setOpen(false)
   }
 
-  const cardBorder = bidFlash ? GOLD : flash ? u.color : '#e5e7eb'
-  const cardBg = bidFlash ? '#fffbeb' : flash ? u.bg : '#fff'
+  const cardBorder = bidFlash ? GOLD : highlighted ? '#ef4444' : flash ? u.color : '#e5e7eb'
+  const cardBg = bidFlash ? '#fffbeb' : highlighted ? '#fef2f2' : flash ? u.bg : '#fff'
 
   return (
     <div
@@ -378,6 +377,7 @@ export default function LiveFeed() {
   const [tier, setTier] = useState('All')
   const [veh, setVeh] = useState('All')
   const [openOnly, setOpenOnly] = useState(false)
+  const [highlightedCriticalIds, setHighlightedCriticalIds] = useState(new Set())
 
   const criticalRef = useRef(null)
   const pollRef = useRef(null)
@@ -459,6 +459,9 @@ export default function LiveFeed() {
 
   const scrollToCritical = () => {
     criticalRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    const ids = new Set(unbidCritical.map(o => o.id))
+    setHighlightedCriticalIds(ids)
+    setTimeout(() => setHighlightedCriticalIds(new Set()), 2500)
   }
 
   return (
@@ -549,6 +552,7 @@ export default function LiveFeed() {
             myBid={myBidMap[order.id] || null}
             isNew={newIds.has(order.id)}
             criticalRef={criticalRef}
+            highlighted={highlightedCriticalIds.has(order.id)}
           />
         ))}
       </div>
