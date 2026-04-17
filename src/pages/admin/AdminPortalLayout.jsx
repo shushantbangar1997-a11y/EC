@@ -103,11 +103,11 @@ function AdminPortalInner() {
       }}>
         {/* Brand */}
         <div style={{ padding: '20px 20px 16px', borderBottom: `1px solid ${T.sidebarBorder}` }}>
-          {/* Clip the bottom text portion of the logo PNG, show only the infinity symbol */}
-          <div style={{ overflow: 'hidden', height: 46, marginBottom: 10 }}>
-            <img src="/logo.png" alt="Everywhere Cars" style={{
-              width: 180, display: 'block',
-              filter: T.logoFilter, opacity: 0.92,
+          {/* Full wordmark — no clipping */}
+          <div style={{ marginBottom: 10 }}>
+            <img src="/logo.png?v=4" alt="Everywhere Cars" style={{
+              width: '100%', maxWidth: 200, height: 'auto', display: 'block',
+              filter: T.logoFilter, opacity: 0.95,
               transition: 'filter 200ms',
             }} />
           </div>

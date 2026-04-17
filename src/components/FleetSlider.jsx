@@ -1,4 +1,6 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
+import { FiArrowRight } from 'react-icons/fi'
 
 const FLEET_IMAGES = [
   { src: '/images/fleet-sedan.png',     label: 'Executive Sedan' },
@@ -41,17 +43,32 @@ export default function FleetSlider() {
         }
       `}</style>
 
-      <section style={{ background: '#0a0a0a', padding: '72px 0 80px', position: 'relative', overflow: 'hidden' }}>
-        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px', textAlign: 'center', marginBottom: 36 }}>
-          <p style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 2, color: 'rgba(255,255,255,0.45)', marginBottom: 12 }}>
+      <section style={{ background: '#ffffff', padding: '0 0 80px', position: 'relative', overflow: 'hidden' }}>
+        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '72px 24px 36px', textAlign: 'center', background: '#ffffff' }}>
+          <p style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 2, color: 'rgba(0,0,0,0.5)', marginBottom: 12 }}>
             Our Fleet
           </p>
-          <h2 style={{ fontSize: 'clamp(1.75rem, 3.5vw, 2.5rem)', fontWeight: 800, color: '#ffffff', letterSpacing: -0.5, marginBottom: 10 }}>
+          <h2 style={{ fontSize: 'clamp(1.75rem, 3.5vw, 2.5rem)', fontWeight: 800, color: '#000000', letterSpacing: -0.5, marginBottom: 10 }}>
             From Sedans to Coach Buses
           </h2>
-          <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.6)', maxWidth: 520, margin: '0 auto', lineHeight: 1.6 }}>
+          <p style={{ fontSize: 15, color: 'rgba(0,0,0,0.65)', maxWidth: 520, margin: '0 auto 22px', lineHeight: 1.6 }}>
             Every vehicle in our network is professionally maintained, late-model, and chauffeur-driven.
           </p>
+          <Link
+            to="/fleet"
+            style={{
+              display: 'inline-flex', alignItems: 'center', gap: 8,
+              padding: '10px 20px',
+              background: '#000000', color: '#ffffff',
+              fontSize: 13, fontWeight: 700, letterSpacing: 0.3,
+              borderRadius: 999, textDecoration: 'none',
+              transition: 'transform 150ms ease, opacity 150ms ease',
+            }}
+            onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.opacity = '0.9' }}
+            onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.opacity = '1' }}
+          >
+            View Full Fleet <FiArrowRight />
+          </Link>
         </div>
 
         <div className="fleet-mask" style={{ width: '100%', overflow: 'hidden' }}>

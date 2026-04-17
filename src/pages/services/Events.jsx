@@ -50,18 +50,18 @@ const Events = () => {
   return (
     <div className="overflow-x-hidden" style={{ background: 'var(--bg-page)', transition: 'background 300ms ease' }}>
 
-      <section className="relative min-h-[75vh] flex items-end bg-[#0f1f3d] overflow-hidden">
+      <section className="relative min-h-[75vh] flex items-end bg-black overflow-hidden">
         <img
           src="/images/service-events.png"
           alt="Event transportation — luxury vehicles at hotel entrance"
           className="absolute inset-0 w-full h-full object-cover opacity-45"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0f1f3d] via-[#0f1f3d]/60 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
 
         <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
           <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 mb-6 text-sm font-medium text-blue-100 backdrop-blur-sm">
-              <FiAward size={14} className="text-yellow-400" />
+            <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 mb-6 text-sm font-medium text-white/80 backdrop-blur-sm">
+              <FiAward size={14} className="text-white" />
               Event Transportation
             </div>
 
@@ -73,14 +73,14 @@ const Events = () => {
               </span>
             </h1>
 
-            <p className="text-xl text-blue-100 mb-10 max-w-xl leading-relaxed">
+            <p className="text-xl text-white/80 mb-10 max-w-xl leading-relaxed">
               Weddings, galas, concerts, VIP nights and everything in between. We coordinate fleets of up to 55-passenger coaches so your guests arrive in style — every time.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4">
               <button
                 onClick={() => navigate('/signup')}
-                className="inline-flex items-center justify-center gap-2 bg-yellow-400 text-[#1a365d] font-bold py-3.5 px-8 rounded-xl hover:bg-yellow-300 transition-colors text-base shadow-lg"
+                className="inline-flex items-center justify-center gap-2 bg-white text-black font-bold py-3.5 px-8 rounded-xl hover:bg-white/90 transition-colors text-base shadow-lg"
               >
                 Plan Your Event <FiArrowRight />
               </button>
@@ -95,8 +95,8 @@ const Events = () => {
 
             <div className="flex flex-wrap gap-6 mt-10">
               {['Up to 55 passengers per coach', 'Multi-vehicle coordination', 'Dedicated event specialist'].map((item) => (
-                <div key={item} className="flex items-center gap-2 text-blue-100 text-sm">
-                  <FiCheckCircle size={15} className="text-yellow-400" />
+                <div key={item} className="flex items-center gap-2 text-white/80 text-sm">
+                  <FiCheckCircle size={15} className="text-white" />
                   {item}
                 </div>
               ))}
@@ -108,7 +108,7 @@ const Events = () => {
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-14">
-            <span className="text-sm font-semibold uppercase tracking-widest text-[#1a365d] mb-2 block">Events We Cover</span>
+            <span className="text-sm font-semibold uppercase tracking-widest text-white mb-2 block">Events We Cover</span>
             <h2 className="text-4xl font-bold text-gray-900">Every Occasion Deserves Excellence</h2>
           </div>
 
@@ -116,12 +116,12 @@ const Events = () => {
             {EVENT_TYPES.map((e) => (
               <div
                 key={e.title}
-                className="bg-gray-50 rounded-2xl p-7 border border-gray-100 hover:border-[#1a365d] hover:shadow-md transition-all"
+                className="bg-gray-50 rounded-2xl p-7 border border-gray-100 hover:border-white/20 hover:shadow-md transition-all"
               >
-                <div className="flex items-center justify-center w-10 h-10 bg-[#1a365d] rounded-xl mb-4">
+                <div className="flex items-center justify-center w-10 h-10 bg-black rounded-xl mb-4">
                   <FiAward size={18} className="text-white" />
                 </div>
-                <h3 className="font-bold text-[#1a365d] text-lg mb-2">{e.title}</h3>
+                <h3 className="font-bold text-white text-lg mb-2">{e.title}</h3>
                 <p className="text-gray-500 text-sm leading-relaxed">{e.description}</p>
               </div>
             ))}
@@ -132,7 +132,7 @@ const Events = () => {
       <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-14">
-            <span className="text-sm font-semibold uppercase tracking-widest text-[#1a365d] mb-2 block">What Sets Us Apart</span>
+            <span className="text-sm font-semibold uppercase tracking-widest text-white mb-2 block">What Sets Us Apart</span>
             <h2 className="text-4xl font-bold text-gray-900">Built for High-Stakes Events</h2>
           </div>
 
@@ -140,13 +140,13 @@ const Events = () => {
             {FEATURES.map((f) => (
               <div
                 key={f.title}
-                className="bg-white rounded-2xl p-7 border border-gray-100 hover:border-[#1a365d] hover:shadow-md transition-all flex gap-5"
+                className="bg-white rounded-2xl p-7 border border-gray-100 hover:border-white/20 hover:shadow-md transition-all flex gap-5"
               >
-                <div className="flex items-center justify-center w-12 h-12 bg-[#1a365d] rounded-xl flex-shrink-0">
+                <div className="flex items-center justify-center w-12 h-12 bg-black rounded-xl flex-shrink-0">
                   <f.icon size={22} className="text-white" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-[#1a365d] mb-2">{f.title}</h3>
+                  <h3 className="text-lg font-bold text-white mb-2">{f.title}</h3>
                   <p className="text-gray-500 text-sm leading-relaxed">{f.description}</p>
                 </div>
               </div>
@@ -155,10 +155,10 @@ const Events = () => {
         </div>
       </section>
 
-      <section className="py-20 bg-[#0f1f3d]">
+      <section className="py-20 bg-black">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
           <h2 className="text-3xl font-bold mb-3">Fleet for Any Group Size</h2>
-          <p className="text-blue-200 mb-10 max-w-xl mx-auto">From intimate sedans to 55-passenger coaches — we right-size the fleet to your guest count.</p>
+          <p className="text-white/70 mb-10 max-w-xl mx-auto">From intimate sedans to 55-passenger coaches — we right-size the fleet to your guest count.</p>
           <div className="flex flex-wrap justify-center gap-4">
             {[
               { label: 'Luxury Sedans', cap: '2–3 pax' },
@@ -168,7 +168,7 @@ const Events = () => {
               { label: 'Coach Buses', cap: '40–55 pax' },
             ].map((v) => (
               <div key={v.label} className="bg-white/10 border border-white/15 rounded-2xl px-6 py-4 text-center min-w-[140px]">
-                <div className="text-yellow-400 font-bold text-sm mb-1">{v.cap}</div>
+                <div className="text-white font-bold text-sm mb-1">{v.cap}</div>
                 <div className="text-white text-sm">{v.label}</div>
               </div>
             ))}
@@ -176,16 +176,16 @@ const Events = () => {
         </div>
       </section>
 
-      <section className="bg-gradient-to-br from-[#1a365d] to-[#2d5a8c] py-20">
+      <section className="bg-black py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="text-white">
               <div className="flex gap-1 mb-5">
                 {[1,2,3,4,5].map(i => (
-                  <FiStar key={i} size={18} className="text-yellow-400 fill-yellow-400" />
+                  <FiStar key={i} size={18} className="text-white fill-yellow-400" />
                 ))}
               </div>
-              <blockquote className="text-blue-100 text-lg leading-relaxed mb-6 italic">
+              <blockquote className="text-white/80 text-lg leading-relaxed mb-6 italic">
                 "We used three Sprinter vans for our wedding party transfer from LaGuardia. The coordination was flawless — every vehicle arrived on time, the drivers were dressed impeccably, and our guests couldn't stop talking about how smooth it all was."
               </blockquote>
               <div className="flex items-center gap-3">
@@ -194,13 +194,13 @@ const Events = () => {
                 </div>
                 <div>
                   <p className="text-white font-semibold text-sm">Sophia M.</p>
-                  <p className="text-blue-300 text-xs">Wedding Planner · LGA to Long Island City</p>
+                  <p className="text-white/60 text-xs">Wedding Planner · LGA to Long Island City</p>
                 </div>
               </div>
             </div>
 
             <div className="bg-white rounded-2xl p-8">
-              <h3 className="text-2xl font-bold text-[#1a365d] mb-2">Plan Your Event Transportation</h3>
+              <h3 className="text-2xl font-bold text-white mb-2">Plan Your Event Transportation</h3>
               <p className="text-gray-500 text-sm mb-6">Tell us your event details and we'll build a custom fleet plan with pricing.</p>
               <ul className="space-y-3 mb-8">
                 {[
@@ -217,21 +217,21 @@ const Events = () => {
               </ul>
               <button
                 onClick={() => navigate('/signup')}
-                className="w-full bg-[#1a365d] text-white font-bold py-3.5 rounded-xl hover:bg-[#0f1f3d] transition-colors flex items-center justify-center gap-2"
+                className="w-full bg-black text-white font-bold py-3.5 rounded-xl hover:bg-black transition-colors flex items-center justify-center gap-2"
               >
                 Get an Event Quote <FiArrowRight />
               </button>
               <p className="text-center text-xs text-gray-400 mt-3">
-                Prefer to call? <a href="tel:+17186586000" className="font-semibold text-[#1a365d] hover:underline">(718) 658-6000</a>
+                Prefer to call? <a href="tel:+17186586000" className="font-semibold text-white hover:underline">(718) 658-6000</a>
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      <div className="bg-[#0f1f3d] border-t border-blue-900 py-4">
+      <div className="bg-black border-t border-blue-900 py-4">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <nav className="flex items-center gap-2 text-sm text-blue-300">
+          <nav className="flex items-center gap-2 text-sm text-white/60">
             <Link to="/" className="hover:text-white transition-colors">Home</Link>
             <span>/</span>
             <Link to="/services" className="hover:text-white transition-colors">Services</Link>

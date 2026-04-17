@@ -116,7 +116,7 @@ const RideDetails = () => {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center" style={{ background: 'var(--bg-page)', transition: 'background 300ms ease' }}>
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#1a365d] mx-auto"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white/20 mx-auto"></div>
           <p className="text-gray-600 mt-4">Loading ride details...</p>
         </div>
       </div>
@@ -128,7 +128,7 @@ const RideDetails = () => {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center" style={{ background: 'var(--bg-page)', transition: 'background 300ms ease' }}>
         <div className="text-center">
           <p className="text-gray-600 mb-4">Ride not found</p>
-          <button onClick={() => navigate('/my-rides')} className="text-[#1a365d] font-semibold hover:underline">
+          <button onClick={() => navigate('/my-rides')} className="text-white font-semibold hover:underline">
             Back to My Rides
           </button>
         </div>
@@ -143,7 +143,7 @@ const RideDetails = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <button
             onClick={() => navigate('/my-rides')}
-            className="flex items-center text-[#1a365d] font-semibold hover:underline"
+            className="flex items-center text-white font-semibold hover:underline"
           >
             <FiChevronLeft className="mr-2" />
             Back to My Rides
@@ -160,18 +160,18 @@ const RideDetails = () => {
             <div className="bg-white rounded-xl shadow-sm p-8 mb-6">
               <div className="mb-6">
                 <h1 className="text-3xl font-bold text-gray-900 mb-4">
-                  <FiMapPin className="inline mr-2 text-[#1a365d]" />
+                  <FiMapPin className="inline mr-2 text-white" />
                   {ride.pickup_location}
                 </h1>
                 <div className="flex items-center justify-between mb-4">
-                  <div className="flex-1 h-1 bg-[#1a365d] rounded-full"></div>
+                  <div className="flex-1 h-1 bg-black rounded-full"></div>
                   <span className="mx-4 text-sm text-gray-600 whitespace-nowrap">
                     {ride.distance ? `${(ride.distance / 1000).toFixed(1)} km` : '-'}
                   </span>
-                  <div className="flex-1 h-1 bg-[#1a365d] rounded-full"></div>
+                  <div className="flex-1 h-1 bg-black rounded-full"></div>
                 </div>
                 <h2 className="text-3xl font-bold text-gray-900">
-                  <FiMapPin className="inline mr-2 text-[#1a365d]" />
+                  <FiMapPin className="inline mr-2 text-white" />
                   {ride.destination}
                 </h2>
               </div>
@@ -214,7 +214,7 @@ const RideDetails = () => {
               <div className="mb-8">
                 <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-[#1a365d] transition-all duration-500"
+                    className="h-full bg-black transition-all duration-500"
                     style={{ width: `${getStatusProgress(ride.status)}%` }}
                   ></div>
                 </div>
@@ -234,13 +234,13 @@ const RideDetails = () => {
                           isCompleted
                             ? 'bg-green-500'
                             : isCurrent
-                            ? 'bg-[#1a365d] ring-4 ring-blue-200'
+                            ? 'bg-black ring-4 ring-blue-200'
                             : 'bg-gray-300'
                         }`}
                       ></div>
                       <span
                         className={`font-medium ${
-                          isCurrent ? 'text-[#1a365d] font-bold' : isCompleted ? 'text-gray-700' : 'text-gray-500'
+                          isCurrent ? 'text-white font-bold' : isCompleted ? 'text-gray-700' : 'text-gray-500'
                         }`}
                       >
                         {label}
@@ -263,9 +263,9 @@ const RideDetails = () => {
                 <h3 className="text-lg font-bold text-gray-900 mb-4">We've Reviewed Your Request</h3>
                 <p className="text-gray-600 mb-6">Our team has prepared a competitive quote for your transportation needs.</p>
 
-                <div className="bg-white rounded-lg p-6 mb-6 border-2 border-[#1a365d]">
+                <div className="bg-white rounded-lg p-6 mb-6 border-2 border-white/20">
                   <p className="text-sm text-gray-600 mb-2">Your Quote</p>
-                  <p className="text-4xl font-bold text-[#1a365d]">${ride.quoted_price?.toFixed(2)}</p>
+                  <p className="text-4xl font-bold text-white">${ride.quoted_price?.toFixed(2)}</p>
                   {ride.quote_notes && <p className="text-sm text-gray-600 mt-4">{ride.quote_notes}</p>}
                 </div>
 
@@ -374,7 +374,7 @@ const RideDetails = () => {
                             size={40}
                             className={`${
                               star <= (hoverRating || rating)
-                                ? 'fill-yellow-400 text-yellow-400'
+                                ? 'fill-yellow-400 text-white'
                                 : 'text-gray-300'
                             } transition`}
                           />
@@ -399,7 +399,7 @@ const RideDetails = () => {
                     <button
                       onClick={handleSubmitReview}
                       disabled={submittingReview || rating === 0}
-                      className="w-full bg-[#1a365d] text-white font-bold py-3 rounded-lg hover:bg-[#0f1f3d] transition disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-full bg-black text-white font-bold py-3 rounded-lg hover:bg-black transition disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {submittingReview ? 'Submitting...' : 'Submit Review'}
                     </button>
@@ -412,7 +412,7 @@ const RideDetails = () => {
                         <FiStar
                           key={star}
                           size={24}
-                          className={star <= ride.rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}
+                          className={star <= ride.rating ? 'fill-yellow-400 text-white' : 'text-gray-300'}
                         />
                       ))}
                     </div>
@@ -435,7 +435,7 @@ const RideDetails = () => {
                 <div>
                   <p className="text-xs font-semibold text-gray-500 uppercase mb-1">Pickup Location</p>
                   <p className="text-sm text-gray-900 flex items-start">
-                    <FiMapPin className="mr-2 mt-0.5 flex-shrink-0 text-[#1a365d]" />
+                    <FiMapPin className="mr-2 mt-0.5 flex-shrink-0 text-white" />
                     {ride.pickup_location}
                   </p>
                 </div>
@@ -444,7 +444,7 @@ const RideDetails = () => {
                 <div>
                   <p className="text-xs font-semibold text-gray-500 uppercase mb-1">Destination</p>
                   <p className="text-sm text-gray-900 flex items-start">
-                    <FiMapPin className="mr-2 mt-0.5 flex-shrink-0 text-[#1a365d]" />
+                    <FiMapPin className="mr-2 mt-0.5 flex-shrink-0 text-white" />
                     {ride.destination}
                   </p>
                 </div>
@@ -453,11 +453,11 @@ const RideDetails = () => {
                 <div>
                   <p className="text-xs font-semibold text-gray-500 uppercase mb-1">Scheduled For</p>
                   <p className="text-sm text-gray-900 flex items-center">
-                    <FiCalendar className="mr-2 text-[#1a365d]" />
+                    <FiCalendar className="mr-2 text-white" />
                     {format(parseISO(ride.scheduled_date), 'MMM dd, yyyy')}
                   </p>
                   <p className="text-sm text-gray-900 flex items-center mt-1">
-                    <FiClock className="mr-2 text-[#1a365d]" />
+                    <FiClock className="mr-2 text-white" />
                     {format(parseISO(`2000-01-01T${ride.scheduled_time}`), 'h:mm a')}
                   </p>
                 </div>
@@ -466,7 +466,7 @@ const RideDetails = () => {
                 <div>
                   <p className="text-xs font-semibold text-gray-500 uppercase mb-1">Passengers</p>
                   <p className="text-sm text-gray-900 flex items-center">
-                    <FiUsers className="mr-2 text-[#1a365d]" />
+                    <FiUsers className="mr-2 text-white" />
                     {ride.passengers}
                   </p>
                 </div>
@@ -475,7 +475,7 @@ const RideDetails = () => {
                 <div>
                   <p className="text-xs font-semibold text-gray-500 uppercase mb-1">Vehicle Type</p>
                   <p className="text-sm text-gray-900 flex items-center">
-                    <FiTruck className="mr-2 text-[#1a365d]" />
+                    <FiTruck className="mr-2 text-white" />
                     {ride.vehicle_type}
                   </p>
                 </div>
@@ -485,7 +485,7 @@ const RideDetails = () => {
                   <div>
                     <p className="text-xs font-semibold text-gray-500 uppercase mb-1">Amount Paid</p>
                     <p className="text-sm text-gray-900 flex items-center">
-                      <FiDollarSign className="mr-2 text-[#1a365d]" />
+                      <FiDollarSign className="mr-2 text-white" />
                       ${ride.amount_paid.toFixed(2)}
                     </p>
                   </div>
