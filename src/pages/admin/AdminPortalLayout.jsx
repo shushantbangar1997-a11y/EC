@@ -179,12 +179,18 @@ export default function AdminPortalLayout() {
                 <item.icon size={18} />
                 <span style={{ flex: 1 }}>{item.label}</span>
                 {item.liveDot && badge > 0 ? (
-                  <span style={{
-                    width: 9, height: 9, borderRadius: 999, background: '#22c55e',
-                    boxShadow: '0 0 0 2px rgba(34,197,94,0.35)',
-                    animation: 'liveDotPulse 1.4s ease infinite',
-                    flexShrink: 0,
-                  }} />
+                  <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                    <span style={{
+                      width: 8, height: 8, borderRadius: 999, background: '#22c55e',
+                      boxShadow: '0 0 0 2px rgba(34,197,94,0.35)',
+                      animation: 'liveDotPulse 1.4s ease infinite',
+                      flexShrink: 0,
+                    }} />
+                    <span style={{
+                      background: '#22c55e', color: '#fff', fontSize: 10, fontWeight: 800,
+                      padding: '2px 6px', borderRadius: 999, minWidth: 18, textAlign: 'center', lineHeight: '14px',
+                    }}>{badge}</span>
+                  </span>
                 ) : !item.liveDot && badge > 0 ? (
                   <span style={{
                     background: '#ef4444', color: '#fff', fontSize: 10, fontWeight: 800,

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Suspense } from 'react'
 import { Routes, Route, useLocation } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
 import { AuthProvider } from './context/AuthContext'
@@ -58,7 +58,7 @@ import AdminMyOffers from './pages/admin/MyOffers'
 import AdminTrips from './pages/admin/Trips'
 import AdminEarnings from './pages/admin/Earnings'
 import AdminProfile from './pages/admin/Profile'
-import AdminLiveFeed from './pages/admin/LiveFeed'
+const AdminLiveFeed = React.lazy(() => import('./pages/admin/LiveFeed'))
 
 function AppContent() {
   const location = useLocation()
@@ -216,8 +216,8 @@ function AppContent() {
                 </ProtectedRoute>
               }
             >
-              <Route index element={<AdminLiveFeed />} />
-              <Route path="live-feed" element={<AdminLiveFeed />} />
+              <Route index element={<Suspense fallback={null}><AdminLiveFeed /></Suspense>} />
+              <Route path="live-feed" element={<Suspense fallback={null}><AdminLiveFeed /></Suspense>} />
               <Route path="orders" element={<AdminOrders />} />
               <Route path="offers" element={<AdminMyOffers />} />
               <Route path="trips" element={<AdminTrips />} />

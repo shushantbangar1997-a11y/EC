@@ -325,9 +325,15 @@ function computeUrgency(rideDate) {
   if (Number.isNaN(ms)) return { urgency_score: 0, urgency_label: 'ASAP' }
   const hoursUntil = (ms - Date.now()) / 36e5
   if (hoursUntil < 0) return { urgency_score: 0, urgency_label: 'ASAP' }
-  if (hoursUntil < 2)  return { urgency_score: 4, urgency_label: 'Critical' }
-  if (hoursUntil < 6)  return { urgency_score: 3, urgency_label: 'Soon' }
-  if (hoursUntil < 24) return { urgency_score: 2, urgency_label: 'Today' }
+  if (hoursUntil < 2) return { urgency_score: 4, urgency_label: 'Critical' }
+  if (hoursUntil < 6) return { urgency_score: 3, urgency_label: 'Soon' }
+  // "Today" = same calendar day as now (in local server time), not just <24h
+  const pickup = new Date(ms)
+  const now = new Date()
+  const sameDay = pickup.getFullYear() === now.getFullYear() &&
+                  pickup.getMonth() === now.getMonth() &&
+                  pickup.getDate() === now.getDate()
+  if (sameDay) return { urgency_score: 2, urgency_label: 'Today' }
   return { urgency_score: 1, urgency_label: 'Flexible' }
 }
 

@@ -227,6 +227,11 @@ function FeedCard({ order, myBid, isNew, criticalRef }) {
           )}
         </div>
 
+        {/* Customer name */}
+        <div style={{ fontSize: 12, fontWeight: 600, color: '#475569', marginBottom: 7 }}>
+          {order.name || order.customer_name || 'Guest'}
+        </div>
+
         {/* Route */}
         <div style={{ marginBottom: 8 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 3 }}>
