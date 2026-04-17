@@ -34,29 +34,6 @@ const SUV_AMENITIES = [
 
 const FLEET_GROUPS = [
   {
-    id: 'electric',
-    label: 'Luxury Electric Vehicles',
-    badge: 'Zero Emissions',
-    tagline: 'The future of luxury transportation — silent, powerful, and impeccably comfortable.',
-    image: '/images/fleet-electric.png',
-    vehicles: [
-      {
-        name: 'Cadillac Lyriq',
-        pax: 4,
-        bags: 3,
-        amenities: ['Premium Seating', 'Dual-Zone Climate Control', 'USB Charging', 'Bottled Water'],
-        bookingValue: 'Cadillac Lyriq (2-4 Passengers)',
-      },
-      {
-        name: 'Tesla Model S',
-        pax: 3,
-        bags: 2,
-        amenities: ['Premium Seating', 'Glass Roof', 'Charging Ports', 'Bottled Water'],
-        bookingValue: 'Tesla Model S (2-3 Passengers)',
-      },
-    ],
-  },
-  {
     id: 'sedans',
     label: 'Luxury Sedans',
     badge: '2–3 Passengers',
@@ -289,7 +266,6 @@ const GroupSection = ({ group, onBook }) => {
               </div>
             )}
             <div className="inline-flex items-center gap-1.5 bg-black text-white text-xs font-bold uppercase tracking-widest px-3 py-1.5 rounded-full mb-2">
-              {group.id === 'electric' && <FiZap size={11} />}
               {group.badge}
             </div>
             <h2 className="text-2xl font-bold text-black mb-2">{group.label}</h2>

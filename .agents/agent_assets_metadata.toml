@@ -90,6 +90,114 @@ uri = "file://public/images/fleet-suv3.png"
 type = "image"
 title = "black lincoln navigator"
 
+[[generated]]
+id = "W97zW1l2JTrHomE_zEhr8"
+uri = "file://public/images/fleet-coach-2.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "5lJJLbDO7Vk_8SMSbCX49"
+uri = "file://public/images/fleet-coach-3.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "YEv05HOKgBAHmsOWaogPd"
+uri = "file://public/images/fleet-coach-4.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "nQIw4HayS_3fo2pRDl1Cs"
+uri = "file://public/images/fleet-limo-2.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "S0gjeM8Vis4qjBeqg_SYp"
+uri = "file://public/images/fleet-limo-3.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "LZKn6waRNsneT7IZsk1x2"
+uri = "file://public/images/fleet-limo-4.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "aUzxFgTMJYF-y28zkYUnB"
+uri = "file://public/images/fleet-sedan-3.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "uHyDfUb_dC61uZPucpg3m"
+uri = "file://public/images/fleet-sedan-4.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "SDlgX0VG4ok75lBAMkP1S"
+uri = "file://public/images/fleet-sedan-5.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "8xiLYt1MRPKSeuSRRBQJy"
+uri = "file://public/images/fleet-minibus-2.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "40hEXZEHu6O__Z1obZton"
+uri = "file://public/images/fleet-minibus-3.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "B7BJnAJp5OwVHGuzy8nSd"
+uri = "file://public/images/fleet-minibus-4.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "-p_B24oknPLqQJL0MLLgV"
+uri = "file://public/images/fleet-suv-4.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "kUBWeP33m7ELs1Hv5uObY"
+uri = "file://public/images/fleet-suv-5.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "k4uvo_VyDJxtZTLOonabz"
+uri = "file://public/images/fleet-suv-6.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "UZsZYWluSIYdBd1Zm7K_d"
+uri = "file://public/images/fleet-sprinter-3.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "kf1vkdTstlopJwqxOvhKl"
+uri = "file://public/images/fleet-sprinter-4.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "2QyOupjfSSbwvYDX-wbIZ"
+uri = "file://public/images/fleet-sprinter-5.png"
+type = "image"
+title = "generated_image"
+
 [[outputs]]
 id = "r7Z0jb9dHXujQvN9sq3u4"
 uri = "file://attached_assets/stock_images/escalade-airport.jpg"
