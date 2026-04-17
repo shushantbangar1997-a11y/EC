@@ -87,3 +87,7 @@ outputType = "console"
 GMAIL_USER = "edsindustries1@gmail.com"
 GMAIL_APP_PASSWORD = "ulwqsdzlropnenul"
 RESEND_API_KEY = "re_Z6PU2hPG_6S1MLrzZiAPRPJig55JTfULk"
+
+[postMerge]
+path = "scripts/post-merge.sh"
+timeoutMs = 180000
