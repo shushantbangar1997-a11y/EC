@@ -18,7 +18,6 @@ const NAV_ITEMS = [
   { to: '/admin/profile',   label: 'Profile',     icon: FiUser },
 ]
 
-// Inner component — consumes the theme provided by the wrapper below
 function AdminPortalInner() {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
@@ -61,9 +60,9 @@ function AdminPortalInner() {
         const liveFeedCount = orders.filter(unbid).length
 
         setCounts({
-          liveFeed:      liveFeedCount,
-          newOrders:     liveFeedCount,
-          pendingOffers: bids.filter(b => b.status === 'pending').length,
+          liveFeed:       liveFeedCount,
+          newOrders:      liveFeedCount,
+          pendingOffers:  bids.filter(b => b.status === 'pending').length,
           confirmedTrips: bids.filter(b => b.status === 'accepted').length,
         })
         document.title = liveFeedCount > 0
@@ -83,32 +82,44 @@ function AdminPortalInner() {
   }
 
   return (
-    <div style={{ background: T.pageBg, minHeight: '100vh', display: 'flex' }}>
+    <div style={{ background: T.pageBg, minHeight: '100vh', display: 'flex', transition: 'background 200ms' }}>
       <style>{`
         @keyframes liveDotPulse {
           0%, 100% { opacity: 1; transform: scale(1); }
           50% { opacity: 0.4; transform: scale(1.6); }
         }
-        .admin-nav-link:hover { background: rgba(255,255,255,0.07) !important; }
+        .admin-nav-link:hover { background: ${T.sidebarHover} !important; }
       `}</style>
 
-      {/* ── Sidebar (always dark, unchanged by theme) ───────────────────── */}
+      {/* ── Sidebar — fully theme-aware ──────────────────────────────────── */}
       <aside style={{
-        width: 240, background: '#0a0a0a', color: '#ffffff',
+        width: 240,
+        background: T.sidebarBg,
+        color: T.sidebarText,
         display: 'flex', flexDirection: 'column',
         position: 'sticky', top: 0, height: '100vh', flexShrink: 0,
-        borderRight: '1px solid #1a1a1a',
+        borderRight: `1px solid ${T.sidebarBorder}`,
+        transition: 'background 200ms, border-color 200ms',
       }}>
         {/* Brand */}
-        <div style={{ padding: '24px 20px 20px', borderBottom: '1px solid #1e1e1e' }}>
+        <div style={{ padding: '24px 20px 20px', borderBottom: `1px solid ${T.sidebarBorder}` }}>
           <img src="/logo.png" alt="Everywhere Cars" style={{
             height: 40, width: 'auto', display: 'block', marginBottom: 10,
-            filter: 'brightness(0) invert(1)', opacity: 0.92,
+            filter: T.logoFilter, opacity: 0.92,
+            transition: 'filter 200ms',
           }} />
-          <div style={{ fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', color: 'rgba(255,255,255,0.88)', fontWeight: 700, lineHeight: 1.2 }}>
+          <div style={{
+            fontSize: 11, letterSpacing: 2, textTransform: 'uppercase',
+            color: T.wordmarkColor, fontWeight: 700, lineHeight: 1.2,
+            transition: 'color 200ms',
+          }}>
             Everywhere Transfers
           </div>
-          <div style={{ fontSize: 9, letterSpacing: 1.8, textTransform: 'uppercase', color: '#a3a3a3', fontWeight: 500, marginTop: 3 }}>
+          <div style={{
+            fontSize: 9, letterSpacing: 1.8, textTransform: 'uppercase',
+            color: T.submarkColor, fontWeight: 500, marginTop: 3,
+            transition: 'color 200ms',
+          }}>
             Admin Portal
           </div>
         </div>
@@ -126,8 +137,8 @@ function AdminPortalInner() {
                 style={({ isActive }) => ({
                   display: 'flex', alignItems: 'center', gap: 11,
                   padding: '10px 12px', margin: '2px 0', borderRadius: 8,
-                  color: isActive ? '#0a0a0a' : 'rgba(255,255,255,0.65)',
-                  background: isActive ? '#ffffff' : 'transparent',
+                  color: isActive ? T.sidebarActiveText : T.sidebarText,
+                  background: isActive ? T.sidebarActiveBg : 'transparent',
                   fontSize: 13, fontWeight: isActive ? 600 : 400, letterSpacing: 0.1,
                   textDecoration: 'none', transition: 'background 120ms, color 120ms',
                 })}
@@ -137,18 +148,20 @@ function AdminPortalInner() {
                 {item.liveDot && badge > 0 ? (
                   <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
                     <span style={{
-                      width: 7, height: 7, borderRadius: 999, background: '#ffffff',
+                      width: 7, height: 7, borderRadius: 999, background: T.sidebarDotBg,
                       animation: 'liveDotPulse 1.6s ease infinite', flexShrink: 0,
                     }} />
                     <span style={{
-                      background: '#ffffff', color: '#0a0a0a', fontSize: 10, fontWeight: 700,
-                      padding: '1px 6px', borderRadius: 999, minWidth: 18, textAlign: 'center', lineHeight: '15px',
+                      background: T.sidebarBadgeBg, color: T.sidebarBadgeText,
+                      fontSize: 10, fontWeight: 700, padding: '1px 6px', borderRadius: 999,
+                      minWidth: 18, textAlign: 'center', lineHeight: '15px',
                     }}>{badge}</span>
                   </span>
                 ) : !item.liveDot && badge > 0 ? (
                   <span style={{
-                    background: '#ffffff', color: '#0a0a0a', fontSize: 10, fontWeight: 700,
-                    padding: '1px 6px', borderRadius: 999, minWidth: 18, textAlign: 'center', lineHeight: '15px',
+                    background: T.sidebarBadgeBg, color: T.sidebarBadgeText,
+                    fontSize: 10, fontWeight: 700, padding: '1px 6px', borderRadius: 999,
+                    minWidth: 18, textAlign: 'center', lineHeight: '15px',
                   }}>{badge}</span>
                 ) : null}
               </NavLink>
@@ -157,21 +170,30 @@ function AdminPortalInner() {
         </nav>
 
         {/* User footer */}
-        <div style={{ padding: '14px 16px', borderTop: '1px solid #1e1e1e' }}>
+        <div style={{ padding: '14px 16px', borderTop: `1px solid ${T.sidebarBorder}` }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
             <div style={{
               width: 32, height: 32, borderRadius: 999,
-              background: '#1e1e1e', border: '1px solid #2e2e2e',
-              color: '#a3a3a3', display: 'flex', alignItems: 'center', justifyContent: 'center',
+              background: T.sidebarAvatarBg,
+              border: `1px solid ${T.sidebarAvatarBorder}`,
+              color: T.sidebarAvatarText,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
               fontWeight: 600, fontSize: 12, letterSpacing: 0.5, flexShrink: 0,
+              transition: 'background 200ms, border-color 200ms',
             }}>
               {(user?.name || 'A').slice(0, 1).toUpperCase()}
             </div>
             <div style={{ minWidth: 0, flex: 1 }}>
-              <div style={{ fontSize: 12, fontWeight: 600, color: 'rgba(255,255,255,0.85)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              <div style={{
+                fontSize: 12, fontWeight: 600, color: T.wordmarkColor,
+                whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+              }}>
                 {user?.name || 'Admin'}
               </div>
-              <div style={{ fontSize: 10, color: '#a3a3a3', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              <div style={{
+                fontSize: 10, color: T.sidebarTextMuted,
+                whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+              }}>
                 {user?.email || ''}
               </div>
             </div>
@@ -180,10 +202,12 @@ function AdminPortalInner() {
             onClick={handleLogout}
             style={{
               width: '100%', padding: '7px 10px', background: 'transparent',
-              border: '1px solid #2a2a2a', color: '#a3a3a3',
+              border: `1px solid ${T.sidebarLogoutBorder}`,
+              color: T.sidebarLogoutText,
               borderRadius: 7, fontSize: 11, fontWeight: 500,
               display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
               cursor: 'pointer', letterSpacing: 0.3,
+              transition: 'border-color 200ms, color 200ms',
             }}
           >
             <FiLogOut size={12} /> Sign Out
@@ -191,7 +215,7 @@ function AdminPortalInner() {
         </div>
       </aside>
 
-      {/* ── Main content ────────────────────────────────────────────────── */}
+      {/* ── Main content ─────────────────────────────────────────────────── */}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
         {/* Top bar */}
         <header style={{
@@ -200,6 +224,7 @@ function AdminPortalInner() {
           padding: '0 24px', height: 52,
           display: 'flex', alignItems: 'center', gap: 12,
           position: 'sticky', top: 0, zIndex: 10,
+          transition: 'background 200ms, border-color 200ms',
         }}>
           <div style={{ flex: 1 }} />
 
@@ -227,7 +252,7 @@ function AdminPortalInner() {
               background: T.headerBg, cursor: 'pointer',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               color: T.textSub,
-              transition: 'background 120ms, border-color 120ms',
+              transition: 'background 200ms, border-color 200ms',
             }}
             aria-label="Toggle theme"
           >
@@ -241,7 +266,7 @@ function AdminPortalInner() {
               position: 'relative', width: 36, height: 36, borderRadius: 8,
               border: `1px solid ${T.border}`, background: T.headerBg,
               cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-              color: T.textSub,
+              color: T.textSub, transition: 'background 200ms',
             }}
             aria-label="Notifications"
           >
@@ -249,7 +274,7 @@ function AdminPortalInner() {
             {counts.newOrders > 0 && (
               <span style={{
                 position: 'absolute', top: -5, right: -5,
-                background: '#0a0a0a', color: '#ffffff',
+                background: T.btnBg, color: T.btnText,
                 fontSize: 9, fontWeight: 700, minWidth: 17, height: 17,
                 borderRadius: 999, display: 'flex', alignItems: 'center', justifyContent: 'center',
                 padding: '0 4px', border: `2px solid ${T.headerBg}`,
@@ -266,7 +291,6 @@ function AdminPortalInner() {
   )
 }
 
-// Default export wraps the inner component in the theme provider
 export default function AdminPortalLayout() {
   return (
     <AdminThemeProvider>
