@@ -14,7 +14,9 @@ export function ThemeProvider({ children }) {
   useEffect(() => {
     const root = document.documentElement
     root.classList.remove('dark')
-    root.removeAttribute('data-theme')
+    if (root.getAttribute('data-theme') !== 'admin') {
+      root.setAttribute('data-theme', 'customer')
+    }
     try { localStorage.setItem('theme', isDark ? 'dark' : 'light') } catch {}
   }, [isDark])
 

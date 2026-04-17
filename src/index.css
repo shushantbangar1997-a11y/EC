@@ -462,318 +462,318 @@ body {
    Scoped to html WITHOUT data-theme — so admin portal is untouched.
    ═══════════════════════════════════════════════════════════════════════ */
 
-html:not([data-theme]) .bg-\[\#1a365d\],
-html:not([data-theme]) .bg-\[\#0f1f3d\],
-html:not([data-theme]) .bg-\[\#1a3a6b\],
-html:not([data-theme]) .bg-\[\#2d5a8c\] { background-color: #0a0a0a !important; }
+html[data-theme="customer"] .bg-\[\#1a365d\],
+html[data-theme="customer"] .bg-\[\#0f1f3d\],
+html[data-theme="customer"] .bg-\[\#1a3a6b\],
+html[data-theme="customer"] .bg-\[\#2d5a8c\] { background-color: #0a0a0a !important; }
 
-html:not([data-theme]) .hover\:bg-\[\#1a365d\]:hover,
-html:not([data-theme]) .hover\:bg-\[\#0f1f3d\]:hover { background-color: #171717 !important; }
+html[data-theme="customer"] .hover\:bg-\[\#1a365d\]:hover,
+html[data-theme="customer"] .hover\:bg-\[\#0f1f3d\]:hover { background-color: #171717 !important; }
 
-html:not([data-theme]) .text-\[\#1a365d\],
-html:not([data-theme]) .text-\[\#0f1f3d\] { color: #0a0a0a !important; }
+html[data-theme="customer"] .text-\[\#1a365d\],
+html[data-theme="customer"] .text-\[\#0f1f3d\] { color: #0a0a0a !important; }
 
-html:not([data-theme]) .border-\[\#1a365d\],
-html:not([data-theme]) .border-\[\#0f1f3d\] { border-color: #0a0a0a !important; }
+html[data-theme="customer"] .border-\[\#1a365d\],
+html[data-theme="customer"] .border-\[\#0f1f3d\] { border-color: #0a0a0a !important; }
 
-html:not([data-theme]) .focus\:ring-\[\#1a365d\]:focus { --tw-ring-color: #0a0a0a !important; }
+html[data-theme="customer"] .focus\:ring-\[\#1a365d\]:focus { --tw-ring-color: #0a0a0a !important; }
 
 /* Tailwind palette tokens used as brand navy / gold */
-html:not([data-theme]) .from-primary-900,
-html:not([data-theme]) .from-primary-800,
-html:not([data-theme]) .via-primary-800,
-html:not([data-theme]) .to-primary-800,
-html:not([data-theme]) .to-primary-700,
-html:not([data-theme]) .to-primary-900,
-html:not([data-theme]) .bg-primary-900,
-html:not([data-theme]) .bg-primary-800,
-html:not([data-theme]) .bg-primary-700 { --tw-gradient-from: #0a0a0a !important; --tw-gradient-to: #0a0a0a !important; --tw-gradient-stops: #0a0a0a, #0a0a0a !important; background-color: #0a0a0a !important; }
-html:not([data-theme]) .text-primary-900,
-html:not([data-theme]) .text-primary-800,
-html:not([data-theme]) .text-primary-700 { color: #0a0a0a !important; }
-html:not([data-theme]) .border-primary-200,
-html:not([data-theme]) .border-primary-300,
-html:not([data-theme]) .border-primary-800 { border-color: #e5e5e5 !important; }
+html[data-theme="customer"] .from-primary-900,
+html[data-theme="customer"] .from-primary-800,
+html[data-theme="customer"] .via-primary-800,
+html[data-theme="customer"] .to-primary-800,
+html[data-theme="customer"] .to-primary-700,
+html[data-theme="customer"] .to-primary-900,
+html[data-theme="customer"] .bg-primary-900,
+html[data-theme="customer"] .bg-primary-800,
+html[data-theme="customer"] .bg-primary-700 { --tw-gradient-from: #0a0a0a !important; --tw-gradient-to: #0a0a0a !important; --tw-gradient-stops: #0a0a0a, #0a0a0a !important; background-color: #0a0a0a !important; }
+html[data-theme="customer"] .text-primary-900,
+html[data-theme="customer"] .text-primary-800,
+html[data-theme="customer"] .text-primary-700 { color: #0a0a0a !important; }
+html[data-theme="customer"] .border-primary-200,
+html[data-theme="customer"] .border-primary-300,
+html[data-theme="customer"] .border-primary-800 { border-color: #e5e5e5 !important; }
 
 /* Gradient hero sections — navy → black */
-html:not([data-theme]) [class*="from-[#0f1f3d]"],
-html:not([data-theme]) [class*="from-[#1a365d]"] { --tw-gradient-from: #0a0a0a !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(10,10,10,0)) !important; }
-html:not([data-theme]) [class*="via-[#1a365d]"],
-html:not([data-theme]) [class*="via-[#2d5a8c]"] { --tw-gradient-stops: var(--tw-gradient-from), #171717, var(--tw-gradient-to, rgba(23,23,23,0)) !important; }
-html:not([data-theme]) [class*="to-[#1a3a6b]"],
-html:not([data-theme]) [class*="to-[#1a365d]"] { --tw-gradient-to: #0a0a0a !important; }
+html[data-theme="customer"] [class*="from-[#0f1f3d]"],
+html[data-theme="customer"] [class*="from-[#1a365d]"] { --tw-gradient-from: #0a0a0a !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(10,10,10,0)) !important; }
+html[data-theme="customer"] [class*="via-[#1a365d]"],
+html[data-theme="customer"] [class*="via-[#2d5a8c]"] { --tw-gradient-stops: var(--tw-gradient-from), #171717, var(--tw-gradient-to, rgba(23,23,23,0)) !important; }
+html[data-theme="customer"] [class*="to-[#1a3a6b]"],
+html[data-theme="customer"] [class*="to-[#1a365d]"] { --tw-gradient-to: #0a0a0a !important; }
 
 /* Decorative blue blurs in heroes — neutralise to white tint */
-html:not([data-theme]) .bg-blue-600,
-html:not([data-theme]) .bg-indigo-800,
-html:not([data-theme]) .bg-blue-700,
-html:not([data-theme]) .bg-indigo-700,
-html:not([data-theme]) .bg-indigo-600 { background-color: #ffffff !important; }
+html[data-theme="customer"] .bg-blue-600,
+html[data-theme="customer"] .bg-indigo-800,
+html[data-theme="customer"] .bg-blue-700,
+html[data-theme="customer"] .bg-indigo-700,
+html[data-theme="customer"] .bg-indigo-600 { background-color: #ffffff !important; }
 
 /* Yellow / gold accents → white on dark, black on light */
-html:not([data-theme]) .bg-yellow-400,
-html:not([data-theme]) .bg-yellow-300,
-html:not([data-theme]) .hover\:bg-yellow-300:hover,
-html:not([data-theme]) .bg-amber-400,
-html:not([data-theme]) .bg-amber-500 { background-color: #ffffff !important; color: #0a0a0a !important; }
+html[data-theme="customer"] .bg-yellow-400,
+html[data-theme="customer"] .bg-yellow-300,
+html[data-theme="customer"] .hover\:bg-yellow-300:hover,
+html[data-theme="customer"] .bg-amber-400,
+html[data-theme="customer"] .bg-amber-500 { background-color: #ffffff !important; color: #0a0a0a !important; }
 /* Yellow accent text — drop to black; on dark hero contexts the elements
    are usually paired with .text-white siblings so the loss of the gold
    accent simply removes a non-monochrome color */
-html:not([data-theme]) .text-yellow-400,
-html:not([data-theme]) .text-yellow-500,
-html:not([data-theme]) .text-yellow-600,
-html:not([data-theme]) .text-amber-400,
-html:not([data-theme]) .text-amber-500 { color: currentColor !important; }
+html[data-theme="customer"] .text-yellow-400,
+html[data-theme="customer"] .text-yellow-500,
+html[data-theme="customer"] .text-yellow-600,
+html[data-theme="customer"] .text-amber-400,
+html[data-theme="customer"] .text-amber-500 { color: currentColor !important; }
 /* Hero / dark-section yellow numbers (e.g. text-yellow-400 directly inside
    a .bg-black or gradient hero) — when the parent text color is white,
    currentColor inherits white. Where the parent has dark text, we want
    visible dark text. Use a fallback for orphan cases. */
-html:not([data-theme]) .border-yellow-400,
-html:not([data-theme]) .border-yellow-400\/50 { border-color: rgba(255,255,255,0.5) !important; }
+html[data-theme="customer"] .border-yellow-400,
+html[data-theme="customer"] .border-yellow-400\/50 { border-color: rgba(255,255,255,0.5) !important; }
 
 /* Blue-tinted body text inside dark heroes → soft white */
-html:not([data-theme]) .text-blue-100,
-html:not([data-theme]) .text-blue-200,
-html:not([data-theme]) .text-blue-300,
-html:not([data-theme]) .text-indigo-100,
-html:not([data-theme]) .text-indigo-200 { color: rgba(255,255,255,0.72) !important; }
+html[data-theme="customer"] .text-blue-100,
+html[data-theme="customer"] .text-blue-200,
+html[data-theme="customer"] .text-blue-300,
+html[data-theme="customer"] .text-indigo-100,
+html[data-theme="customer"] .text-indigo-200 { color: rgba(255,255,255,0.72) !important; }
 
 /* Light blue hover backgrounds (icons inside cards) */
-html:not([data-theme]) .bg-blue-50 { background-color: #f5f5f5 !important; }
-html:not([data-theme]) .group:hover .group-hover\:bg-\[\#1a365d\] { background-color: #0a0a0a !important; }
-html:not([data-theme]) .group:hover .group-hover\:text-white { color: #ffffff !important; }
+html[data-theme="customer"] .bg-blue-50 { background-color: #f5f5f5 !important; }
+html[data-theme="customer"] .group:hover .group-hover\:bg-\[\#1a365d\] { background-color: #0a0a0a !important; }
+html[data-theme="customer"] .group:hover .group-hover\:text-white { color: #ffffff !important; }
 
 /* === Comprehensive blue / sky / indigo neutralisation === */
 /* Solid blue/sky/indigo backgrounds — collapse to black on customer site */
-html:not([data-theme]) .bg-blue-500,
-html:not([data-theme]) .bg-blue-600,
-html:not([data-theme]) .bg-blue-700,
-html:not([data-theme]) .bg-blue-800,
-html:not([data-theme]) .bg-blue-900,
-html:not([data-theme]) .bg-sky-500,
-html:not([data-theme]) .bg-sky-600,
-html:not([data-theme]) .bg-sky-700,
-html:not([data-theme]) .bg-sky-800,
-html:not([data-theme]) .bg-indigo-500,
-html:not([data-theme]) .bg-indigo-600,
-html:not([data-theme]) .bg-indigo-700,
-html:not([data-theme]) .bg-indigo-800,
-html:not([data-theme]) .hover\:bg-blue-600:hover,
-html:not([data-theme]) .hover\:bg-blue-700:hover { background-color: #0a0a0a !important; color: #ffffff !important; }
+html[data-theme="customer"] .bg-blue-500,
+html[data-theme="customer"] .bg-blue-600,
+html[data-theme="customer"] .bg-blue-700,
+html[data-theme="customer"] .bg-blue-800,
+html[data-theme="customer"] .bg-blue-900,
+html[data-theme="customer"] .bg-sky-500,
+html[data-theme="customer"] .bg-sky-600,
+html[data-theme="customer"] .bg-sky-700,
+html[data-theme="customer"] .bg-sky-800,
+html[data-theme="customer"] .bg-indigo-500,
+html[data-theme="customer"] .bg-indigo-600,
+html[data-theme="customer"] .bg-indigo-700,
+html[data-theme="customer"] .bg-indigo-800,
+html[data-theme="customer"] .hover\:bg-blue-600:hover,
+html[data-theme="customer"] .hover\:bg-blue-700:hover { background-color: #0a0a0a !important; color: #ffffff !important; }
 
 /* Soft tint blue/indigo backgrounds (cards, badges) — collapse to neutral */
-html:not([data-theme]) .bg-blue-100,
-html:not([data-theme]) .bg-blue-200,
-html:not([data-theme]) .bg-sky-50,
-html:not([data-theme]) .bg-sky-100,
-html:not([data-theme]) .bg-indigo-50,
-html:not([data-theme]) .bg-indigo-100,
-html:not([data-theme]) .bg-primary-50,
-html:not([data-theme]) .bg-primary-100,
-html:not([data-theme]) .bg-primary-200 { background-color: #f5f5f5 !important; color: #0a0a0a !important; }
+html[data-theme="customer"] .bg-blue-100,
+html[data-theme="customer"] .bg-blue-200,
+html[data-theme="customer"] .bg-sky-50,
+html[data-theme="customer"] .bg-sky-100,
+html[data-theme="customer"] .bg-indigo-50,
+html[data-theme="customer"] .bg-indigo-100,
+html[data-theme="customer"] .bg-primary-50,
+html[data-theme="customer"] .bg-primary-100,
+html[data-theme="customer"] .bg-primary-200 { background-color: #f5f5f5 !important; color: #0a0a0a !important; }
 
 /* Blue / sky / indigo text — solid darks become black, lights inherit */
-html:not([data-theme]) .text-blue-500,
-html:not([data-theme]) .text-blue-600,
-html:not([data-theme]) .text-blue-700,
-html:not([data-theme]) .text-blue-800,
-html:not([data-theme]) .text-blue-900,
-html:not([data-theme]) .text-sky-500,
-html:not([data-theme]) .text-sky-600,
-html:not([data-theme]) .text-sky-700,
-html:not([data-theme]) .text-indigo-500,
-html:not([data-theme]) .text-indigo-600,
-html:not([data-theme]) .text-indigo-700,
-html:not([data-theme]) .text-indigo-800 { color: #0a0a0a !important; }
+html[data-theme="customer"] .text-blue-500,
+html[data-theme="customer"] .text-blue-600,
+html[data-theme="customer"] .text-blue-700,
+html[data-theme="customer"] .text-blue-800,
+html[data-theme="customer"] .text-blue-900,
+html[data-theme="customer"] .text-sky-500,
+html[data-theme="customer"] .text-sky-600,
+html[data-theme="customer"] .text-sky-700,
+html[data-theme="customer"] .text-indigo-500,
+html[data-theme="customer"] .text-indigo-600,
+html[data-theme="customer"] .text-indigo-700,
+html[data-theme="customer"] .text-indigo-800 { color: #0a0a0a !important; }
 
 /* Blue / sky / indigo borders → neutral */
-html:not([data-theme]) .border-blue-200,
-html:not([data-theme]) .border-blue-300,
-html:not([data-theme]) .border-blue-400,
-html:not([data-theme]) .border-blue-500,
-html:not([data-theme]) .border-blue-600,
-html:not([data-theme]) .border-blue-700,
-html:not([data-theme]) .border-blue-800,
-html:not([data-theme]) .border-blue-900,
-html:not([data-theme]) .border-sky-200,
-html:not([data-theme]) .border-sky-300,
-html:not([data-theme]) .border-indigo-200,
-html:not([data-theme]) .border-indigo-300,
-html:not([data-theme]) .border-indigo-500 { border-color: #e5e5e5 !important; }
+html[data-theme="customer"] .border-blue-200,
+html[data-theme="customer"] .border-blue-300,
+html[data-theme="customer"] .border-blue-400,
+html[data-theme="customer"] .border-blue-500,
+html[data-theme="customer"] .border-blue-600,
+html[data-theme="customer"] .border-blue-700,
+html[data-theme="customer"] .border-blue-800,
+html[data-theme="customer"] .border-blue-900,
+html[data-theme="customer"] .border-sky-200,
+html[data-theme="customer"] .border-sky-300,
+html[data-theme="customer"] .border-indigo-200,
+html[data-theme="customer"] .border-indigo-300,
+html[data-theme="customer"] .border-indigo-500 { border-color: #e5e5e5 !important; }
 
 /* Gradient stops referencing blue/sky/indigo — every numeric variant.
    Light variants (50–300) collapse to white so bg-clip-text reads as
    plain white on dark heroes; dark variants collapse to black. */
-html:not([data-theme]) [class*="from-blue-"],
-html:not([data-theme]) [class*="from-sky-"],
-html:not([data-theme]) [class*="from-indigo-"] { --tw-gradient-from: #ffffff !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(255,255,255,0)) !important; }
-html:not([data-theme]) [class*="to-blue-"],
-html:not([data-theme]) [class*="to-sky-"],
-html:not([data-theme]) [class*="to-indigo-"] { --tw-gradient-to: #ffffff !important; }
-html:not([data-theme]) [class*="via-blue-"],
-html:not([data-theme]) [class*="via-sky-"],
-html:not([data-theme]) [class*="via-indigo-"] { --tw-gradient-stops: var(--tw-gradient-from), #ffffff, var(--tw-gradient-to, rgba(255,255,255,0)) !important; }
+html[data-theme="customer"] [class*="from-blue-"],
+html[data-theme="customer"] [class*="from-sky-"],
+html[data-theme="customer"] [class*="from-indigo-"] { --tw-gradient-from: #ffffff !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(255,255,255,0)) !important; }
+html[data-theme="customer"] [class*="to-blue-"],
+html[data-theme="customer"] [class*="to-sky-"],
+html[data-theme="customer"] [class*="to-indigo-"] { --tw-gradient-to: #ffffff !important; }
+html[data-theme="customer"] [class*="via-blue-"],
+html[data-theme="customer"] [class*="via-sky-"],
+html[data-theme="customer"] [class*="via-indigo-"] { --tw-gradient-stops: var(--tw-gradient-from), #ffffff, var(--tw-gradient-to, rgba(255,255,255,0)) !important; }
 
 /* Solid blue/indigo/sky backgrounds (any numeric) → black surface */
-html:not([data-theme]) .bg-blue-400,
-html:not([data-theme]) .bg-blue-500,
-html:not([data-theme]) .bg-blue-600,
-html:not([data-theme]) .bg-blue-700,
-html:not([data-theme]) .bg-blue-800,
-html:not([data-theme]) .bg-blue-900,
-html:not([data-theme]) .bg-sky-400,
-html:not([data-theme]) .bg-sky-500,
-html:not([data-theme]) .bg-sky-600,
-html:not([data-theme]) .bg-sky-700,
-html:not([data-theme]) .bg-sky-800,
-html:not([data-theme]) .bg-sky-900,
-html:not([data-theme]) .bg-indigo-400,
-html:not([data-theme]) .bg-indigo-500,
-html:not([data-theme]) .bg-indigo-600,
-html:not([data-theme]) .bg-indigo-700,
-html:not([data-theme]) .bg-indigo-800,
-html:not([data-theme]) .bg-indigo-900 { background-color: #0a0a0a !important; color: #ffffff !important; }
+html[data-theme="customer"] .bg-blue-400,
+html[data-theme="customer"] .bg-blue-500,
+html[data-theme="customer"] .bg-blue-600,
+html[data-theme="customer"] .bg-blue-700,
+html[data-theme="customer"] .bg-blue-800,
+html[data-theme="customer"] .bg-blue-900,
+html[data-theme="customer"] .bg-sky-400,
+html[data-theme="customer"] .bg-sky-500,
+html[data-theme="customer"] .bg-sky-600,
+html[data-theme="customer"] .bg-sky-700,
+html[data-theme="customer"] .bg-sky-800,
+html[data-theme="customer"] .bg-sky-900,
+html[data-theme="customer"] .bg-indigo-400,
+html[data-theme="customer"] .bg-indigo-500,
+html[data-theme="customer"] .bg-indigo-600,
+html[data-theme="customer"] .bg-indigo-700,
+html[data-theme="customer"] .bg-indigo-800,
+html[data-theme="customer"] .bg-indigo-900 { background-color: #0a0a0a !important; color: #ffffff !important; }
 
 /* === Universal grayscale override (customer site only) ===
    Catches every common semantic color × numeric variant.
    Solid backgrounds: light variants → light gray, dark variants → black.
    Text: dark variants → black, light variants → gray.
    Borders: → neutral gray. */
-html:not([data-theme]) [class*="bg-yellow-50"],
-html:not([data-theme]) [class*="bg-yellow-100"],
-html:not([data-theme]) [class*="bg-yellow-200"],
-html:not([data-theme]) [class*="bg-amber-50"],
-html:not([data-theme]) [class*="bg-amber-100"],
-html:not([data-theme]) [class*="bg-amber-200"],
-html:not([data-theme]) [class*="bg-orange-50"],
-html:not([data-theme]) [class*="bg-orange-100"],
-html:not([data-theme]) [class*="bg-orange-200"],
-html:not([data-theme]) [class*="bg-green-50"],
-html:not([data-theme]) [class*="bg-green-100"],
-html:not([data-theme]) [class*="bg-green-200"],
-html:not([data-theme]) [class*="bg-emerald-50"],
-html:not([data-theme]) [class*="bg-emerald-100"],
-html:not([data-theme]) [class*="bg-emerald-200"],
-html:not([data-theme]) [class*="bg-teal-50"],
-html:not([data-theme]) [class*="bg-teal-100"],
-html:not([data-theme]) [class*="bg-red-50"],
-html:not([data-theme]) [class*="bg-red-100"],
-html:not([data-theme]) [class*="bg-red-200"],
-html:not([data-theme]) [class*="bg-rose-50"],
-html:not([data-theme]) [class*="bg-rose-100"],
-html:not([data-theme]) [class*="bg-purple-50"],
-html:not([data-theme]) [class*="bg-purple-100"],
-html:not([data-theme]) [class*="bg-purple-200"],
-html:not([data-theme]) [class*="bg-pink-50"],
-html:not([data-theme]) [class*="bg-pink-100"],
-html:not([data-theme]) [class*="bg-violet-50"],
-html:not([data-theme]) [class*="bg-violet-100"],
-html:not([data-theme]) [class*="bg-fuchsia-50"],
-html:not([data-theme]) [class*="bg-fuchsia-100"] { background-color: #f5f5f5 !important; color: #0a0a0a !important; }
+html[data-theme="customer"] [class*="bg-yellow-50"],
+html[data-theme="customer"] [class*="bg-yellow-100"],
+html[data-theme="customer"] [class*="bg-yellow-200"],
+html[data-theme="customer"] [class*="bg-amber-50"],
+html[data-theme="customer"] [class*="bg-amber-100"],
+html[data-theme="customer"] [class*="bg-amber-200"],
+html[data-theme="customer"] [class*="bg-orange-50"],
+html[data-theme="customer"] [class*="bg-orange-100"],
+html[data-theme="customer"] [class*="bg-orange-200"],
+html[data-theme="customer"] [class*="bg-green-50"],
+html[data-theme="customer"] [class*="bg-green-100"],
+html[data-theme="customer"] [class*="bg-green-200"],
+html[data-theme="customer"] [class*="bg-emerald-50"],
+html[data-theme="customer"] [class*="bg-emerald-100"],
+html[data-theme="customer"] [class*="bg-emerald-200"],
+html[data-theme="customer"] [class*="bg-teal-50"],
+html[data-theme="customer"] [class*="bg-teal-100"],
+html[data-theme="customer"] [class*="bg-red-50"],
+html[data-theme="customer"] [class*="bg-red-100"],
+html[data-theme="customer"] [class*="bg-red-200"],
+html[data-theme="customer"] [class*="bg-rose-50"],
+html[data-theme="customer"] [class*="bg-rose-100"],
+html[data-theme="customer"] [class*="bg-purple-50"],
+html[data-theme="customer"] [class*="bg-purple-100"],
+html[data-theme="customer"] [class*="bg-purple-200"],
+html[data-theme="customer"] [class*="bg-pink-50"],
+html[data-theme="customer"] [class*="bg-pink-100"],
+html[data-theme="customer"] [class*="bg-violet-50"],
+html[data-theme="customer"] [class*="bg-violet-100"],
+html[data-theme="customer"] [class*="bg-fuchsia-50"],
+html[data-theme="customer"] [class*="bg-fuchsia-100"] { background-color: #f5f5f5 !important; color: #0a0a0a !important; }
 
-html:not([data-theme]) .bg-yellow-300,
-html:not([data-theme]) .bg-yellow-500,
-html:not([data-theme]) .bg-yellow-600,
-html:not([data-theme]) .bg-yellow-700,
-html:not([data-theme]) .bg-yellow-800,
-html:not([data-theme]) .bg-yellow-900,
-html:not([data-theme]) .bg-amber-300,
-html:not([data-theme]) .bg-amber-600,
-html:not([data-theme]) .bg-amber-700,
-html:not([data-theme]) .bg-amber-800,
-html:not([data-theme]) .bg-orange-400,
-html:not([data-theme]) .bg-orange-500,
-html:not([data-theme]) .bg-orange-600,
-html:not([data-theme]) .bg-orange-700,
-html:not([data-theme]) .bg-green-400,
-html:not([data-theme]) .bg-green-500,
-html:not([data-theme]) .bg-green-600,
-html:not([data-theme]) .bg-green-700,
-html:not([data-theme]) .bg-green-800,
-html:not([data-theme]) .bg-green-900,
-html:not([data-theme]) .bg-emerald-400,
-html:not([data-theme]) .bg-emerald-500,
-html:not([data-theme]) .bg-emerald-600,
-html:not([data-theme]) .bg-emerald-700,
-html:not([data-theme]) .bg-emerald-800,
-html:not([data-theme]) .bg-teal-500,
-html:not([data-theme]) .bg-teal-600,
-html:not([data-theme]) .bg-teal-700,
-html:not([data-theme]) .bg-red-400,
-html:not([data-theme]) .bg-red-500,
-html:not([data-theme]) .bg-red-600,
-html:not([data-theme]) .bg-red-700,
-html:not([data-theme]) .bg-red-800,
-html:not([data-theme]) .bg-red-900,
-html:not([data-theme]) .bg-rose-500,
-html:not([data-theme]) .bg-rose-600,
-html:not([data-theme]) .bg-rose-700,
-html:not([data-theme]) .bg-purple-400,
-html:not([data-theme]) .bg-purple-500,
-html:not([data-theme]) .bg-purple-600,
-html:not([data-theme]) .bg-purple-700,
-html:not([data-theme]) .bg-purple-800,
-html:not([data-theme]) .bg-pink-500,
-html:not([data-theme]) .bg-pink-600,
-html:not([data-theme]) .bg-violet-500,
-html:not([data-theme]) .bg-violet-600,
-html:not([data-theme]) .bg-violet-700,
-html:not([data-theme]) .bg-fuchsia-500,
-html:not([data-theme]) .bg-fuchsia-600,
-html:not([data-theme]) .hover\:bg-green-600:hover,
-html:not([data-theme]) .hover\:bg-red-600:hover { background-color: #0a0a0a !important; color: #ffffff !important; }
+html[data-theme="customer"] .bg-yellow-300,
+html[data-theme="customer"] .bg-yellow-500,
+html[data-theme="customer"] .bg-yellow-600,
+html[data-theme="customer"] .bg-yellow-700,
+html[data-theme="customer"] .bg-yellow-800,
+html[data-theme="customer"] .bg-yellow-900,
+html[data-theme="customer"] .bg-amber-300,
+html[data-theme="customer"] .bg-amber-600,
+html[data-theme="customer"] .bg-amber-700,
+html[data-theme="customer"] .bg-amber-800,
+html[data-theme="customer"] .bg-orange-400,
+html[data-theme="customer"] .bg-orange-500,
+html[data-theme="customer"] .bg-orange-600,
+html[data-theme="customer"] .bg-orange-700,
+html[data-theme="customer"] .bg-green-400,
+html[data-theme="customer"] .bg-green-500,
+html[data-theme="customer"] .bg-green-600,
+html[data-theme="customer"] .bg-green-700,
+html[data-theme="customer"] .bg-green-800,
+html[data-theme="customer"] .bg-green-900,
+html[data-theme="customer"] .bg-emerald-400,
+html[data-theme="customer"] .bg-emerald-500,
+html[data-theme="customer"] .bg-emerald-600,
+html[data-theme="customer"] .bg-emerald-700,
+html[data-theme="customer"] .bg-emerald-800,
+html[data-theme="customer"] .bg-teal-500,
+html[data-theme="customer"] .bg-teal-600,
+html[data-theme="customer"] .bg-teal-700,
+html[data-theme="customer"] .bg-red-400,
+html[data-theme="customer"] .bg-red-500,
+html[data-theme="customer"] .bg-red-600,
+html[data-theme="customer"] .bg-red-700,
+html[data-theme="customer"] .bg-red-800,
+html[data-theme="customer"] .bg-red-900,
+html[data-theme="customer"] .bg-rose-500,
+html[data-theme="customer"] .bg-rose-600,
+html[data-theme="customer"] .bg-rose-700,
+html[data-theme="customer"] .bg-purple-400,
+html[data-theme="customer"] .bg-purple-500,
+html[data-theme="customer"] .bg-purple-600,
+html[data-theme="customer"] .bg-purple-700,
+html[data-theme="customer"] .bg-purple-800,
+html[data-theme="customer"] .bg-pink-500,
+html[data-theme="customer"] .bg-pink-600,
+html[data-theme="customer"] .bg-violet-500,
+html[data-theme="customer"] .bg-violet-600,
+html[data-theme="customer"] .bg-violet-700,
+html[data-theme="customer"] .bg-fuchsia-500,
+html[data-theme="customer"] .bg-fuchsia-600,
+html[data-theme="customer"] .hover\:bg-green-600:hover,
+html[data-theme="customer"] .hover\:bg-red-600:hover { background-color: #0a0a0a !important; color: #ffffff !important; }
 
 /* Text colors — solid darks → black, lights stay readable */
-html:not([data-theme]) .text-yellow-700,
-html:not([data-theme]) .text-yellow-800,
-html:not([data-theme]) .text-yellow-900,
-html:not([data-theme]) .text-amber-600,
-html:not([data-theme]) .text-amber-700,
-html:not([data-theme]) .text-amber-800,
-html:not([data-theme]) .text-orange-500,
-html:not([data-theme]) .text-orange-600,
-html:not([data-theme]) .text-orange-700,
-html:not([data-theme]) .text-green-500,
-html:not([data-theme]) .text-green-600,
-html:not([data-theme]) .text-green-700,
-html:not([data-theme]) .text-green-800,
-html:not([data-theme]) .text-emerald-500,
-html:not([data-theme]) .text-emerald-600,
-html:not([data-theme]) .text-emerald-700,
-html:not([data-theme]) .text-emerald-800,
-html:not([data-theme]) .text-teal-600,
-html:not([data-theme]) .text-teal-700,
-html:not([data-theme]) .text-red-500,
-html:not([data-theme]) .text-red-600,
-html:not([data-theme]) .text-red-700,
-html:not([data-theme]) .text-red-800,
-html:not([data-theme]) .text-rose-500,
-html:not([data-theme]) .text-rose-600,
-html:not([data-theme]) .text-purple-500,
-html:not([data-theme]) .text-purple-600,
-html:not([data-theme]) .text-purple-700,
-html:not([data-theme]) .text-purple-800,
-html:not([data-theme]) .text-pink-500,
-html:not([data-theme]) .text-pink-600,
-html:not([data-theme]) .text-violet-600,
-html:not([data-theme]) .text-violet-700,
-html:not([data-theme]) .text-fuchsia-600 { color: #0a0a0a !important; }
+html[data-theme="customer"] .text-yellow-700,
+html[data-theme="customer"] .text-yellow-800,
+html[data-theme="customer"] .text-yellow-900,
+html[data-theme="customer"] .text-amber-600,
+html[data-theme="customer"] .text-amber-700,
+html[data-theme="customer"] .text-amber-800,
+html[data-theme="customer"] .text-orange-500,
+html[data-theme="customer"] .text-orange-600,
+html[data-theme="customer"] .text-orange-700,
+html[data-theme="customer"] .text-green-500,
+html[data-theme="customer"] .text-green-600,
+html[data-theme="customer"] .text-green-700,
+html[data-theme="customer"] .text-green-800,
+html[data-theme="customer"] .text-emerald-500,
+html[data-theme="customer"] .text-emerald-600,
+html[data-theme="customer"] .text-emerald-700,
+html[data-theme="customer"] .text-emerald-800,
+html[data-theme="customer"] .text-teal-600,
+html[data-theme="customer"] .text-teal-700,
+html[data-theme="customer"] .text-red-500,
+html[data-theme="customer"] .text-red-600,
+html[data-theme="customer"] .text-red-700,
+html[data-theme="customer"] .text-red-800,
+html[data-theme="customer"] .text-rose-500,
+html[data-theme="customer"] .text-rose-600,
+html[data-theme="customer"] .text-purple-500,
+html[data-theme="customer"] .text-purple-600,
+html[data-theme="customer"] .text-purple-700,
+html[data-theme="customer"] .text-purple-800,
+html[data-theme="customer"] .text-pink-500,
+html[data-theme="customer"] .text-pink-600,
+html[data-theme="customer"] .text-violet-600,
+html[data-theme="customer"] .text-violet-700,
+html[data-theme="customer"] .text-fuchsia-600 { color: #0a0a0a !important; }
 
 /* Borders — neutral gray */
-html:not([data-theme]) [class*="border-yellow-"],
-html:not([data-theme]) [class*="border-amber-"],
-html:not([data-theme]) [class*="border-orange-"],
-html:not([data-theme]) [class*="border-green-"],
-html:not([data-theme]) [class*="border-emerald-"],
-html:not([data-theme]) [class*="border-teal-"],
-html:not([data-theme]) [class*="border-red-"],
-html:not([data-theme]) [class*="border-rose-"],
-html:not([data-theme]) [class*="border-purple-"],
-html:not([data-theme]) [class*="border-pink-"],
-html:not([data-theme]) [class*="border-violet-"] { border-color: #e5e5e5 !important; }
+html[data-theme="customer"] [class*="border-yellow-"],
+html[data-theme="customer"] [class*="border-amber-"],
+html[data-theme="customer"] [class*="border-orange-"],
+html[data-theme="customer"] [class*="border-green-"],
+html[data-theme="customer"] [class*="border-emerald-"],
+html[data-theme="customer"] [class*="border-teal-"],
+html[data-theme="customer"] [class*="border-red-"],
+html[data-theme="customer"] [class*="border-rose-"],
+html[data-theme="customer"] [class*="border-purple-"],
+html[data-theme="customer"] [class*="border-pink-"],
+html[data-theme="customer"] [class*="border-violet-"] { border-color: #e5e5e5 !important; }
 
 /* Fill colors (e.g. star icons) */
-html:not([data-theme]) .fill-yellow-400,
-html:not([data-theme]) .fill-yellow-500,
-html:not([data-theme]) .fill-amber-400,
-html:not([data-theme]) .fill-amber-500 { fill: #0a0a0a !important; }
+html[data-theme="customer"] .fill-yellow-400,
+html[data-theme="customer"] .fill-yellow-500,
+html[data-theme="customer"] .fill-amber-400,
+html[data-theme="customer"] .fill-amber-500 { fill: #0a0a0a !important; }

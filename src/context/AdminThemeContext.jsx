@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react'
+import React, { createContext, useContext, useEffect, useState } from 'react'
 
 // ── Light mode tokens ────────────────────────────────────────────────────────
 const LIGHT = {
@@ -92,6 +92,16 @@ export function AdminThemeProvider({ children }) {
   const [isDark, setIsDark] = useState(() => {
     try { return localStorage.getItem('adminTheme') === 'dark' } catch { return false }
   })
+
+  useEffect(() => {
+    const root = document.documentElement
+    root.setAttribute('data-theme', 'admin')
+    return () => {
+      if (root.getAttribute('data-theme') === 'admin') {
+        root.setAttribute('data-theme', 'customer')
+      }
+    }
+  }, [])
 
   const toggle = () => setIsDark(d => {
     const next = !d
