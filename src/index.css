@@ -12,41 +12,61 @@ html {
   scroll-behavior: smooth;
 }
 
-:root,
+/* ── Customer-facing defaults: clean white monochrome ── */
+:root {
+  --bg-page: #ffffff;
+  --bg-surface: #fafafa;
+  --bg-panel: rgba(255, 255, 255, 0.97);
+  --bg-field: rgba(0, 0, 0, 0.04);
+  --bg-field-hover: rgba(0, 0, 0, 0.07);
+  --border-panel: 1px solid rgba(0, 0, 0, 0.10);
+  --border-field: 1px solid rgba(0, 0, 0, 0.12);
+  --border-color: rgba(0, 0, 0, 0.08);
+  --text-primary: #171717;
+  --text-secondary: #525252;
+  --text-muted: #a3a3a3;
+  --stats-bg: rgba(0, 0, 0, 0.03);
+  --canvas-bg: #f5f5f5;
+  --canvas-grid: rgba(0, 0, 0, 0.06);
+  --canvas-dot: rgba(10, 10, 10, 0.55);
+}
+
+/* ── Admin dark theme ── */
 [data-theme='dark'] {
-  --bg-page: #050a0f;
-  --bg-surface: #0a1628;
-  --bg-panel: rgba(15, 23, 42, 0.92);
+  --bg-page: #0a0a0a;
+  --bg-surface: #141414;
+  --bg-panel: rgba(18, 18, 18, 0.96);
   --bg-field: rgba(255, 255, 255, 0.06);
-  --bg-field-hover: rgba(255, 255, 255, 0.1);
-  --border-panel: 1px solid rgba(255, 255, 255, 0.08);
+  --bg-field-hover: rgba(255, 255, 255, 0.10);
+  --border-panel: 1px solid rgba(255, 255, 255, 0.09);
   --border-field: 1px solid rgba(255, 255, 255, 0.12);
   --border-color: rgba(255, 255, 255, 0.08);
   --text-primary: rgba(255, 255, 255, 1);
-  --text-secondary: rgba(255, 255, 255, 0.7);
+  --text-secondary: rgba(255, 255, 255, 0.70);
   --text-muted: rgba(255, 255, 255, 0.38);
   --stats-bg: rgba(255, 255, 255, 0.04);
-  --canvas-bg: #050a0f;
+  --canvas-bg: #0a0a0a;
   --canvas-grid: rgba(255, 255, 255, 0.04);
-  --canvas-dot: rgba(14, 165, 233, 0.65);
+  --canvas-dot: rgba(255, 255, 255, 0.50);
 }
 
+/* ── Admin light theme ── */
 [data-theme='light'] {
-  --bg-page: #f0f4f9;
+  --bg-page: #f5f5f5;
   --bg-surface: #ffffff;
   --bg-panel: rgba(255, 255, 255, 0.97);
-  --bg-field: rgba(26, 54, 93, 0.06);
-  --bg-field-hover: rgba(26, 54, 93, 0.1);
-  --border-panel: 1px solid rgba(26, 54, 93, 0.14);
-  --border-field: 1px solid rgba(26, 54, 93, 0.14);
-  --border-color: rgba(26, 54, 93, 0.12);
-  --text-primary: #0f1f3d;
-  --text-secondary: #374151;
-  --text-muted: rgba(26, 54, 93, 0.48);
-  --stats-bg: rgba(26, 54, 93, 0.05);
-  --canvas-bg: #e8eef6;
-  --canvas-grid: rgba(26, 54, 93, 0.08);
-  --canvas-dot: rgba(14, 165, 233, 0.55);
+  --bg-field: rgba(0, 0, 0, 0.04);
+  --bg-field-hover: rgba(0, 0, 0, 0.07);
+  --border-panel: 1px solid rgba(0, 0, 0, 0.10);
+  --border-field: 1px solid rgba(0, 0, 0, 0.12);
+  --border-color: rgba(0, 0, 0, 0.08);
+  --text-primary: #171717;
+  --text-secondary: #525252;
+  --text-muted: #a3a3a3;
+  --stats-bg: rgba(0, 0, 0, 0.03);
+  --canvas-bg: #ebebeb;
+  --canvas-grid: rgba(0, 0, 0, 0.07);
+  --canvas-dot: rgba(10, 10, 10, 0.50);
 }
 
 body {

@@ -7,7 +7,6 @@ import {
 import DispatchPanel from '../components/DispatchPanel'
 import HeroSlideshow from '../components/HeroSlideshow'
 import useSimulatedStats from '../hooks/useSimulatedStats'
-import { useTheme } from '../context/ThemeContext'
 
 const VEHICLE_OPTIONS = [
   { id: 'sedan',        label: 'Sedan',    icon: '🚗', desc: '2–3 passengers' },
@@ -17,279 +16,179 @@ const VEHICLE_OPTIONS = [
 ]
 
 const TRUST_ITEMS = [
-  {
-    icon: FiShield,
-    label: 'Licensed & Insured',
-    desc: 'Every driver fully vetted, licensed, and covered',
-    color: '#22c55e',
-  },
-  {
-    icon: FiTruck,
-    label: '250+ Vehicles',
-    desc: 'Sedans, SUVs, Sprinters and luxury coaches',
-    color: '#F6C90E',
-  },
-  {
-    icon: FiHeadphones,
-    label: '24/7 Live Support',
-    desc: 'Real humans always available to help',
-    color: '#0EA5E9',
-  },
+  { icon: FiShield,      label: 'Licensed & Insured',  desc: 'Every driver fully vetted, licensed, and covered' },
+  { icon: FiTruck,       label: '250+ Vehicles',         desc: 'Sedans, SUVs, Sprinters and luxury coaches' },
+  { icon: FiHeadphones,  label: '24/7 Live Support',    desc: 'Real humans always available to help' },
 ]
 
 const SERVICE_PILLS = [
   { label: 'Airport Transfers', icon: FiNavigation, href: '/services/airport-transfers' },
-  { label: 'Hourly Chauffeur', icon: FiCalendar, href: '/services/hourly' },
-  { label: 'Group Events', icon: FiUsers, href: '/services/events' },
-  { label: 'Corporate', icon: FiBriefcase, href: '/corporate' },
+  { label: 'Hourly Chauffeur',  icon: FiCalendar,   href: '/services/hourly' },
+  { label: 'Group Events',      icon: FiUsers,      href: '/services/events' },
+  { label: 'Corporate',         icon: FiBriefcase,  href: '/corporate' },
 ]
 
-const ELECTRIC = '#0EA5E9'
-const GOLD = '#F6C90E'
-
 export default function Home() {
-  const { isDark } = useTheme()
   const stats = useSimulatedStats()
   const [presetVehicle, setPresetVehicle] = useState(null)
   const panelRef = useRef(null)
 
   const handleVehicleSelect = (vehicleId) => {
     setPresetVehicle(vehicleId)
-    setTimeout(() => {
-      panelRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-    }, 50)
+    setTimeout(() => { panelRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }) }, 50)
   }
-
-  const scrollToBook = () => {
-    panelRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-  }
-
-  const overlayBase = isDark ? 'rgba(4,8,14,0.28)' : 'rgba(10,18,40,0.18)'
-  const overlayTop = isDark
-    ? 'linear-gradient(to bottom, rgba(4,8,14,0.55) 0%, transparent 100%)'
-    : 'linear-gradient(to bottom, rgba(10,18,40,0.42) 0%, transparent 100%)'
-  const overlayBottom = isDark
-    ? 'linear-gradient(to top, rgba(4,8,14,0.60) 0%, transparent 100%)'
-    : 'linear-gradient(to top, rgba(10,18,40,0.35) 0%, transparent 100%)'
+  const scrollToBook = () => { panelRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }) }
 
   return (
-    <div style={{ background: 'var(--bg-page)', transition: 'background 300ms ease' }}>
+    <div style={{ background: '#ffffff' }}>
 
-      <section
-        className="relative flex flex-col overflow-hidden"
-        style={{ minHeight: '100vh' }}
-      >
+      {/* ── Hero ───────────────────────────────────────────────────────── */}
+      <section style={{ position: 'relative', minHeight: '100vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         <HeroSlideshow />
 
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{ zIndex: 3 }}
-        >
-          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '35%', background: overlayTop }} />
-          <div style={{ position: 'absolute', inset: 0, background: overlayBase }} />
-          <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '45%', background: overlayBottom }} />
+        {/* Overlays */}
+        <div style={{ position: 'absolute', inset: 0, zIndex: 3, pointerEvents: 'none' }}>
+          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '40%', background: 'linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, transparent 100%)' }} />
+          <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.32)' }} />
+          <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '50%', background: 'linear-gradient(to top, rgba(0,0,0,0.65) 0%, transparent 100%)' }} />
         </div>
 
-        <div
-          ref={panelRef}
-          className="relative flex-1 flex flex-col items-center justify-center px-4"
-          style={{ zIndex: 4, paddingTop: '5rem', paddingBottom: '6rem' }}
-        >
-          <div
-            className="flex items-center gap-3 mb-4 px-4 py-2 rounded-full"
-            style={{
-              background: 'rgba(0,0,0,0.50)',
-              backdropFilter: 'blur(14px)',
-              WebkitBackdropFilter: 'blur(14px)',
-              border: '1px solid rgba(255,255,255,0.13)',
-            }}
-          >
-            <span
-              className="w-1.5 h-1.5 rounded-full flex-shrink-0 animate-pulse"
-              style={{ background: '#22c55e' }}
-            />
-            <div
-              className="flex items-center gap-3 text-xs font-mono"
-              style={{ color: ELECTRIC }}
-            >
-              <span className="whitespace-nowrap">
-                <span className="font-bold text-white">{stats.vehicles}</span> vehicles ready near NYC
-              </span>
-              <span className="text-white/25">|</span>
-              <span className="whitespace-nowrap">
-                Avg response: <span className="font-bold text-white">{stats.response} min</span>
-              </span>
-              <span className="hidden sm:inline text-white/25">|</span>
-              <span className="whitespace-nowrap hidden sm:inline">
-                Rides today: <span className="font-bold text-white">{stats.rides}</span>
-              </span>
+        <div ref={panelRef} style={{ position: 'relative', zIndex: 4, flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '80px 16px 90px' }}>
+
+          {/* Live stats bar */}
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20,
+            padding: '7px 18px', borderRadius: 999,
+            background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(14px)',
+            border: '1px solid rgba(255,255,255,0.15)',
+          }}>
+            <span style={{ width: 6, height: 6, borderRadius: 999, background: '#22c55e', flexShrink: 0, display: 'inline-block' }} className="animate-pulse" />
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, fontSize: 12, fontFamily: 'monospace', color: 'rgba(255,255,255,0.72)' }}>
+              <span><span style={{ fontWeight: 700, color: '#ffffff' }}>{stats.vehicles}</span> vehicles ready near NYC</span>
+              <span style={{ color: 'rgba(255,255,255,0.25)' }}>|</span>
+              <span>Avg response: <span style={{ fontWeight: 700, color: '#ffffff' }}>{stats.response} min</span></span>
+              <span style={{ color: 'rgba(255,255,255,0.25)' }} className="hidden sm:inline">|</span>
+              <span className="hidden sm:inline">Rides today: <span style={{ fontWeight: 700, color: '#ffffff' }}>{stats.rides}</span></span>
             </div>
           </div>
 
-          <div
-            style={{
-              '--bg-panel': 'rgba(5, 12, 25, 0.35)',
-              '--border-panel': '1px solid rgba(255, 255, 255, 0.20)',
-              '--bg-field': 'rgba(255, 255, 255, 0.09)',
-              '--bg-field-hover': 'rgba(255, 255, 255, 0.15)',
-              '--border-field': '1px solid rgba(255, 255, 255, 0.20)',
-              '--border-color': 'rgba(255, 255, 255, 0.12)',
-              '--stats-bg': 'rgba(255, 255, 255, 0.06)',
-              '--bg-surface': 'rgba(8, 16, 36, 0.97)',
-              '--text-primary': 'rgba(255, 255, 255, 1)',
-              '--text-secondary': 'rgba(255, 255, 255, 0.82)',
-              '--text-muted': 'rgba(255, 255, 255, 0.45)',
-            }}
-          >
+          {/* Headline */}
+          <h1 style={{ fontSize: 'clamp(2rem, 5vw, 3.5rem)', fontWeight: 800, color: '#ffffff', textAlign: 'center', letterSpacing: -1, lineHeight: 1.1, marginBottom: 10, maxWidth: 680 }}>
+            NYC's Premium<br />Transfer Marketplace
+          </h1>
+          <p style={{ fontSize: 16, color: 'rgba(255,255,255,0.72)', textAlign: 'center', maxWidth: 420, marginBottom: 36, lineHeight: 1.6 }}>
+            Post your ride free. Operators compete. You pick the best price.
+          </p>
+
+          {/* Booking panel */}
+          <div style={{
+            '--bg-panel': 'rgba(0, 0, 0, 0.55)',
+            '--border-panel': '1px solid rgba(255, 255, 255, 0.18)',
+            '--bg-field': 'rgba(255, 255, 255, 0.10)',
+            '--bg-field-hover': 'rgba(255, 255, 255, 0.16)',
+            '--border-field': '1px solid rgba(255, 255, 255, 0.20)',
+            '--border-color': 'rgba(255, 255, 255, 0.14)',
+            '--stats-bg': 'rgba(255, 255, 255, 0.06)',
+            '--bg-surface': 'rgba(10, 10, 10, 0.97)',
+            '--text-primary': 'rgba(255, 255, 255, 1)',
+            '--text-secondary': 'rgba(255, 255, 255, 0.80)',
+            '--text-muted': 'rgba(255, 255, 255, 0.45)',
+            width: '100%', maxWidth: 660,
+          }}>
             <DispatchPanel presetVehicle={presetVehicle} hideStats />
           </div>
         </div>
       </section>
 
-      <section
-        className="relative"
-        style={{
-          background: isDark
-            ? 'linear-gradient(to bottom, rgba(4,8,14,0.0) 0%, var(--bg-surface) 80px)'
-            : 'var(--bg-surface)',
-          borderTop: '1px solid var(--border-color)',
-          transition: 'background 300ms ease',
-        }}
-      >
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-14 sm:py-20">
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 mb-14">
-            {TRUST_ITEMS.map(({ icon: Icon, label, desc, color }) => (
-              <div key={label} className="flex flex-col items-center text-center gap-3">
-                <div
-                  className="w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0"
-                  style={{
-                    background: `${color}18`,
-                    border: `1.5px solid ${color}30`,
-                  }}
-                >
-                  <Icon size={22} style={{ color }} />
+      {/* ── Trust strip ────────────────────────────────────────────────── */}
+      <section style={{ background: '#ffffff', borderTop: '1px solid #e5e5e5', padding: '56px 24px' }}>
+        <div style={{ maxWidth: 900, margin: '0 auto' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 36 }}>
+            {TRUST_ITEMS.map(({ icon: Icon, label, desc }) => (
+              <div key={label} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: 12 }}>
+                <div style={{ width: 52, height: 52, borderRadius: 14, background: '#0a0a0a', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <Icon size={22} color="#ffffff" />
                 </div>
                 <div>
-                  <div
-                    className="font-bold text-base mb-1"
-                    style={{ color: 'var(--text-primary)' }}
-                  >
-                    {label}
-                  </div>
-                  <div
-                    className="text-sm leading-relaxed"
-                    style={{ color: 'var(--text-muted)' }}
-                  >
-                    {desc}
-                  </div>
+                  <div style={{ fontWeight: 700, fontSize: 15, color: '#171717', marginBottom: 4 }}>{label}</div>
+                  <div style={{ fontSize: 13, color: '#737373', lineHeight: 1.6 }}>{desc}</div>
                 </div>
               </div>
             ))}
           </div>
+        </div>
+      </section>
 
-          <div
-            className="rounded-2xl p-6 sm:p-8 mb-14"
-            style={{
-              background: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(26,54,93,0.04)',
-              border: '1px solid var(--border-color)',
-            }}
-          >
-            <p
-              className="text-xs font-bold uppercase tracking-widest mb-5 text-center"
-              style={{ color: 'var(--text-muted)' }}
-            >
-              Choose your vehicle — we will pre-select it in the booking form above
-            </p>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              {VEHICLE_OPTIONS.map(({ id, label, icon, desc }) => {
-                const isSelected = presetVehicle === id
-                return (
-                  <button
-                    key={id}
-                    onClick={() => handleVehicleSelect(id)}
-                    className="flex flex-col items-center gap-2 p-4 rounded-xl transition-all text-center"
-                    style={{
-                      background: isSelected
-                        ? (isDark ? 'rgba(246,201,14,0.10)' : 'rgba(246,201,14,0.12)')
-                        : (isDark ? 'rgba(255,255,255,0.04)' : 'rgba(26,54,93,0.05)'),
-                      border: isSelected
-                        ? `1.5px solid ${GOLD}`
-                        : '1px solid var(--border-color)',
-                      cursor: 'pointer',
-                    }}
-                  >
-                    <span className="text-2xl">{icon}</span>
-                    <div>
-                      <div
-                        className="text-sm font-semibold"
-                        style={{ color: isSelected ? GOLD : 'var(--text-primary)' }}
-                      >
-                        {label}
-                      </div>
-                      <div
-                        className="text-xs mt-0.5"
-                        style={{ color: 'var(--text-muted)' }}
-                      >
-                        {desc}
-                      </div>
-                    </div>
-                  </button>
-                )
-              })}
-            </div>
-          </div>
-
-          <div
-            className="rounded-2xl overflow-hidden"
-            style={{ background: 'linear-gradient(135deg, #1a365d 0%, #0f1f3d 100%)' }}
-          >
-            <div className="px-6 sm:px-10 py-8 sm:py-10 flex flex-col sm:flex-row items-center justify-between gap-6">
-              <div>
-                <p className="text-xs font-bold uppercase tracking-widest text-yellow-400 mb-2">
-                  Popular services
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {SERVICE_PILLS.map(({ label, icon: Icon, href }) => (
-                    <Link
-                      key={label}
-                      to={href}
-                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium text-white/80 hover:text-white transition-colors"
-                      style={{
-                        background: 'rgba(255,255,255,0.10)',
-                        border: '1px solid rgba(255,255,255,0.14)',
-                        textDecoration: 'none',
-                      }}
-                    >
-                      <Icon size={12} />
-                      {label}
-                    </Link>
-                  ))}
-                </div>
-              </div>
-              <div className="flex flex-col sm:items-end items-center gap-3">
-                <button
-                  onClick={scrollToBook}
-                  className="flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-sm transition-all hover:scale-105"
-                  style={{
-                    background: GOLD,
-                    color: '#0f1f3d',
-                    boxShadow: `0 4px 20px rgba(246,201,14,0.35)`,
-                  }}
-                >
-                  Book Now <FiArrowRight size={15} />
+      {/* ── Vehicle picker ──────────────────────────────────────────────── */}
+      <section style={{ background: '#fafafa', borderTop: '1px solid #e5e5e5', padding: '56px 24px' }}>
+        <div style={{ maxWidth: 900, margin: '0 auto' }}>
+          <p style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 2, color: '#a3a3a3', textAlign: 'center', marginBottom: 20 }}>
+            Choose your vehicle — we'll pre-select it in the booking form
+          </p>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 10 }} className="sm:grid-cols-4">
+            {VEHICLE_OPTIONS.map(({ id, label, icon, desc }) => {
+              const selected = presetVehicle === id
+              return (
+                <button key={id} onClick={() => handleVehicleSelect(id)} style={{
+                  display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8,
+                  padding: '20px 12px', borderRadius: 12, cursor: 'pointer',
+                  background: selected ? '#0a0a0a' : '#ffffff',
+                  border: `1.5px solid ${selected ? '#0a0a0a' : '#e5e5e5'}`,
+                  transition: 'all 150ms',
+                }}>
+                  <span style={{ fontSize: 28 }}>{icon}</span>
+                  <div style={{ textAlign: 'center' }}>
+                    <div style={{ fontSize: 13, fontWeight: 600, color: selected ? '#ffffff' : '#171717', marginBottom: 2 }}>{label}</div>
+                    <div style={{ fontSize: 11, color: selected ? 'rgba(255,255,255,0.6)' : '#a3a3a3' }}>{desc}</div>
+                  </div>
                 </button>
-                <a
-                  href="tel:+17186586000"
-                  className="flex items-center gap-1.5 text-sm font-medium text-white/60 hover:text-white/90 transition-colors"
-                >
-                  <FiPhone size={13} />
-                  (718) 658-6000
-                </a>
-              </div>
+              )
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Services CTA ────────────────────────────────────────────────── */}
+      <section style={{ background: '#0a0a0a', padding: '60px 24px' }}>
+        <div style={{ maxWidth: 900, margin: '0 auto', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 28, textAlign: 'center' }}>
+          <div>
+            <p style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 2, color: 'rgba(255,255,255,0.4)', marginBottom: 14 }}>
+              Popular services
+            </p>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, justifyContent: 'center' }}>
+              {SERVICE_PILLS.map(({ label, icon: Icon, href }) => (
+                <Link key={label} to={href} style={{
+                  display: 'flex', alignItems: 'center', gap: 6,
+                  padding: '8px 16px', borderRadius: 999, fontSize: 13, fontWeight: 500,
+                  color: 'rgba(255,255,255,0.75)', textDecoration: 'none',
+                  background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.12)',
+                  transition: 'background 120ms, color 120ms',
+                }}
+                  onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.13)'; e.currentTarget.style.color = '#ffffff' }}
+                  onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.07)'; e.currentTarget.style.color = 'rgba(255,255,255,0.75)' }}>
+                  <Icon size={13} /> {label}
+                </Link>
+              ))}
             </div>
           </div>
-
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
+            <button onClick={scrollToBook} style={{
+              display: 'flex', alignItems: 'center', gap: 8,
+              padding: '14px 28px', borderRadius: 12,
+              background: '#ffffff', color: '#0a0a0a',
+              border: 'none', cursor: 'pointer', fontWeight: 700, fontSize: 15,
+              letterSpacing: 0.1, transition: 'background 120ms',
+            }}
+              onMouseEnter={e => e.currentTarget.style.background = '#e5e5e5'}
+              onMouseLeave={e => e.currentTarget.style.background = '#ffffff'}>
+              Book Now <FiArrowRight size={16} />
+            </button>
+            <a href="tel:+17186586000" style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: 'rgba(255,255,255,0.5)', textDecoration: 'none', transition: 'color 120ms' }}
+              onMouseEnter={e => e.currentTarget.style.color = 'rgba(255,255,255,0.8)'}
+              onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.5)'}>
+              <FiPhone size={13} /> (718) 658-6000
+            </a>
+          </div>
         </div>
       </section>
 
