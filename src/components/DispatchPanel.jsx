@@ -320,11 +320,28 @@ export default function DispatchPanel({ onRouteChange, presetVehicle, hideStats 
     }
   }, [phase, postedRide])
 
-  const handleSelectBid = (bid) => {
-    const payload = { rideData: postedRide, selectedBid: bid, fromBidBoard: true }
-    try { sessionStorage.setItem('pendingBidBooking', JSON.stringify(payload)) } catch {}
-    if (!user) navigate('/signup', { state: payload })
-    else navigate('/book', { state: payload })
+  const [acceptedBid, setAcceptedBid] = useState(null)
+  const [accepting, setAccepting] = useState(false)
+  const handleSelectBid = async (bid) => {
+    if (!postedRide?.id || !bid?.id) {
+      // Fallback for legacy flow
+      const payload = { rideData: postedRide, selectedBid: bid, fromBidBoard: true }
+      try { sessionStorage.setItem('pendingBidBooking', JSON.stringify(payload)) } catch {}
+      if (!user) navigate('/signup', { state: payload })
+      else navigate('/book', { state: payload })
+      return
+    }
+    setAccepting(true)
+    try {
+      const res = await api.post(`/quote-requests/${postedRide.id}/accept-bid`, { bid_id: bid.id })
+      const confirmed = res.data?.data?.bid || bid
+      setAcceptedBid(confirmed)
+      toast.success(`Confirmed! ${confirmed.operator_name} will be in touch.`)
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Could not accept this offer')
+    } finally {
+      setAccepting(false)
+    }
   }
 
   const startVoice = (target) => {
@@ -372,7 +389,7 @@ export default function DispatchPanel({ onRouteChange, presetVehicle, hideStats 
   const resetAll = () => {
     setPhase('idle'); setPickup(''); setDropoff(''); setDate(''); setTime('')
     setPassengers(1); setVehicle('sedan'); setName(''); setContact('')
-    setBids([]); setPostedRide(null); setNoOffersMsg(false); setCountdown(600)
+    setBids([]); setPostedRide(null); setNoOffersMsg(false); setCountdown(600); setAcceptedBid(null)
   }
 
   const { displayed: bidHero } = useTypewriter(
@@ -466,19 +483,49 @@ export default function DispatchPanel({ onRouteChange, presetVehicle, hideStats 
                 </div>
               </div>
 
-              <div className="space-y-3">
-                {bids.length === 0 && (
-                  <>
-                    <SkeletonCard />
-                    <SkeletonCard />
-                    <p className="text-center text-xs font-mono animate-pulse py-2" style={{ color: 'var(--text-muted)' }}>Reviewing your request...</p>
-                  </>
-                )}
-                {bids.map((bid, i) => {
-                  const isLowest = bids.length > 1 && bid.price === Math.min(...bids.map(b => b.price))
-                  return <BidCard key={bid.id || i} bid={bid} onSelect={handleSelectBid} index={i} isLowest={isLowest} />
-                })}
-              </div>
+              {acceptedBid ? (
+                <div
+                  className="p-5 rounded-2xl text-center"
+                  style={{
+                    background: 'linear-gradient(135deg, rgba(34,197,94,0.15), rgba(34,197,94,0.06))',
+                    border: '1px solid rgba(34,197,94,0.45)',
+                  }}
+                >
+                  <div
+                    className="mx-auto mb-3 flex items-center justify-center rounded-full"
+                    style={{ width: 56, height: 56, background: '#22c55e', color: '#fff', fontSize: 28, fontWeight: 900 }}
+                  >✓</div>
+                  <div className="text-base font-bold mb-1" style={{ color: 'var(--text-primary)' }}>
+                    Ride confirmed!
+                  </div>
+                  <div className="text-sm mb-3" style={{ color: 'var(--text-secondary)' }}>
+                    {acceptedBid.operator_name} accepted your ride at{' '}
+                    <strong style={{ color: GOLD }}>${acceptedBid.price}</strong>.
+                  </div>
+                  {acceptedBid.message && (
+                    <div className="text-xs italic mb-3 px-3 py-2 rounded-xl" style={{ background: 'var(--bg-field)', color: 'var(--text-secondary)' }}>
+                      "{acceptedBid.message}"
+                    </div>
+                  )}
+                  <div className="text-xs" style={{ color: 'var(--text-muted)' }}>
+                    The operator will contact you shortly with pickup details.
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {bids.length === 0 && (
+                    <>
+                      <SkeletonCard />
+                      <SkeletonCard />
+                      <p className="text-center text-xs font-mono animate-pulse py-2" style={{ color: 'var(--text-muted)' }}>Reviewing your request...</p>
+                    </>
+                  )}
+                  {bids.map((bid, i) => {
+                    const isLowest = bids.length > 1 && bid.price === Math.min(...bids.map(b => b.price))
+                    return <BidCard key={bid.id || i} bid={bid} onSelect={handleSelectBid} index={i} isLowest={isLowest} disabled={accepting} />
+                  })}
+                </div>
+              )}
 
               {noOffersMsg && !bids.length && (
                 <div className="mt-4 p-4 rounded-2xl text-center" style={{ background: 'var(--bg-field)', border: 'var(--border-field)' }}>

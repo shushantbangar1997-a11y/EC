@@ -85,12 +85,26 @@ export const db = {
   },
 
   createBid: (data) => {
-    const bid = { id: nextId(), created_at: new Date().toISOString(), ...data }
+    const bid = { id: nextId(), status: 'pending', created_at: new Date().toISOString(), ...data }
     _db.bids.push(bid)
     save(_db)
     return bid
   },
+  getBid: (id) => _db.bids.find(b => b.id === id) || null,
   getBidsForRequest: (quote_request_id) => _db.bids.filter(b => b.quote_request_id === quote_request_id),
+  listBids: (filters = {}) => {
+    let list = [..._db.bids].reverse()
+    if (filters.operator_id) list = list.filter(b => b.operator_id === filters.operator_id)
+    if (filters.status && filters.status !== 'all') list = list.filter(b => (b.status || 'pending') === filters.status)
+    return list
+  },
+  updateBid: (id, updates) => {
+    const idx = _db.bids.findIndex(b => b.id === id)
+    if (idx === -1) return null
+    _db.bids[idx] = { ..._db.bids[idx], ...updates, updated_at: new Date().toISOString() }
+    save(_db)
+    return _db.bids[idx]
+  },
 
   listDrivers: (operator_id) => operator_id ? _db.drivers.filter(d => d.operator_id === operator_id) : _db.drivers,
   createDriver: (data) => {

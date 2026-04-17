@@ -1,5 +1,5 @@
 import React from 'react'
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, useLocation } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
 import { AuthProvider } from './context/AuthContext'
 import { ThemeProvider } from './context/ThemeContext'
@@ -52,11 +52,21 @@ import OperatorUsers from './pages/operator/Users'
 import AdminDashboard from './pages/admin/Dashboard'
 import AdminUsers from './pages/admin/Users'
 import AdminRevenue from './pages/admin/Revenue'
+import AdminPortalLayout from './pages/admin/AdminPortalLayout'
+import AdminOrders from './pages/admin/Orders'
+import AdminMyOffers from './pages/admin/MyOffers'
+import AdminTrips from './pages/admin/Trips'
+import AdminEarnings from './pages/admin/Earnings'
+import AdminProfile from './pages/admin/Profile'
 
 function AppContent() {
+  const location = useLocation()
+  const isAdminPortal = location.pathname.startsWith('/admin') &&
+    !['/admin/dashboard', '/admin/users', '/admin/revenue'].includes(location.pathname)
+
   return (
     <div className="flex flex-col min-h-screen" style={{ background: 'var(--bg-page)', transition: 'background 300ms ease' }}>
-      <Navbar />
+      {!isAdminPortal && <Navbar />}
       <main className="flex-grow">
           <Routes>
             {/* Public Routes */}
@@ -170,15 +180,7 @@ function AppContent() {
               }
             />
 
-            {/* Protected - Admin Routes */}
-            <Route
-              path="/admin"
-              element={
-                <ProtectedRoute allowedRoles={['admin']}>
-                  <AdminDashboard />
-                </ProtectedRoute>
-              }
-            />
+            {/* Legacy admin pages (kept) */}
             <Route
               path="/admin/dashboard"
               element={
@@ -204,12 +206,29 @@ function AppContent() {
               }
             />
 
+            {/* Admin Bidding Portal (GetTransfer-style) */}
+            <Route
+              path="/admin"
+              element={
+                <ProtectedRoute allowedRoles={['admin']}>
+                  <AdminPortalLayout />
+                </ProtectedRoute>
+              }
+            >
+              <Route index element={<AdminOrders />} />
+              <Route path="orders" element={<AdminOrders />} />
+              <Route path="offers" element={<AdminMyOffers />} />
+              <Route path="trips" element={<AdminTrips />} />
+              <Route path="earnings" element={<AdminEarnings />} />
+              <Route path="profile" element={<AdminProfile />} />
+            </Route>
+
             {/* Catch All */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </main>
-        <Footer />
-        <WhatsAppWidget />
+        {!isAdminPortal && <Footer />}
+        {!isAdminPortal && <WhatsAppWidget />}
         <Toaster
           position="top-right"
           toastOptions={{

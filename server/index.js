@@ -225,17 +225,136 @@ app.post('/api/quote-requests/:id/bids', auth, role('operator', 'admin'), (req, 
     const bid = db.createBid({
       quote_request_id: qr.id,
       operator_id: req.user.id,
-      operator_name: operator?.name || 'Operator',
+      operator_name: operator?.name || 'Everywhere Transfers',
       price: Number(price),
       vehicle_type: vehicle_type || qr.vehicle_type,
       eta_minutes: eta_minutes ? Number(eta_minutes) : 30,
       message: message || notes || '',
       notes: message || notes || '',
+      status: 'pending',
     })
     db.updateQuoteRequest(qr.id, { status: 'quoted', bid_price: Number(price) })
     res.status(201).json({ success: true, data: bid })
   } catch (e) {
     res.status(500).json({ message: 'Could not submit bid', error: e.message })
+  }
+})
+
+// Customer accepts a specific bid — marks accepted, declines siblings, confirms ride
+app.post('/api/quote-requests/:id/accept-bid', (req, res) => {
+  try {
+    const qr = db.getQuoteRequest(req.params.id)
+    if (!qr) return res.status(404).json({ message: 'Quote request not found' })
+    const { bid_id } = req.body
+    if (!bid_id) return res.status(400).json({ message: 'bid_id required' })
+
+    // Optional auth — derive caller identity if a token is present
+    const token = req.headers.authorization?.slice(7)
+    let caller = null
+    try { if (token) caller = jwt.verify(token, JWT_SECRET) } catch {}
+
+    // Ownership: if the quote was created by a logged-in customer, only that
+    // customer (or an admin) may accept on its behalf. Guest quotes (no customer_id)
+    // remain open to acceptance from the original quote-board session.
+    if (qr.customer_id) {
+      if (!caller) return res.status(401).json({ message: 'Authentication required to accept this offer' })
+      if (caller.id !== qr.customer_id && caller.role !== 'admin') {
+        return res.status(403).json({ message: 'You are not allowed to accept this offer' })
+      }
+    }
+
+    // State guards — prevent double-accept / racing
+    if (['confirmed', 'booked', 'completed', 'cancelled'].includes(qr.status)) {
+      return res.status(409).json({ message: `This ride is already ${qr.status}` })
+    }
+    const bid = db.getBid(bid_id)
+    if (!bid || bid.quote_request_id !== qr.id) {
+      return res.status(404).json({ message: 'Bid not found for this request' })
+    }
+    if ((bid.status || 'pending') !== 'pending') {
+      return res.status(409).json({ message: `This offer is no longer ${bid.status === 'accepted' ? 'available' : bid.status}` })
+    }
+
+    db.updateBid(bid_id, { status: 'accepted' })
+    db.getBidsForRequest(qr.id).forEach(b => {
+      if (b.id !== bid_id && (b.status || 'pending') === 'pending') {
+        db.updateBid(b.id, { status: 'declined' })
+      }
+    })
+    const updated = db.updateQuoteRequest(qr.id, {
+      status: 'confirmed',
+      bid_price: bid.price,
+      vehicle_type: bid.vehicle_type,
+      accepted_bid_id: bid_id,
+    })
+    res.json({ success: true, data: { request: qrToLead(updated), bid: db.getBid(bid_id) } })
+  } catch (e) {
+    res.status(500).json({ message: 'Could not accept bid', error: e.message })
+  }
+})
+
+// ── ADMIN PORTAL ──────────────────────────────────────────────────────────────
+
+// New orders feed (with optional `since` ISO timestamp for badge polling)
+app.get('/api/admin/orders', auth, role('admin', 'operator'), (req, res) => {
+  try {
+    const { since, limit = 100 } = req.query
+    let list = db.listQuoteRequests()
+    if (since) {
+      const sinceMs = Date.parse(since)
+      if (!Number.isNaN(sinceMs)) {
+        list = list.filter(q => Date.parse(q.created_at) > sinceMs)
+      }
+    }
+    const items = list.slice(0, Number(limit)).map(qr => ({
+      ...qrToLead(qr),
+      bids: db.getBidsForRequest(qr.id),
+    }))
+    res.json({ data: items, count: items.length, server_time: new Date().toISOString() })
+  } catch (e) {
+    res.status(500).json({ message: 'Could not fetch orders', error: e.message })
+  }
+})
+
+// Admin's own bids, optionally filtered by status, enriched with the order summary
+app.get('/api/admin/my-bids', auth, role('admin', 'operator'), (req, res) => {
+  try {
+    const { status } = req.query
+    const list = db.listBids({ operator_id: req.user.id, status })
+    const items = list.map(b => {
+      const qr = db.getQuoteRequest(b.quote_request_id)
+      return {
+        ...b,
+        request: qr ? qrToLead(qr) : null,
+      }
+    })
+    res.json({ data: items })
+  } catch (e) {
+    res.status(500).json({ message: 'Could not fetch bids', error: e.message })
+  }
+})
+
+// Earnings summary from accepted bids
+app.get('/api/admin/earnings', auth, role('admin', 'operator'), (req, res) => {
+  try {
+    const accepted = db.listBids({ operator_id: req.user.id, status: 'accepted' })
+    const total = accepted.reduce((s, b) => s + (Number(b.price) || 0), 0)
+    const pending = db.listBids({ operator_id: req.user.id, status: 'pending' }).length
+    const declined = db.listBids({ operator_id: req.user.id, status: 'declined' }).length
+    res.json({
+      data: {
+        accepted_count: accepted.length,
+        accepted_total: total,
+        pending_count: pending,
+        declined_count: declined,
+        recent: accepted.slice(0, 10).map(b => ({
+          ...b,
+          request: db.getQuoteRequest(b.quote_request_id) ? qrToLead(db.getQuoteRequest(b.quote_request_id)) : null,
+        })),
+      }
+    })
+  } catch (e) {
+    res.status(500).json({ message: 'Could not fetch earnings', error: e.message })
   }
 })
 
