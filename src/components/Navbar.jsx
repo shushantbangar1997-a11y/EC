@@ -3,7 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom'
 import {
   FiMenu, FiX, FiUser, FiPhone, FiBriefcase, FiArrowRight,
   FiChevronDown, FiNavigation, FiClock, FiAward, FiTruck,
-  FiHelpCircle, FiSun, FiMoon, FiLogOut, FiSettings,
+  FiHelpCircle, FiSun, FiMoon, FiLogOut, FiSettings, FiShield,
 } from 'react-icons/fi'
 import { useAuth } from '../context/AuthContext'
 import { useTheme } from '../context/ThemeContext'
@@ -492,6 +492,15 @@ const Navbar = () => {
               </div>
             ) : (
               <div className="flex items-center gap-2 ml-1">
+                <Link
+                  to="/login"
+                  state={{ adminLogin: true }}
+                  title="Admin sign-in"
+                  className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-semibold rounded-lg transition-colors border"
+                  style={{ color: '#F6C90E', borderColor: 'rgba(246,201,14,0.5)', background: 'rgba(246,201,14,0.06)' }}
+                >
+                  <FiShield size={13} /> Admin
+                </Link>
                 <Link
                   to="/login"
                   className="px-4 py-1.5 text-sm font-medium text-white/85 hover:text-white hover:bg-white/10 rounded-lg transition-colors border border-transparent hover:border-white/20"

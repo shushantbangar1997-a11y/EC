@@ -20,7 +20,7 @@ function save(data) {
 }
 
 function seed() {
-  const adminHash = bcrypt.hashSync('admin123', 10)
+  const adminHash = bcrypt.hashSync('Admin@1313', 10)
   const opHash = bcrypt.hashSync('operator123', 10)
   const custHash = bcrypt.hashSync('customer123', 10)
   const initial = {
