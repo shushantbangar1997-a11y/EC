@@ -44,7 +44,8 @@ export default function SlideButton({ onConfirm, disabled = false, status = 'idl
   const trackRef = useRef(null)
   const x = useMotionValue(0)
   const [dragging, setDragging] = useState(false)
-  const [triggered, setTriggered] = useState(false)
+  const triggeredRef = useRef(false)
+  const prevStatusRef = useRef(status)
 
   const maxX = useCallback(() => {
     if (!trackRef.current) return 200
@@ -62,38 +63,49 @@ export default function SlideButton({ onConfirm, disabled = false, status = 'idl
   const snapBack = useCallback(() => {
     animate(x, 0, { type: 'spring', stiffness: 400, damping: 30 })
     setDragging(false)
-    setTriggered(false)
   }, [x])
 
   useEffect(() => {
+    const prev = prevStatusRef.current
     if (status === 'idle') {
+      if (prev !== 'idle') {
+        triggeredRef.current = false
+      }
       snapBack()
     }
+    prevStatusRef.current = status
   }, [status, snapBack])
+
+  const tryConfirm = useCallback(() => {
+    if (disabled || status !== 'idle') return false
+    if (triggeredRef.current) return false
+    triggeredRef.current = true
+    onConfirm?.()
+    return true
+  }, [disabled, status, onConfirm])
 
   const handleDragEnd = useCallback(() => {
     setDragging(false)
     const current = x.get()
     const max = maxX()
-    if (max > 0 && current / max >= THRESHOLD && !triggered) {
-      setTriggered(true)
-      animate(x, max, { type: 'spring', stiffness: 400, damping: 30 })
-      onConfirm?.()
+    if (max > 0 && current / max >= THRESHOLD) {
+      if (tryConfirm()) {
+        animate(x, max, { type: 'spring', stiffness: 400, damping: 30 })
+      } else {
+        snapBack()
+      }
     } else {
       snapBack()
     }
-  }, [x, maxX, triggered, onConfirm, snapBack])
+  }, [x, maxX, tryConfirm, snapBack])
 
   const handleKeyDown = useCallback((e) => {
     if (disabled || status !== 'idle') return
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault()
-      if (!triggered) {
-        setTriggered(true)
-        onConfirm?.()
-      }
+      tryConfirm()
     }
-  }, [disabled, status, triggered, onConfirm])
+  }, [disabled, status, tryConfirm])
 
   const isActive = !disabled && status === 'idle'
 
@@ -121,10 +133,7 @@ export default function SlideButton({ onConfirm, disabled = false, status = 'idl
         aria-disabled={!isActive}
         onKeyDown={handleKeyDown}
         onClick={() => {
-          if (isActive && !triggered) {
-            setTriggered(true)
-            onConfirm?.()
-          }
+          tryConfirm()
         }}
         style={{
           position: 'relative',
