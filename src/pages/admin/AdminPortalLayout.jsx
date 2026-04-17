@@ -102,12 +102,15 @@ function AdminPortalInner() {
         transition: 'background 200ms, border-color 200ms',
       }}>
         {/* Brand */}
-        <div style={{ padding: '24px 20px 20px', borderBottom: `1px solid ${T.sidebarBorder}` }}>
-          <img src="/logo.png" alt="Everywhere Cars" style={{
-            height: 40, width: 'auto', display: 'block', marginBottom: 10,
-            filter: T.logoFilter, opacity: 0.92,
-            transition: 'filter 200ms',
-          }} />
+        <div style={{ padding: '20px 20px 16px', borderBottom: `1px solid ${T.sidebarBorder}` }}>
+          {/* Clip the bottom text portion of the logo PNG, show only the infinity symbol */}
+          <div style={{ overflow: 'hidden', height: 46, marginBottom: 10 }}>
+            <img src="/logo.png" alt="Everywhere Cars" style={{
+              width: 180, display: 'block',
+              filter: T.logoFilter, opacity: 0.92,
+              transition: 'filter 200ms',
+            }} />
+          </div>
           <div style={{
             fontSize: 11, letterSpacing: 2, textTransform: 'uppercase',
             color: T.wordmarkColor, fontWeight: 700, lineHeight: 1.2,
