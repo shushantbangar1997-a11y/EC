@@ -38,7 +38,7 @@ const LIGHT = {
   sidebarBadgeBg:     '#0a0a0a',
   sidebarBadgeText:   '#ffffff',
   sidebarDotBg:       '#0a0a0a',
-  logoFilter:         'none',
+  logoFilter:         'brightness(0)',
   wordmarkColor:      '#171717',
   submarkColor:       '#a3a3a3',
 }
