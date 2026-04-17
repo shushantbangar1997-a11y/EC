@@ -40,6 +40,44 @@ const HANDLE_SIZE = 52
 const TRACK_PADDING = 4
 const THRESHOLD = 0.9
 
+function triggerDispatchFeedback() {
+  try {
+    if (typeof navigator !== 'undefined' && typeof navigator.vibrate === 'function') {
+      navigator.vibrate([15, 40, 25])
+    }
+  } catch (_) {
+    // ignore vibration errors
+  }
+
+  try {
+    const AudioCtx = typeof window !== 'undefined'
+      ? (window.AudioContext || window.webkitAudioContext)
+      : null
+    if (!AudioCtx) return
+    const ctx = new AudioCtx()
+    const now = ctx.currentTime
+    const gain = ctx.createGain()
+    gain.gain.setValueAtTime(0.0001, now)
+    gain.gain.exponentialRampToValueAtTime(0.18, now + 0.01)
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.22)
+    gain.connect(ctx.destination)
+
+    const osc1 = ctx.createOscillator()
+    osc1.type = 'sine'
+    osc1.frequency.setValueAtTime(660, now)
+    osc1.frequency.exponentialRampToValueAtTime(990, now + 0.18)
+    osc1.connect(gain)
+    osc1.start(now)
+    osc1.stop(now + 0.24)
+
+    osc1.onended = () => {
+      try { ctx.close() } catch (_) { /* noop */ }
+    }
+  } catch (_) {
+    // ignore audio errors
+  }
+}
+
 export default function SlideButton({ onConfirm, disabled = false, status = 'idle', label = 'Slide to dispatch' }) {
   const trackRef = useRef(null)
   const x = useMotionValue(0)
@@ -91,6 +129,7 @@ export default function SlideButton({ onConfirm, disabled = false, status = 'idl
     if (max > 0 && current / max >= THRESHOLD) {
       if (tryConfirm()) {
         animate(x, max, { type: 'spring', stiffness: 400, damping: 30 })
+        triggerDispatchFeedback()
       } else {
         snapBack()
       }
@@ -103,7 +142,9 @@ export default function SlideButton({ onConfirm, disabled = false, status = 'idl
     if (disabled || status !== 'idle') return
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault()
-      tryConfirm()
+      if (tryConfirm()) {
+        triggerDispatchFeedback()
+      }
     }
   }, [disabled, status, tryConfirm])
 
@@ -133,7 +174,9 @@ export default function SlideButton({ onConfirm, disabled = false, status = 'idl
         aria-disabled={!isActive}
         onKeyDown={handleKeyDown}
         onClick={() => {
-          tryConfirm()
+          if (tryConfirm()) {
+            triggerDispatchFeedback()
+          }
         }}
         style={{
           position: 'relative',
