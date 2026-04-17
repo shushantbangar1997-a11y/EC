@@ -73,7 +73,7 @@ function SkeletonCard() {
   )
 }
 
-function BidCard({ bid, onSelect, index, isLowest }) {
+function BidCard({ bid, onSelect, index, isLowest, disabled }) {
   const [visible, setVisible] = useState(false)
   useEffect(() => {
     const t = setTimeout(() => setVisible(true), index * 320 + 80)
@@ -121,11 +121,12 @@ function BidCard({ bid, onSelect, index, isLowest }) {
         </p>
       )}
       <button
-        onClick={() => onSelect(bid)}
-        className="w-full py-2.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all duration-200 hover:brightness-110 active:scale-[0.98]"
+        onClick={() => !disabled && onSelect(bid)}
+        disabled={disabled}
+        className="w-full py-2.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all duration-200 hover:brightness-110 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:brightness-100"
         style={{ background: `linear-gradient(135deg, ${GOLD}, #E8B800)`, color: '#050a0f', letterSpacing: '0.04em' }}
       >
-        SELECT THIS RIDE <FiArrowRight size={14} />
+        {disabled ? 'CONFIRMING...' : <>SELECT THIS RIDE <FiArrowRight size={14} /></>}
       </button>
     </div>
   )
@@ -529,7 +530,7 @@ export default function DispatchPanel({ onRouteChange, presetVehicle, hideStats 
                   )}
                   {bids.map((bid, i) => {
                     const isLowest = bids.length > 1 && bid.price === Math.min(...bids.map(b => b.price))
-                    return <BidCard key={bid.id || i} bid={bid} onSelect={handleSelectBid} index={i} isLowest={isLowest} />
+                    return <BidCard key={bid.id || i} bid={bid} onSelect={handleSelectBid} index={i} isLowest={isLowest} disabled={accepting} />
                   })}
                 </div>
               )}

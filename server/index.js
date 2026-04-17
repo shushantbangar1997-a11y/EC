@@ -102,7 +102,7 @@ app.get('/api/auth/me', auth, (req, res) => {
 
 app.post('/api/quote-requests', (req, res) => {
   try {
-    const { name, phone, email, pickup, dropoff, ride_date, passengers, vehicle_type } = req.body
+    const { name, phone, email, pickup, dropoff, ride_date, passengers, vehicle_type, notes } = req.body
     if (!pickup || !dropoff) return res.status(400).json({ message: 'Pickup and dropoff required' })
 
     const token = req.headers.authorization?.slice(7)
@@ -119,6 +119,7 @@ app.post('/api/quote-requests', (req, res) => {
       ride_date,
       passengers: passengers || 1,
       vehicle_type: vehicle_type || 'sedan',
+      notes: notes || '',
       status: 'pending',
     })
     if (email) {
