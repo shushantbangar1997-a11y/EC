@@ -447,7 +447,7 @@ export default function DispatchPanel({ onRouteChange, presetVehicle, hideStats 
       >
         {!hideStats && (
           <div className="px-4 py-2.5 flex items-center gap-3 border-b" style={{ borderColor: 'var(--bg-field)', background: 'var(--stats-bg)' }}>
-            <span className="w-1.5 h-1.5 rounded-full flex-shrink-0 animate-pulse" style={{ background: '#22c55e' }} />
+            <span className="w-1.5 h-1.5 rounded-full flex-shrink-0 animate-pulse" style={{ background: '#ffffff' }} />
             <div className="flex items-center gap-3 text-xs font-mono overflow-hidden" style={{ color: ELECTRIC }}>
               <span className="whitespace-nowrap"><span className="font-bold">{stats.vehicles}</span> vehicles ready near NYC</span>
               <span style={{ color: 'var(--text-muted)' }}>|</span>
@@ -464,7 +464,7 @@ export default function DispatchPanel({ onRouteChange, presetVehicle, hideStats 
             <div>
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full animate-pulse" style={{ background: '#22c55e' }} />
+                  <span className="w-2 h-2 rounded-full animate-pulse" style={{ background: '#ffffff' }} />
                   <span className="text-xs font-bold tracking-widest uppercase font-mono" style={{ color: 'var(--text-secondary)' }}>Ride Dispatched</span>
                 </div>
                 <div className="flex items-center gap-2">
@@ -495,13 +495,13 @@ export default function DispatchPanel({ onRouteChange, presetVehicle, hideStats 
                 <div
                   className="p-5 rounded-2xl text-center"
                   style={{
-                    background: 'linear-gradient(135deg, rgba(34,197,94,0.15), rgba(34,197,94,0.06))',
-                    border: '1px solid rgba(34,197,94,0.45)',
+                    background: 'linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.15))',
+                    border: '1px solid rgba(255,255,255,0.15)',
                   }}
                 >
                   <div
                     className="mx-auto mb-3 flex items-center justify-center rounded-full"
-                    style={{ width: 56, height: 56, background: '#22c55e', color: '#fff', fontSize: 28, fontWeight: 900 }}
+                    style={{ width: 56, height: 56, background: '#ffffff', color: '#fff', fontSize: 28, fontWeight: 900 }}
                   >✓</div>
                   <div className="text-base font-bold mb-1" style={{ color: 'var(--text-primary)' }}>
                     Ride confirmed!
@@ -542,7 +542,7 @@ export default function DispatchPanel({ onRouteChange, presetVehicle, hideStats 
                     <a href="tel:+17186586000" className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl font-bold text-xs transition-all hover:brightness-110" style={{ background: `linear-gradient(135deg, ${GOLD}, #e5e5e5)`, color: '#050a0f' }}>
                       <FiPhone size={12} /> (718) 658-6000
                     </a>
-                    <a href="https://wa.me/17182196683" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl font-bold text-xs bg-green-600 text-white hover:bg-green-500 transition-colors">
+                    <a href="https://wa.me/17182196683" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl font-bold text-xs bg-white text-black hover:bg-gray-200 transition-colors">
                       <FiMessageCircle size={12} /> WhatsApp
                     </a>
                   </div>
@@ -604,7 +604,7 @@ export default function DispatchPanel({ onRouteChange, presetVehicle, hideStats 
                     <div className="flex items-center justify-center gap-5 mt-4 flex-wrap">
                       {['Free to post', 'No payment now', 'Licensed drivers'].map(t => (
                         <span key={t} className="flex items-center gap-1.5 text-xs font-medium" style={{ color: 'var(--text-muted)' }}>
-                          <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: '#22c55e' }} />
+                          <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: '#ffffff' }} />
                           {t}
                         </span>
                       ))}
@@ -633,7 +633,7 @@ export default function DispatchPanel({ onRouteChange, presetVehicle, hideStats 
                       </div>
                       {(pickupAirport || pickupHotel) && (
                         <div className="flex flex-wrap gap-1.5 mt-1.5">
-                          {pickupAirport && <span className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-full font-medium" style={{ background: 'rgba(34,197,94,0.12)', border: '1px solid rgba(34,197,94,0.3)', color: '#16a34a' }}>Flight tracking included</span>}
+                          {pickupAirport && <span className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-full font-medium" style={{ background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.15)', color: '#0a0a0a' }}>Flight tracking included</span>}
                           {pickupHotel && <span className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-full font-medium" style={{ background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.3)', color: ELECTRIC }}>Hotel pickup confirmed</span>}
                         </div>
                       )}
@@ -662,7 +662,7 @@ export default function DispatchPanel({ onRouteChange, presetVehicle, hideStats 
                       </div>
                       {(dropoffAirport || dropoffHotel) && (
                         <div className="flex flex-wrap gap-1.5 mt-1.5">
-                          {dropoffAirport && <span className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-full font-medium" style={{ background: 'rgba(34,197,94,0.12)', border: '1px solid rgba(34,197,94,0.3)', color: '#16a34a' }}>Flight tracking included</span>}
+                          {dropoffAirport && <span className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-full font-medium" style={{ background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.15)', color: '#0a0a0a' }}>Flight tracking included</span>}
                           {dropoffHotel && <span className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-full font-medium" style={{ background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.3)', color: ELECTRIC }}>Hotel dropoff confirmed</span>}
                         </div>
                       )}
