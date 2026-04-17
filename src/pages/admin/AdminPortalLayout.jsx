@@ -66,9 +66,6 @@ export default function AdminPortalLayout() {
           })
         }
 
-        const orderIdsWithMyAcceptedBid = new Set(
-          bids.filter(b => b.status === 'accepted').map(b => b.quote_request_id)
-        )
         const newOrdersCount = orders.filter(o => {
           // count un-bid-by-me, not yet confirmed orders as "new"
           const myBid = bids.find(b => b.quote_request_id === o.id)

@@ -47,10 +47,10 @@ const Login = () => {
         return;
       }
 
-      // Redirect based on role
-      if (response?.user?.role === 'customer') {
-        navigate('/my-rides');
-      } else if (response?.user?.role === 'operator' || response?.user?.role === 'admin') {
+      // Redirect based on role — admins land on the new bidding portal
+      if (response?.user?.role === 'admin') {
+        navigate('/admin/orders');
+      } else if (response?.user?.role === 'operator') {
         navigate('/operator/dashboard');
       } else {
         navigate('/my-rides');

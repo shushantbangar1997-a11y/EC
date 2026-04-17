@@ -529,7 +529,7 @@ export default function DispatchPanel({ onRouteChange, presetVehicle, hideStats 
                   )}
                   {bids.map((bid, i) => {
                     const isLowest = bids.length > 1 && bid.price === Math.min(...bids.map(b => b.price))
-                    return <BidCard key={bid.id || i} bid={bid} onSelect={handleSelectBid} index={i} isLowest={isLowest} disabled={accepting} />
+                    return <BidCard key={bid.id || i} bid={bid} onSelect={handleSelectBid} index={i} isLowest={isLowest} />
                   })}
                 </div>
               )}
