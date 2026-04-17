@@ -501,7 +501,7 @@ export default function DispatchPanel({ onRouteChange, presetVehicle, hideStats 
                 >
                   <div
                     className="mx-auto mb-3 flex items-center justify-center rounded-full"
-                    style={{ width: 56, height: 56, background: '#ffffff', color: '#fff', fontSize: 28, fontWeight: 900 }}
+                    style={{ width: 56, height: 56, background: '#ffffff', color: '#0a0a0a', fontSize: 28, fontWeight: 900 }}
                   >✓</div>
                   <div className="text-base font-bold mb-1" style={{ color: 'var(--text-primary)' }}>
                     Ride confirmed!
