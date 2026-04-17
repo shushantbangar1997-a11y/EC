@@ -16,8 +16,8 @@ import {
   detectAirport, detectHotel, isPeakHour,
 } from '../utils/priceEstimator'
 
-const GOLD = '#F6C90E'
-const ELECTRIC = '#0EA5E9'
+const GOLD = '#ffffff'
+const ELECTRIC = '#cccccc'
 
 const VEHICLES = [
   { id: 'sedan',        label: 'Sedan',    capacity: '2–3',      image: '/images/fleet-sedan.png'    },
@@ -52,7 +52,7 @@ function CountdownTimer({ seconds }) {
   const urgent = seconds < 60
   return (
     <span className="font-mono text-xs font-bold tabular-nums"
-      style={{ color: urgent ? '#f87171' : ELECTRIC }}>
+      style={{ color: urgent ? '#ffffff' : ELECTRIC }}>
       {m}:{s}
     </span>
   )
@@ -84,7 +84,7 @@ function BidCard({ bid, onSelect, index, isLowest, disabled }) {
       className="rounded-2xl p-4 transition-all duration-500"
       style={{
         background: 'var(--bg-field)',
-        border: isLowest ? `1px solid rgba(246,201,14,0.5)` : 'var(--border-field)',
+        border: isLowest ? `1px solid rgba(255,255,255,0.2)` : 'var(--border-field)',
         borderLeft: isLowest ? `3px solid ${GOLD}` : undefined,
         opacity: visible ? 1 : 0,
         transform: visible ? 'translateY(0)' : 'translateY(16px)',
@@ -124,7 +124,7 @@ function BidCard({ bid, onSelect, index, isLowest, disabled }) {
         onClick={() => !disabled && onSelect(bid)}
         disabled={disabled}
         className="w-full py-2.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all duration-200 hover:brightness-110 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:brightness-100"
-        style={{ background: `linear-gradient(135deg, ${GOLD}, #E8B800)`, color: '#050a0f', letterSpacing: '0.04em' }}
+        style={{ background: `linear-gradient(135deg, ${GOLD}, #e5e5e5)`, color: '#050a0f', letterSpacing: '0.04em' }}
       >
         {disabled ? 'CONFIRMING...' : <>SELECT THIS RIDE <FiArrowRight size={14} /></>}
       </button>
@@ -418,7 +418,7 @@ export default function DispatchPanel({ onRouteChange, presetVehicle, hideStats 
           style={{ background: 'rgba(5,10,15,0.96)', backdropFilter: 'blur(16px)' }}
         >
           <div className="text-center">
-            <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-5 animate-pulse" style={{ background: `rgba(246,201,14,0.15)`, border: `2px solid ${GOLD}` }}>
+            <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-5 animate-pulse" style={{ background: `rgba(255,255,255,0.15)`, border: `2px solid ${GOLD}` }}>
               <FiMic size={28} style={{ color: GOLD }} />
             </div>
             <VoicePrompt target={voiceTarget} />
@@ -440,7 +440,7 @@ export default function DispatchPanel({ onRouteChange, presetVehicle, hideStats 
           border: 'var(--border-panel)',
           borderRadius: 20,
           boxShadow: isDark
-            ? '0 0 80px rgba(246,201,14,0.04), 0 25px 60px rgba(0,0,0,0.3)'
+            ? '0 0 80px rgba(255,255,255,0.2), 0 25px 60px rgba(0,0,0,0.3)'
             : '0 0 40px rgba(26,54,93,0.08), 0 25px 60px rgba(0,0,0,0.12)',
           transition: 'background 300ms ease, border 300ms ease, box-shadow 300ms ease',
         }}
@@ -481,7 +481,7 @@ export default function DispatchPanel({ onRouteChange, presetVehicle, hideStats 
                 <div className="flex flex-col items-center gap-1 flex-shrink-0">
                   <div className="w-2.5 h-2.5 rounded-full" style={{ background: GOLD, boxShadow: `0 0 8px ${GOLD}` }} />
                   <div className="flex flex-col gap-0.5">
-                    {[0,1,2].map(i => <div key={i} className="w-0.5 h-1.5 rounded-full mx-auto" style={{ background: 'rgba(246,201,14,0.4)', animation: `dashFlow 1.4s ease-in-out ${i * 0.2}s infinite` }} />)}
+                    {[0,1,2].map(i => <div key={i} className="w-0.5 h-1.5 rounded-full mx-auto" style={{ background: 'rgba(255,255,255,0.2)', animation: `dashFlow 1.4s ease-in-out ${i * 0.2}s infinite` }} />)}
                   </div>
                   <div className="w-2.5 h-2.5 rounded-full" style={{ background: 'var(--text-secondary)' }} />
                 </div>
@@ -539,7 +539,7 @@ export default function DispatchPanel({ onRouteChange, presetVehicle, hideStats 
                 <div className="mt-4 p-4 rounded-2xl text-center" style={{ background: 'var(--bg-field)', border: 'var(--border-field)' }}>
                   <p className="text-sm mb-3" style={{ color: 'var(--text-secondary)' }}>Our team is reviewing your request. You will hear from us shortly.</p>
                   <div className="flex gap-2 justify-center">
-                    <a href="tel:+17186586000" className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl font-bold text-xs transition-all hover:brightness-110" style={{ background: `linear-gradient(135deg, ${GOLD}, #E8B800)`, color: '#050a0f' }}>
+                    <a href="tel:+17186586000" className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl font-bold text-xs transition-all hover:brightness-110" style={{ background: `linear-gradient(135deg, ${GOLD}, #e5e5e5)`, color: '#050a0f' }}>
                       <FiPhone size={12} /> (718) 658-6000
                     </a>
                     <a href="https://wa.me/17182196683" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl font-bold text-xs bg-green-600 text-white hover:bg-green-500 transition-colors">
@@ -634,7 +634,7 @@ export default function DispatchPanel({ onRouteChange, presetVehicle, hideStats 
                       {(pickupAirport || pickupHotel) && (
                         <div className="flex flex-wrap gap-1.5 mt-1.5">
                           {pickupAirport && <span className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-full font-medium" style={{ background: 'rgba(34,197,94,0.12)', border: '1px solid rgba(34,197,94,0.3)', color: '#16a34a' }}>Flight tracking included</span>}
-                          {pickupHotel && <span className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-full font-medium" style={{ background: 'rgba(14,165,233,0.12)', border: '1px solid rgba(14,165,233,0.3)', color: ELECTRIC }}>Hotel pickup confirmed</span>}
+                          {pickupHotel && <span className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-full font-medium" style={{ background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.3)', color: ELECTRIC }}>Hotel pickup confirmed</span>}
                         </div>
                       )}
                     </div>
@@ -663,7 +663,7 @@ export default function DispatchPanel({ onRouteChange, presetVehicle, hideStats 
                       {(dropoffAirport || dropoffHotel) && (
                         <div className="flex flex-wrap gap-1.5 mt-1.5">
                           {dropoffAirport && <span className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-full font-medium" style={{ background: 'rgba(34,197,94,0.12)', border: '1px solid rgba(34,197,94,0.3)', color: '#16a34a' }}>Flight tracking included</span>}
-                          {dropoffHotel && <span className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-full font-medium" style={{ background: 'rgba(14,165,233,0.12)', border: '1px solid rgba(14,165,233,0.3)', color: ELECTRIC }}>Hotel dropoff confirmed</span>}
+                          {dropoffHotel && <span className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-full font-medium" style={{ background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.3)', color: ELECTRIC }}>Hotel dropoff confirmed</span>}
                         </div>
                       )}
                     </div>
@@ -736,9 +736,9 @@ export default function DispatchPanel({ onRouteChange, presetVehicle, hideStats 
                             className="flex-shrink-0 snap-start rounded-xl overflow-hidden text-left transition-all duration-200 w-24"
                             style={{
                               border: sel ? `2px solid ${GOLD}` : 'var(--border-field)',
-                              background: sel ? 'rgba(246,201,14,0.1)' : 'var(--bg-field)',
+                              background: sel ? 'rgba(255,255,255,0.2)' : 'var(--bg-field)',
                               transform: sel ? 'translateY(-2px) scale(1.02)' : 'none',
-                              boxShadow: sel ? `0 8px 20px rgba(246,201,14,0.2)` : 'none',
+                              boxShadow: sel ? `0 8px 20px rgba(255,255,255,0.2)` : 'none',
                             }}
                           >
                             <div className="h-16 overflow-hidden">
@@ -792,10 +792,10 @@ export default function DispatchPanel({ onRouteChange, presetVehicle, hideStats 
                     className="w-full py-4 rounded-2xl font-black text-sm tracking-wider flex items-center justify-center gap-2 transition-all duration-220 active:scale-[0.98]"
                     style={{
                       background: canSubmit && !submitting
-                        ? `linear-gradient(135deg, ${GOLD} 0%, #E8B800 100%)`
+                        ? `linear-gradient(135deg, ${GOLD} 0%, #e5e5e5 100%)`
                         : 'var(--bg-field)',
                       color: canSubmit && !submitting ? '#050a0f' : 'var(--text-muted)',
-                      boxShadow: canSubmit && !submitting ? '0 0 24px rgba(246,201,14,0.35), 0 8px 20px rgba(0,0,0,0.18)' : 'none',
+                      boxShadow: canSubmit && !submitting ? '0 0 24px rgba(255,255,255,0.2), 0 8px 20px rgba(0,0,0,0.18)' : 'none',
                       letterSpacing: '0.05em',
                       cursor: canSubmit && !submitting ? 'pointer' : 'not-allowed',
                       animation: canSubmit && !submitting ? 'goldPulse 2.5s ease-in-out infinite' : 'none',
@@ -834,7 +834,7 @@ export default function DispatchPanel({ onRouteChange, presetVehicle, hideStats 
         }
         .dispatch-field::placeholder { color: var(--text-muted); }
         .dispatch-field:focus {
-          border-color: rgba(246,201,14,0.5);
+          border-color: rgba(255,255,255,0.2);
           background: var(--bg-field-hover);
         }
         .dispatch-field-wrap .absolute.left-3 { z-index: 10; }
@@ -853,8 +853,8 @@ export default function DispatchPanel({ onRouteChange, presetVehicle, hideStats 
         }
         .dispatch-field-wrap ul li:hover,
         .dispatch-field-wrap ul li[aria-selected="true"] {
-          background: rgba(246,201,14,0.12);
-          color: #F6C90E;
+          background: rgba(255,255,255,0.12);
+          color: #ffffff;
         }
       `}</style>
     </div>
