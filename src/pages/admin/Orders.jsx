@@ -24,13 +24,13 @@ const VEHICLE_LABEL = {
 }
 
 const STATUS_PILL = {
-  pending:   { label: 'New',       bg: GR100,    fg: GR600 },
-  new:       { label: 'New',       bg: GR100,    fg: GR600 },
-  quoted:    { label: 'Bid Sent',  bg: '#eff6ff', fg: '#1d4ed8' },
-  contacted: { label: 'Bid Sent',  bg: '#eff6ff', fg: '#1d4ed8' },
-  confirmed: { label: 'Confirmed', bg: '#f0fdf4', fg: '#166534' },
-  booked:    { label: 'Booked',    bg: '#f0fdf4', fg: '#166534' },
-  completed: { label: 'Completed', bg: GR100,    fg: GR400   },
+  pending:   { label: 'New',       bg: GR100, fg: GR600 },
+  new:       { label: 'New',       bg: GR100, fg: GR600 },
+  quoted:    { label: 'Bid Sent',  bg: BK,    fg: WH    },
+  contacted: { label: 'Bid Sent',  bg: BK,    fg: WH    },
+  confirmed: { label: 'Confirmed', bg: BK,    fg: WH    },
+  booked:    { label: 'Booked',    bg: BK,    fg: WH    },
+  completed: { label: 'Completed', bg: GR100, fg: GR400 },
 }
 
 // ── Decorative route map ──────────────────────────────────────────────────────
@@ -486,8 +486,8 @@ export default function Orders() {
                       }}>
                         <div style={{
                           width: 36, height: 36, borderRadius: 9,
-                          background: accepted ? '#f0fdf4' : declined ? '#fef2f2' : GR100,
-                          color: accepted ? '#166534' : declined ? '#b91c1c' : GR600,
+                          background: accepted ? GR900 : GR100,
+                          color: accepted ? WH : GR600,
                           display: 'flex', alignItems: 'center', justifyContent: 'center',
                         }}>
                           {accepted ? <FiCheckCircle size={15} /> : <FiDollarSign size={15} />}
@@ -495,8 +495,8 @@ export default function Orders() {
                         <div style={{ flex: 1, minWidth: 0 }}>
                           <div style={{ fontSize: 13, fontWeight: 600, color: GR900 }}>
                             {b.operator_name}
-                            {accepted && <span style={{ marginLeft: 7, color: '#166534', fontSize: 10, fontWeight: 700, textTransform: 'uppercase' }}>· Accepted</span>}
-                            {declined && <span style={{ marginLeft: 7, color: '#b91c1c', fontSize: 10, fontWeight: 700, textTransform: 'uppercase' }}>· Declined</span>}
+                            {accepted && <span style={{ marginLeft: 7, color: GR900, fontSize: 10, fontWeight: 700, textTransform: 'uppercase' }}>· Accepted</span>}
+                            {declined && <span style={{ marginLeft: 7, color: GR400, fontSize: 10, fontWeight: 700, textTransform: 'uppercase' }}>· Declined</span>}
                           </div>
                           {b.message && <div style={{ fontSize: 12, color: GR600, fontStyle: 'italic', marginTop: 2 }}>"{b.message}"</div>}
                           <div style={{ fontSize: 11, color: GR400, marginTop: 2 }}>
@@ -531,8 +531,8 @@ export default function Orders() {
               )
             ) : (
               <div style={{
-                background: '#f0fdf4', borderTop: '1px solid #bbf7d0',
-                padding: '16px 24px', textAlign: 'center', color: '#166534', fontWeight: 600, fontSize: 13,
+                background: GR100, borderTop: `1px solid ${GR200}`,
+                padding: '16px 24px', textAlign: 'center', color: GR900, fontWeight: 600, fontSize: 13,
               }}>
                 <FiCheckCircle style={{ display: 'inline', marginRight: 6, marginBottom: -2 }} />
                 Confirmed at ${selected.bid_price}

@@ -130,20 +130,31 @@ export default function AdminPortalLayout() {
             src="/logo.png"
             alt="Everywhere Cars"
             style={{
-              height: 44,
+              height: 40,
               width: 'auto',
               display: 'block',
-              marginBottom: 12,
+              marginBottom: 10,
               filter: 'brightness(0) invert(1)',
               opacity: 0.92,
             }}
           />
           <div style={{
+            fontSize: 11,
+            letterSpacing: 2,
+            textTransform: 'uppercase',
+            color: 'rgba(255,255,255,0.88)',
+            fontWeight: 700,
+            lineHeight: 1.2,
+          }}>
+            Everywhere Transfers
+          </div>
+          <div style={{
             fontSize: 9,
-            letterSpacing: 2.5,
+            letterSpacing: 1.8,
             textTransform: 'uppercase',
             color: GR400,
-            fontWeight: 600,
+            fontWeight: 500,
+            marginTop: 3,
           }}>
             Admin Portal
           </div>

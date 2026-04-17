@@ -76,7 +76,7 @@ export default function Earnings() {
           value={`$${data.accepted_total.toLocaleString()}`}
           sub={`from ${data.accepted_count} accepted ${data.accepted_count === 1 ? 'offer' : 'offers'}`}
         />
-        <Stat icon={FiCheckCircle} label="Accepted"  value={data.accepted_count}  accent="#16a34a" />
+        <Stat icon={FiCheckCircle} label="Accepted"  value={data.accepted_count} />
         <Stat icon={FiClock}       label="Pending"   value={data.pending_count}   sub="Waiting on customer" />
         <Stat icon={FiXCircle}     label="Declined"  value={data.declined_count} />
       </div>

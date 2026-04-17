@@ -220,7 +220,7 @@ function FeedCard({ order, myBid, isNew, criticalRef, highlighted }) {
           {myBid ? (
             <span style={{
               fontSize: 11, fontWeight: 600, padding: '4px 10px', borderRadius: 999,
-              background: '#f0fdf4', color: '#166534', border: '1px solid #bbf7d0',
+              background: BK, color: WH,
               display: 'flex', alignItems: 'center', gap: 4, whiteSpace: 'nowrap', flexShrink: 0,
             }}>
               <FiCheckCircle size={11} /> You bid ${myBid.price}

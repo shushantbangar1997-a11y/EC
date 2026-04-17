@@ -61,21 +61,21 @@ export default function Trips() {
           <div key={b.id} style={{
             background: WH, borderRadius: 12,
             border: `1px solid ${GR200}`,
-            borderLeft: '4px solid #16a34a',
+            borderLeft: `4px solid ${BK}`,
             overflow: 'hidden',
           }}>
             {/* Confirmation banner */}
             <div style={{
               padding: '10px 20px',
-              background: '#f0fdf4',
+              background: BK,
               display: 'flex', alignItems: 'center', gap: 7,
-              fontSize: 11, fontWeight: 700, color: '#166534',
+              fontSize: 11, fontWeight: 700, color: WH,
               letterSpacing: 0.4, textTransform: 'uppercase',
-              borderBottom: '1px solid #bbf7d0',
+              borderBottom: `1px solid #1a1a1a`,
             }}>
               <FiCheckCircle size={13} />
               Confirmed · ${b.price}
-              <span style={{ marginLeft: 'auto', fontFamily: 'monospace', color: '#4ade80' }}>
+              <span style={{ marginLeft: 'auto', fontFamily: 'monospace', color: GR400 }}>
                 Order #{b.quote_request_id}
               </span>
             </div>

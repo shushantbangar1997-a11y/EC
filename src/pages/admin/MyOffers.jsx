@@ -16,10 +16,10 @@ const GR600 = '#525252'
 const GR900 = '#171717'
 
 const TABS = [
-  { id: 'pending',  label: 'Pending',  borderColor: GR400,    bg: GR100,    fg: GR600,    icon: FiClock },
-  { id: 'accepted', label: 'Accepted', borderColor: '#16a34a', bg: '#f0fdf4', fg: '#166534', icon: FiCheckCircle },
-  { id: 'declined', label: 'Declined', borderColor: GR200,    bg: GR100,    fg: GR400,    icon: FiXCircle },
-  { id: 'expired',  label: 'Expired',  borderColor: GR200,    bg: GR100,    fg: GR400,    icon: FiClock },
+  { id: 'pending',  label: 'Pending',  borderColor: GR400, bg: GR100, fg: GR600, icon: FiClock },
+  { id: 'accepted', label: 'Accepted', borderColor: BK,    bg: BK,    fg: WH,    icon: FiCheckCircle },
+  { id: 'declined', label: 'Declined', borderColor: GR200, bg: GR100, fg: GR400, icon: FiXCircle, strikethrough: true },
+  { id: 'expired',  label: 'Expired',  borderColor: GR200, bg: GR100, fg: GR400, icon: FiClock },
 ]
 
 export default function MyOffers() {
@@ -152,11 +152,15 @@ export default function MyOffers() {
                 <div style={{ fontSize: 10, color: GR400, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 0.6 }}>
                   Your Price
                 </div>
-                <div style={{ fontSize: 28, fontWeight: 800, color: GR900, fontFamily: 'monospace', lineHeight: 1.1, marginTop: 4 }}>
+                <div style={{
+                  fontSize: 28, fontWeight: 800, fontFamily: 'monospace', lineHeight: 1.1, marginTop: 4,
+                  color: status.strikethrough ? GR400 : GR900,
+                  textDecoration: status.strikethrough ? 'line-through' : 'none',
+                }}>
                   ${b.price}
                 </div>
                 {b.status === 'accepted' && (
-                  <div style={{ fontSize: 11, color: '#166534', fontWeight: 600, marginTop: 6, display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 4 }}>
+                  <div style={{ fontSize: 11, color: GR600, fontWeight: 600, marginTop: 6, display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 4 }}>
                     <FiCheckCircle size={11} /> Confirmed
                   </div>
                 )}
