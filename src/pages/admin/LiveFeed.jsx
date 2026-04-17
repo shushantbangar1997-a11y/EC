@@ -1,23 +1,30 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { formatDistanceToNow, format } from 'date-fns'
 import {
-  FiZap, FiMapPin, FiNavigation2, FiUsers, FiTruck, FiClock,
+  FiZap, FiUsers, FiTruck, FiClock,
   FiDollarSign, FiSend, FiChevronDown, FiChevronUp, FiFilter,
   FiAlertTriangle, FiRefreshCw, FiInbox, FiCheckCircle,
 } from 'react-icons/fi'
 import toast from 'react-hot-toast'
 import api from '../../utils/api'
 
-const NAVY_DEEP = '#0a1628'
-const GOLD      = '#F6C90E'
-const ELECTRIC  = '#0EA5E9'
+// ── Design tokens ─────────────────────────────────────────────────────────────
+const BK    = '#0a0a0a'
+const WH    = '#ffffff'
+const GR50  = '#fafafa'
+const GR100 = '#f5f5f5'
+const GR200 = '#e5e5e5'
+const GR400 = '#a3a3a3'
+const GR600 = '#525252'
+const GR900 = '#171717'
 
+// Urgency retains functional status colors (operational meaning)
 const URGENCY = {
-  Critical: { color: '#ef4444', bg: '#fef2f2', border: '#fecaca', score: 4, icon: '🔴' },
-  Soon:     { color: '#f59e0b', bg: '#fffbeb', border: '#fde68a', score: 3, icon: '🟡' },
-  Today:    { color: ELECTRIC,  bg: '#f0f9ff', border: '#bae6fd', score: 2, icon: '🔵' },
-  Flexible: { color: '#22c55e', bg: '#f0fdf4', border: '#bbf7d0', score: 1, icon: '🟢' },
-  ASAP:     { color: '#94a3b8', bg: '#f8fafc', border: '#e2e8f0', score: 0, icon: '⚫' },
+  Critical: { color: '#dc2626', bg: '#fef2f2', border: '#fecaca', score: 4, icon: '🔴' },
+  Soon:     { color: '#d97706', bg: '#fffbeb', border: '#fde68a', score: 3, icon: '🟡' },
+  Today:    { color: '#2563eb', bg: '#eff6ff', border: '#bfdbfe', score: 2, icon: '🔵' },
+  Flexible: { color: '#16a34a', bg: '#f0fdf4', border: '#bbf7d0', score: 1, icon: '🟢' },
+  ASAP:     { color: GR400,    bg: GR50,       border: GR200,     score: 0, icon: '⚫' },
 }
 
 const VEHICLE_LABEL = {
@@ -25,32 +32,42 @@ const VEHICLE_LABEL = {
   mini_bus: 'Mini Bus', coach: 'Coach',
 }
 
-// Short 440 Hz browser chime via Web Audio API (~150 ms)
 function playChime() {
   try {
     const ctx = new (window.AudioContext || window.webkitAudioContext)()
-    const osc = ctx.createOscillator()
+    const osc  = ctx.createOscillator()
     const gain = ctx.createGain()
-    osc.connect(gain)
-    gain.connect(ctx.destination)
+    osc.connect(gain); gain.connect(ctx.destination)
     osc.type = 'sine'
     osc.frequency.setValueAtTime(440, ctx.currentTime)
     gain.gain.setValueAtTime(0.25, ctx.currentTime)
     gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15)
-    osc.start(ctx.currentTime)
-    osc.stop(ctx.currentTime + 0.18)
+    osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.18)
     setTimeout(() => ctx.close(), 400)
   } catch {}
 }
 
-// ── Quick-bid inline form ────────────────────────────────────────────────────
+// ── Shared input / label styles ───────────────────────────────────────────────
+const labelStyle = {
+  fontSize: 10, fontWeight: 600, color: GR400,
+  display: 'block', marginBottom: 4,
+  textTransform: 'uppercase', letterSpacing: 0.8,
+}
+const inputStyle = {
+  width: '100%', padding: '8px 10px',
+  border: `1px solid ${GR200}`, borderRadius: 7,
+  fontSize: 13, color: GR900, outline: 'none',
+  background: WH, boxSizing: 'border-box',
+  fontFamily: 'inherit',
+}
 
+// ── Quick-bid inline form ─────────────────────────────────────────────────────
 function QuickBid({ order, onDone, onFlash }) {
-  const [price, setPrice]   = useState('')
-  const [eta, setEta]       = useState(30)
+  const [price,   setPrice]   = useState('')
+  const [eta,     setEta]     = useState(30)
   const [vehicle, setVehicle] = useState(order.vehicle_type || 'sedan')
-  const [msg, setMsg]       = useState('')
-  const [busy, setBusy]     = useState(false)
+  const [msg,     setMsg]     = useState('')
+  const [busy,    setBusy]    = useState(false)
 
   const submit = async (e) => {
     e.preventDefault()
@@ -62,36 +79,38 @@ function QuickBid({ order, onDone, onFlash }) {
         price: n, vehicle_type: vehicle,
         eta_minutes: Number(eta) || 30, message: msg,
       })
-      toast.success('Offer sent!', { icon: '🚖', style: { background: NAVY_DEEP, color: '#fff', border: `1px solid ${GOLD}` } })
+      toast.success('Offer sent!', {
+        icon: '🚖',
+        style: { background: BK, color: WH, border: `1px solid #1e1e1e`, borderRadius: 10, fontSize: 13 },
+      })
       onFlash?.()
       onDone?.()
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to send offer')
-    } finally {
-      setBusy(false)
-    }
+    } finally { setBusy(false) }
   }
 
   return (
     <form
       onSubmit={submit}
       style={{
-        marginTop: 14, padding: '14px 16px',
-        background: '#f8fafc', borderRadius: 10,
-        border: `1px solid #e5e7eb`,
+        marginTop: 12, padding: '14px 16px',
+        background: GR50, borderRadius: 9,
+        border: `1px solid ${GR200}`,
         animation: 'slideDown 0.18s ease',
       }}
     >
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 90px', gap: 8, marginBottom: 8 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 80px', gap: 8, marginBottom: 8 }}>
         <div>
           <label style={labelStyle}>Price (USD)</label>
           <div style={{ position: 'relative' }}>
-            <FiDollarSign size={12} style={{ position: 'absolute', left: 9, top: 10, color: '#94a3b8' }} />
+            <FiDollarSign size={11} style={{ position: 'absolute', left: 9, top: 10, color: GR400 }} />
             <input
               type="number" min="1" step="1" required
               value={price} onChange={e => setPrice(e.target.value)}
               placeholder="120"
-              style={{ ...inputStyle, paddingLeft: 26, fontWeight: 700, fontSize: 16, border: `2px solid ${price ? GOLD : '#e5e7eb'}` }}
+              style={{ ...inputStyle, paddingLeft: 26, fontWeight: 700, fontSize: 15,
+                border: `1px solid ${price ? GR900 : GR200}` }}
             />
           </div>
         </div>
@@ -113,22 +132,23 @@ function QuickBid({ order, onDone, onFlash }) {
       <div style={{ display: 'flex', gap: 8 }}>
         <input
           type="text" value={msg} onChange={e => setMsg(e.target.value)}
-          placeholder="Optional message to customer…"
+          placeholder="Optional note to customer…"
           maxLength={140}
           style={{ ...inputStyle, flex: 1 }}
         />
         <button
           type="submit" disabled={busy || !price}
           style={{
-            padding: '9px 18px',
-            background: busy || !price ? '#cbd5e1' : `linear-gradient(135deg, ${GOLD}, #d4a90c)`,
-            color: NAVY_DEEP, border: 'none', borderRadius: 8,
-            fontWeight: 800, fontSize: 13, cursor: busy || !price ? 'not-allowed' : 'pointer',
-            display: 'flex', alignItems: 'center', gap: 6, whiteSpace: 'nowrap',
-            boxShadow: busy || !price ? 'none' : `0 3px 10px rgba(246,201,14,0.35)`,
+            padding: '8px 16px',
+            background: busy || !price ? GR200 : BK,
+            color: busy || !price ? GR400 : WH,
+            border: 'none', borderRadius: 7,
+            fontWeight: 600, fontSize: 12, cursor: busy || !price ? 'not-allowed' : 'pointer',
+            display: 'flex', alignItems: 'center', gap: 5, whiteSpace: 'nowrap',
+            letterSpacing: 0.2,
           }}
         >
-          <FiSend size={13} />
+          <FiSend size={12} />
           {busy ? 'Sending…' : 'Send Offer'}
         </button>
       </div>
@@ -136,19 +156,10 @@ function QuickBid({ order, onDone, onFlash }) {
   )
 }
 
-const labelStyle = { fontSize: 10, fontWeight: 700, color: '#64748b', display: 'block', marginBottom: 4, textTransform: 'uppercase', letterSpacing: 0.5 }
-const inputStyle = {
-  width: '100%', padding: '9px 10px',
-  border: '1px solid #e5e7eb', borderRadius: 8,
-  fontSize: 13, color: NAVY_DEEP, outline: 'none',
-  background: '#fff', boxSizing: 'border-box',
-}
-
-// ── Single feed card ─────────────────────────────────────────────────────────
-
+// ── Single feed card ──────────────────────────────────────────────────────────
 function FeedCard({ order, myBid, isNew, criticalRef, highlighted }) {
-  const [open, setOpen] = useState(false)
-  const [flash, setFlash] = useState(isNew)
+  const [open,     setOpen]     = useState(false)
+  const [flash,    setFlash]    = useState(isNew)
   const [bidFlash, setBidFlash] = useState(false)
   const u = URGENCY[order.urgency_label] || URGENCY.ASAP
 
@@ -165,8 +176,9 @@ function FeedCard({ order, myBid, isNew, criticalRef, highlighted }) {
     setOpen(false)
   }
 
-  const cardBorder = bidFlash ? GOLD : highlighted ? '#ef4444' : flash ? u.color : '#e5e7eb'
-  const cardBg = bidFlash ? '#fffbeb' : highlighted ? '#fef2f2' : flash ? u.bg : '#fff'
+  const cardBorder   = bidFlash ? GR900 : highlighted ? '#dc2626' : flash ? u.color : GR200
+  const cardBg       = bidFlash ? GR100 : highlighted ? '#fef2f2' : flash ? u.bg : WH
+  const leftAccent   = bidFlash ? GR900 : u.color
 
   return (
     <div
@@ -174,22 +186,21 @@ function FeedCard({ order, myBid, isNew, criticalRef, highlighted }) {
       style={{
         background: cardBg,
         border: `1px solid ${cardBorder}`,
-        borderLeft: `4px solid ${bidFlash ? GOLD : u.color}`,
-        borderRadius: 12,
+        borderLeft: `4px solid ${leftAccent}`,
+        borderRadius: 11,
         marginBottom: 10,
         overflow: 'hidden',
         transition: 'background 0.4s, border-color 0.4s',
         animation: isNew ? 'slideIn 0.25s ease' : undefined,
-        boxShadow: bidFlash ? `0 0 0 3px rgba(246,201,14,0.3)` : '0 1px 4px rgba(0,0,0,0.06)',
+        boxShadow: bidFlash ? `0 0 0 3px rgba(10,10,10,0.12)` : '0 1px 3px rgba(0,0,0,0.05)',
       }}
     >
       {/* Card header */}
-      <div style={{ padding: '14px 16px 10px' }}>
-        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 10, marginBottom: 8 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1, minWidth: 0 }}>
-            {/* Urgency badge */}
+      <div style={{ padding: '13px 15px 10px' }}>
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 10, marginBottom: 7 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 7, flex: 1, minWidth: 0 }}>
             <span style={{
-              fontSize: 10, fontWeight: 800, padding: '3px 8px', borderRadius: 999,
+              fontSize: 10, fontWeight: 700, padding: '3px 8px', borderRadius: 999,
               background: u.bg, color: u.color, border: `1px solid ${u.border}`,
               textTransform: 'uppercase', letterSpacing: 0.5, whiteSpace: 'nowrap', flexShrink: 0,
             }}>
@@ -197,28 +208,27 @@ function FeedCard({ order, myBid, isNew, criticalRef, highlighted }) {
             </span>
             {isNew && (
               <span style={{
-                fontSize: 9, fontWeight: 900, padding: '2px 7px', borderRadius: 999,
-                background: u.color, color: '#fff', textTransform: 'uppercase',
+                fontSize: 9, fontWeight: 800, padding: '2px 6px', borderRadius: 999,
+                background: u.color, color: WH, textTransform: 'uppercase',
                 letterSpacing: 0.8, flexShrink: 0,
                 animation: 'pulse 0.8s ease infinite',
               }}>NEW</span>
             )}
-            <span style={{ fontSize: 11, color: '#94a3b8', fontFamily: 'monospace', flexShrink: 0 }}>#{order.id}</span>
+            <span style={{ fontSize: 10, color: GR400, fontFamily: 'monospace', flexShrink: 0 }}>#{order.id}</span>
           </div>
 
-          {/* Bid status pill */}
           {myBid ? (
             <span style={{
-              fontSize: 11, fontWeight: 700, padding: '4px 10px', borderRadius: 999,
-              background: '#dcfce7', color: '#166534',
+              fontSize: 11, fontWeight: 600, padding: '4px 10px', borderRadius: 999,
+              background: '#f0fdf4', color: '#166534', border: '1px solid #bbf7d0',
               display: 'flex', alignItems: 'center', gap: 4, whiteSpace: 'nowrap', flexShrink: 0,
             }}>
               <FiCheckCircle size={11} /> You bid ${myBid.price}
             </span>
           ) : (
             <span style={{
-              fontSize: 11, fontWeight: 700, padding: '4px 10px', borderRadius: 999,
-              background: '#fef3c7', color: '#92400e',
+              fontSize: 11, fontWeight: 600, padding: '4px 10px', borderRadius: 999,
+              background: GR100, color: GR600, border: `1px solid ${GR200}`,
               whiteSpace: 'nowrap', flexShrink: 0,
             }}>
               No bids yet
@@ -227,28 +237,28 @@ function FeedCard({ order, myBid, isNew, criticalRef, highlighted }) {
         </div>
 
         {/* Customer name */}
-        <div style={{ fontSize: 12, fontWeight: 600, color: '#475569', marginBottom: 7 }}>
+        <div style={{ fontSize: 12, fontWeight: 600, color: GR600, marginBottom: 7 }}>
           {order.name || order.customer_name || 'Guest'}
         </div>
 
         {/* Route */}
         <div style={{ marginBottom: 8 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 3 }}>
-            <span style={{ width: 7, height: 7, borderRadius: 999, background: GOLD, flexShrink: 0 }} />
-            <span style={{ fontSize: 13, fontWeight: 600, color: '#1e293b', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            <span style={{ width: 6, height: 6, borderRadius: 999, background: GR900, flexShrink: 0 }} />
+            <span style={{ fontSize: 13, fontWeight: 600, color: GR900, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               {order.pickup}
             </span>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <span style={{ width: 7, height: 7, borderRadius: 999, background: ELECTRIC, flexShrink: 0 }} />
-            <span style={{ fontSize: 13, color: '#475569', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            <span style={{ width: 6, height: 6, borderRadius: 999, background: GR400, flexShrink: 0 }} />
+            <span style={{ fontSize: 13, color: GR600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               {order.dropoff}
             </span>
           </div>
         </div>
 
         {/* Meta row */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, fontSize: 11, color: '#94a3b8', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, fontSize: 11, color: GR400, flexWrap: 'wrap' }}>
           <span style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
             <FiUsers size={11} /> {order.passengers} pax
           </span>
@@ -257,21 +267,19 @@ function FeedCard({ order, myBid, isNew, criticalRef, highlighted }) {
           </span>
           <span style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
             <FiClock size={11} />
-            {order.ride_date
-              ? format(new Date(order.ride_date), 'MMM d · h:mm a')
-              : 'ASAP'}
+            {order.ride_date ? format(new Date(order.ride_date), 'MMM d · h:mm a') : 'ASAP'}
           </span>
-          <span style={{ marginLeft: 'auto', fontSize: 10, color: '#cbd5e1' }}>
-            Posted {formatDistanceToNow(new Date(order.created_at), { addSuffix: true })}
+          <span style={{ marginLeft: 'auto', fontSize: 10, color: GR200 }}>
+            {formatDistanceToNow(new Date(order.created_at), { addSuffix: true })}
           </span>
         </div>
 
         {order.notes && (
           <div style={{
             marginTop: 8, padding: '6px 10px',
-            background: '#f1f5f9', borderRadius: 7,
-            fontSize: 11, color: '#475569', fontStyle: 'italic',
-            borderLeft: `2px solid ${ELECTRIC}`,
+            background: GR50, borderRadius: 6,
+            fontSize: 11, color: GR600, fontStyle: 'italic',
+            borderLeft: `2px solid ${GR200}`,
           }}>
             "{order.notes}"
           </div>
@@ -280,28 +288,27 @@ function FeedCard({ order, myBid, isNew, criticalRef, highlighted }) {
 
       {/* Action row */}
       {!myBid && (
-        <div style={{ padding: '0 16px 14px', display: 'flex', gap: 8 }}>
+        <div style={{ padding: '0 15px 13px', display: 'flex', gap: 8 }}>
           <button
             onClick={() => setOpen(o => !o)}
             style={{
-              flex: 1, padding: '9px 14px',
-              background: open ? '#f1f5f9' : `linear-gradient(135deg, ${GOLD}, #d4a90c)`,
-              color: open ? '#475569' : NAVY_DEEP,
-              border: open ? '1px solid #e5e7eb' : 'none',
-              borderRadius: 8, fontWeight: 800, fontSize: 12,
-              cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
-              boxShadow: open ? 'none' : `0 3px 10px rgba(246,201,14,0.35)`,
+              flex: 1, padding: '8px 14px',
+              background: open ? GR100 : BK,
+              color: open ? GR600 : WH,
+              border: open ? `1px solid ${GR200}` : 'none',
+              borderRadius: 7, fontWeight: 600, fontSize: 12,
+              cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5,
+              letterSpacing: 0.2,
             }}
           >
-            {open ? <FiChevronUp size={13} /> : <FiZap size={13} />}
+            {open ? <FiChevronUp size={12} /> : <FiZap size={12} />}
             {open ? 'Cancel' : 'Place Bid'}
           </button>
         </div>
       )}
 
-      {/* Inline bid form */}
       {open && !myBid && (
-        <div style={{ padding: '0 16px 16px' }}>
+        <div style={{ padding: '0 15px 15px' }}>
           <QuickBid order={order} onDone={() => setOpen(false)} onFlash={handleFlash} />
         </div>
       )}
@@ -309,16 +316,18 @@ function FeedCard({ order, myBid, isNew, criticalRef, highlighted }) {
   )
 }
 
-// ── Urgency filter pills ──────────────────────────────────────────────────────
-
-const ALL_TIERS = ['All', 'Critical', 'Soon', 'Today', 'Flexible', 'ASAP']
+// ── Filter bar ────────────────────────────────────────────────────────────────
+const ALL_TIERS    = ['All', 'Critical', 'Soon', 'Today', 'Flexible', 'ASAP']
 const ALL_VEHICLES = ['All', ...Object.keys(VEHICLE_LABEL)]
 
 function FilterBar({ tier, setTier, veh, setVeh, openOnly, setOpenOnly }) {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', padding: '12px 20px', background: '#fff', borderBottom: '1px solid #f1f5f9' }}>
-      <FiFilter size={13} color="#94a3b8" />
-      <span style={{ fontSize: 11, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: 0.5, marginRight: 4 }}>Urgency</span>
+    <div style={{
+      display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap',
+      padding: '10px 20px', background: WH, borderBottom: `1px solid ${GR200}`,
+    }}>
+      <FiFilter size={12} color={GR400} />
+      <span style={{ fontSize: 10, fontWeight: 600, color: GR400, textTransform: 'uppercase', letterSpacing: 0.8, marginRight: 2 }}>Urgency</span>
       {ALL_TIERS.map(t => {
         const u = URGENCY[t]
         const active = tier === t
@@ -327,36 +336,36 @@ function FilterBar({ tier, setTier, veh, setVeh, openOnly, setOpenOnly }) {
             key={t}
             onClick={() => setTier(t)}
             style={{
-              padding: '4px 11px', borderRadius: 999, fontSize: 11, fontWeight: 700,
-              background: active ? (u ? u.color : NAVY_DEEP) : '#f1f5f9',
-              color: active ? '#fff' : '#64748b',
-              border: 'none', cursor: 'pointer',
+              padding: '4px 10px', borderRadius: 999, fontSize: 11, fontWeight: 600,
+              background: active ? BK : GR100,
+              color: active ? WH : GR600,
+              border: 'none', cursor: 'pointer', letterSpacing: 0.2,
             }}
           >{t === 'All' ? 'All' : `${u?.icon} ${t}`}</button>
         )
       })}
-      <div style={{ width: 1, height: 18, background: '#e5e7eb', margin: '0 4px' }} />
-      <span style={{ fontSize: 11, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: 0.5, marginRight: 4 }}>Vehicle</span>
+      <div style={{ width: 1, height: 16, background: GR200, margin: '0 2px' }} />
+      <span style={{ fontSize: 10, fontWeight: 600, color: GR400, textTransform: 'uppercase', letterSpacing: 0.8, marginRight: 2 }}>Vehicle</span>
       {ALL_VEHICLES.map(v => (
         <button
           key={v}
           onClick={() => setVeh(v)}
           style={{
-            padding: '4px 11px', borderRadius: 999, fontSize: 11, fontWeight: 700,
-            background: veh === v ? NAVY_DEEP : '#f1f5f9',
-            color: veh === v ? '#fff' : '#64748b',
-            border: 'none', cursor: 'pointer',
+            padding: '4px 10px', borderRadius: 999, fontSize: 11, fontWeight: 600,
+            background: veh === v ? BK : GR100,
+            color: veh === v ? WH : GR600,
+            border: 'none', cursor: 'pointer', letterSpacing: 0.2,
           }}
         >{v === 'All' ? 'All' : VEHICLE_LABEL[v]}</button>
       ))}
-      <div style={{ width: 1, height: 18, background: '#e5e7eb', margin: '0 4px' }} />
+      <div style={{ width: 1, height: 16, background: GR200, margin: '0 2px' }} />
       <button
         onClick={() => setOpenOnly(o => !o)}
         style={{
-          padding: '4px 11px', borderRadius: 999, fontSize: 11, fontWeight: 700,
-          background: openOnly ? '#dcfce7' : '#f1f5f9',
-          color: openOnly ? '#166534' : '#64748b',
-          border: 'none', cursor: 'pointer',
+          padding: '4px 10px', borderRadius: 999, fontSize: 11, fontWeight: 600,
+          background: openOnly ? BK : GR100,
+          color: openOnly ? WH : GR600,
+          border: 'none', cursor: 'pointer', letterSpacing: 0.2,
         }}
       >
         {openOnly ? '✓ Unbid only' : 'Unbid only'}
@@ -365,22 +374,20 @@ function FilterBar({ tier, setTier, veh, setVeh, openOnly, setOpenOnly }) {
   )
 }
 
-// ── Main page ────────────────────────────────────────────────────────────────
-
+// ── Main page ─────────────────────────────────────────────────────────────────
 export default function LiveFeed() {
-  const [orders, setOrders] = useState([])
-  const [myBids, setMyBids] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [lastPollIds, setLastPollIds] = useState(null)   // null = first load
-  const [newIds, setNewIds] = useState(new Set())
-
-  const [tier, setTier] = useState('All')
-  const [veh, setVeh] = useState('All')
-  const [openOnly, setOpenOnly] = useState(false)
+  const [orders,       setOrders]       = useState([])
+  const [myBids,       setMyBids]       = useState([])
+  const [loading,      setLoading]      = useState(true)
+  const [lastPollIds,  setLastPollIds]  = useState(null)
+  const [newIds,       setNewIds]       = useState(new Set())
+  const [tier,         setTier]         = useState('All')
+  const [veh,          setVeh]          = useState('All')
+  const [openOnly,     setOpenOnly]     = useState(false)
   const [highlightedCriticalIds, setHighlightedCriticalIds] = useState(new Set())
 
   const criticalRef = useRef(null)
-  const pollRef = useRef(null)
+  const pollRef     = useRef(null)
 
   const fetchData = useCallback(async (isFirst = false) => {
     try {
@@ -389,15 +396,14 @@ export default function LiveFeed() {
         api.get('/admin/my-bids'),
       ])
       const incoming = ordersRes.data?.data || []
-      const bids = bidsRes.data?.data || []
+      const bids     = bidsRes.data?.data  || []
 
       setMyBids(bids)
       setOrders(incoming)
 
       if (!isFirst && lastPollIds !== null) {
-        const prevIds = lastPollIds
         const freshIds = new Set()
-        incoming.forEach(o => { if (!prevIds.has(o.id)) freshIds.add(o.id) })
+        incoming.forEach(o => { if (!lastPollIds.has(o.id)) freshIds.add(o.id) })
         if (freshIds.size > 0) {
           playChime()
           setNewIds(prev => new Set([...prev, ...freshIds]))
@@ -408,7 +414,6 @@ export default function LiveFeed() {
           }), 3000)
         }
       }
-
       setLastPollIds(new Set(incoming.map(o => o.id)))
     } catch {}
     finally { setLoading(false) }
@@ -420,7 +425,6 @@ export default function LiveFeed() {
     return () => clearInterval(pollRef.current)
   }, [])
 
-  // Re-register interval when fetchData reference changes (lastPollIds updates)
   useEffect(() => {
     if (lastPollIds === null) return
     clearInterval(pollRef.current)
@@ -434,24 +438,20 @@ export default function LiveFeed() {
     return m
   }, [myBids])
 
-  // Sort by urgency score desc, then oldest created_at first within same tier
-  const sorted = useMemo(() => {
-    return [...orders].sort((a, b) => {
+  const sorted = useMemo(() =>
+    [...orders].sort((a, b) => {
       const ds = (b.urgency_score ?? 0) - (a.urgency_score ?? 0)
-      if (ds !== 0) return ds
-      return new Date(a.created_at) - new Date(b.created_at)
-    })
-  }, [orders])
+      return ds !== 0 ? ds : new Date(a.created_at) - new Date(b.created_at)
+    }), [orders])
 
-  const filtered = useMemo(() => {
-    return sorted.filter(o => {
+  const filtered = useMemo(() =>
+    sorted.filter(o => {
       if (o.status === 'confirmed' || o.status === 'completed' || o.status === 'booked') return false
       if (tier !== 'All' && o.urgency_label !== tier) return false
       if (veh !== 'All' && o.vehicle_type !== veh) return false
       if (openOnly && myBidMap[o.id]) return false
       return true
-    })
-  }, [sorted, tier, veh, openOnly, myBidMap])
+    }), [sorted, tier, veh, openOnly, myBidMap])
 
   const unbidCritical = useMemo(() =>
     filtered.filter(o => o.urgency_label === 'Critical' && !myBidMap[o.id]),
@@ -466,57 +466,60 @@ export default function LiveFeed() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
-      {/* CSS keyframes injected once */}
       <style>{`
         @keyframes slideIn {
-          from { opacity: 0; transform: translateY(-12px); }
+          from { opacity: 0; transform: translateY(-10px); }
           to   { opacity: 1; transform: translateY(0); }
         }
         @keyframes slideDown {
-          from { opacity: 0; transform: translateY(-6px); }
+          from { opacity: 0; transform: translateY(-5px); }
           to   { opacity: 1; transform: translateY(0); }
         }
         @keyframes pulse {
           0%, 100% { opacity: 1; }
-          50% { opacity: 0.55; }
+          50% { opacity: 0.5; }
         }
-        @keyframes dot-pulse {
-          0%, 100% { transform: scale(1); opacity: 1; }
-          50% { transform: scale(1.5); opacity: 0.6; }
+        @keyframes dotBlink {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.3; }
         }
       `}</style>
 
       {/* Page header */}
-      <div style={{ padding: '20px 24px 0', background: '#f4f5f8', flexShrink: 0 }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
+      <div style={{ padding: '20px 24px 16px', background: GR50, flexShrink: 0, borderBottom: `1px solid ${GR200}` }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <div style={{ width: 34, height: 34, borderRadius: 10, background: `linear-gradient(135deg, ${GOLD}, #d4a90c)`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <FiZap size={17} color={NAVY_DEEP} />
+            <div style={{
+              width: 32, height: 32, borderRadius: 9, background: BK,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}>
+              <FiZap size={16} color={WH} />
             </div>
             <div>
-              <h1 style={{ fontSize: 20, fontWeight: 800, color: NAVY_DEEP, margin: 0 }}>Live Feed</h1>
-              <div style={{ fontSize: 11, color: '#94a3b8', display: 'flex', alignItems: 'center', gap: 5 }}>
-                <span style={{ width: 7, height: 7, borderRadius: 999, background: '#22c55e', display: 'inline-block', animation: 'dot-pulse 1.5s ease infinite' }} />
-                Auto-updating every 2 seconds · {filtered.length} open {filtered.length === 1 ? 'ride' : 'rides'}
+              <h1 style={{ fontSize: 18, fontWeight: 700, color: GR900, margin: 0, letterSpacing: -0.3 }}>Live Feed</h1>
+              <div style={{ fontSize: 11, color: GR400, display: 'flex', alignItems: 'center', gap: 5, marginTop: 1 }}>
+                <span style={{
+                  width: 6, height: 6, borderRadius: 999, background: BK,
+                  display: 'inline-block', animation: 'dotBlink 2s ease infinite',
+                }} />
+                Every 2 s · {filtered.length} open {filtered.length === 1 ? 'ride' : 'rides'}
               </div>
             </div>
           </div>
 
-          {/* Bid All Critical shortcut */}
           {unbidCritical.length > 1 && (
             <button
               onClick={scrollToCritical}
               style={{
-                display: 'flex', alignItems: 'center', gap: 7,
-                padding: '9px 16px', borderRadius: 10,
-                background: '#ef4444', color: '#fff',
+                display: 'flex', alignItems: 'center', gap: 6,
+                padding: '8px 14px', borderRadius: 9,
+                background: BK, color: WH,
                 border: 'none', cursor: 'pointer',
-                fontSize: 12, fontWeight: 800,
-                boxShadow: '0 4px 12px rgba(239,68,68,0.35)',
-                animation: 'pulse 1.2s ease infinite',
+                fontSize: 12, fontWeight: 600, letterSpacing: 0.2,
+                animation: 'pulse 1.4s ease infinite',
               }}
             >
-              <FiAlertTriangle size={14} />
+              <FiAlertTriangle size={13} />
               {unbidCritical.length} Critical — Bid Now
             </button>
           )}
@@ -529,18 +532,18 @@ export default function LiveFeed() {
       </div>
 
       {/* Feed */}
-      <div style={{ flex: 1, overflowY: 'auto', padding: '16px 20px 20px', background: '#f4f5f8' }}>
+      <div style={{ flex: 1, overflowY: 'auto', padding: '14px 18px 18px', background: GR50 }}>
         {loading && (
-          <div style={{ textAlign: 'center', color: '#94a3b8', paddingTop: 60 }}>
-            <FiRefreshCw size={24} style={{ animation: 'spin 1s linear infinite', display: 'inline-block' }} />
+          <div style={{ textAlign: 'center', color: GR400, paddingTop: 60 }}>
+            <FiRefreshCw size={22} style={{ animation: 'spin 1s linear infinite', display: 'inline-block' }} />
             <p style={{ fontSize: 13, marginTop: 10 }}>Loading feed…</p>
           </div>
         )}
 
         {!loading && filtered.length === 0 && (
-          <div style={{ textAlign: 'center', color: '#94a3b8', paddingTop: 60 }}>
-            <FiInbox size={40} style={{ opacity: 0.35, marginBottom: 12 }} />
-            <p style={{ fontSize: 14, fontWeight: 600, color: '#475569' }}>No open rides match your filters</p>
+          <div style={{ textAlign: 'center', color: GR400, paddingTop: 60 }}>
+            <FiInbox size={38} style={{ opacity: 0.3, marginBottom: 12 }} />
+            <p style={{ fontSize: 14, fontWeight: 600, color: GR600 }}>No open rides match your filters</p>
             <p style={{ fontSize: 12, marginTop: 4 }}>New requests will appear here automatically.</p>
           </div>
         )}
