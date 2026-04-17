@@ -162,6 +162,21 @@ app.get('/api/quote-requests/:id', (req, res) => {
   try {
     const qr = db.getQuoteRequest(req.params.id)
     if (!qr) return res.status(404).json({ message: 'Quote request not found' })
+
+    // Authorization: caller must be (a) the owning customer, (b) an admin/operator,
+    // or (c) hold the per-quote unguessable token issued at creation. This prevents
+    // sequential-id enumeration of other customers' quotes and bids.
+    const token = req.headers.authorization?.slice(7)
+    let caller = null
+    try { if (token) caller = jwt.verify(token, JWT_SECRET) } catch {}
+    const providedQuoteToken = req.query.token || req.headers['x-quote-token']
+    const isOwner = caller && qr.customer_id && caller.id === qr.customer_id
+    const isStaff = caller && (caller.role === 'admin' || caller.role === 'operator')
+    const tokenOK = qr.quote_token && providedQuoteToken === qr.quote_token
+    if (!isOwner && !isStaff && !tokenOK) {
+      return res.status(401).json({ message: 'Authorization required to view this quote request' })
+    }
+
     const bids = db.getBidsForRequest(qr.id)
     res.json({ success: true, data: { ...qrToLead(qr), bids } })
   } catch (e) {
@@ -253,14 +268,21 @@ app.post('/api/quote-requests/:id/accept-bid', (req, res) => {
     let caller = null
     try { if (token) caller = jwt.verify(token, JWT_SECRET) } catch {}
 
-    // Ownership: if the quote was created by a logged-in customer, only that
-    // customer (or an admin) may accept on its behalf. Guest quotes (no customer_id)
-    // remain open to acceptance from the original quote-board session.
+    // Authorization. The caller must be one of:
+    //   (a) the owning logged-in customer
+    //   (b) an admin acting on the customer's behalf
+    //   (c) a guest who holds the per-quote unguessable token issued at creation
+    // This blocks IDOR via sequential quote/bid IDs.
+    const providedQuoteToken = req.body.quote_token || req.headers['x-quote-token']
+    const isOwner = caller && qr.customer_id && caller.id === qr.customer_id
+    const isAdmin = caller && caller.role === 'admin'
+    const tokenOK = qr.quote_token && providedQuoteToken === qr.quote_token
     if (qr.customer_id) {
-      if (!caller) return res.status(401).json({ message: 'Authentication required to accept this offer' })
-      if (caller.id !== qr.customer_id && caller.role !== 'admin') {
-        return res.status(403).json({ message: 'You are not allowed to accept this offer' })
+      if (!isOwner && !isAdmin) {
+        return res.status(caller ? 403 : 401).json({ message: 'You are not allowed to accept this offer' })
       }
+    } else if (!tokenOK && !isAdmin) {
+      return res.status(401).json({ message: 'A valid quote token is required to accept this offer' })
     }
 
     // State guards — prevent double-accept / racing

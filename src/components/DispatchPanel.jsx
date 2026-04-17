@@ -278,8 +278,10 @@ export default function DispatchPanel({ onRouteChange, presetVehicle, hideStats 
         vehicle_type: vehicle,
       }
       const res = await api.post('/quote-requests', payload)
-      const id = res.data?.data?.id || res.data?.id || null
-      setPostedRide({ id, pickup, dropoff, date, time, passengers, vehicle_type: vehicle })
+      const created = res.data?.data || res.data || {}
+      const id = created.id || null
+      const quote_token = created.quote_token || null
+      setPostedRide({ id, quote_token, pickup, dropoff, date, time, passengers, vehicle_type: vehicle })
       setPhase('bids')
       setCountdown(600)
       setBids([])
@@ -300,7 +302,9 @@ export default function DispatchPanel({ onRouteChange, presetVehicle, hideStats 
     if (postedRide?.id) {
       const poll = async () => {
         try {
-          const res = await api.get(`/quote-requests/${postedRide.id}`)
+          const res = await api.get(`/quote-requests/${postedRide.id}`, {
+            params: postedRide.quote_token ? { token: postedRide.quote_token } : undefined,
+          })
           const data = res.data?.data || res.data
           if (data?.bids?.length) setBids(data.bids)
           else if (data?.bid_price) setBids([{ id: 1, operator_name: 'Everywhere Cars', price: data.bid_price, vehicle_type: data.vehicle_type, rating: 4.9, eta_minutes: data.eta_minutes || 30, notes: data.notes }])
@@ -333,7 +337,10 @@ export default function DispatchPanel({ onRouteChange, presetVehicle, hideStats 
     }
     setAccepting(true)
     try {
-      const res = await api.post(`/quote-requests/${postedRide.id}/accept-bid`, { bid_id: bid.id })
+      const res = await api.post(`/quote-requests/${postedRide.id}/accept-bid`, {
+        bid_id: bid.id,
+        quote_token: postedRide.quote_token,
+      })
       const confirmed = res.data?.data?.bid || bid
       setAcceptedBid(confirmed)
       toast.success(`Confirmed! ${confirmed.operator_name} will be in touch.`)

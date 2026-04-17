@@ -2,6 +2,7 @@ import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs'
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
 import bcrypt from 'bcryptjs'
+import { randomBytes } from 'crypto'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const DATA_DIR = join(__dirname, 'data')
@@ -61,7 +62,8 @@ export const db = {
   listUsers: () => _db.users,
 
   createQuoteRequest: (data) => {
-    const qr = { id: nextId(), status: 'pending', created_at: new Date().toISOString(), ...data }
+    const quote_token = randomBytes(18).toString('hex')
+    const qr = { id: nextId(), status: 'pending', quote_token, created_at: new Date().toISOString(), ...data }
     _db.quote_requests.push(qr)
     save(_db)
     return qr
