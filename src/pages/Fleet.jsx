@@ -388,7 +388,7 @@ const Fleet = () => {
               <a
                 key={g.id}
                 href={`#${g.id}`}
-                className="flex-shrink-0 bg-white border border-gray-200 text-white font-semibold text-sm px-5 py-2 rounded-full hover:bg-black hover:text-white hover:border-white/20 transition-colors"
+                className="flex-shrink-0 bg-white border border-gray-200 text-black font-semibold text-sm px-5 py-2 rounded-full hover:bg-black hover:text-white hover:border-black transition-colors"
               >
                 {g.label}
               </a>

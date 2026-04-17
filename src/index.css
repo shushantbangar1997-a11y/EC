@@ -542,3 +542,80 @@ html:not([data-theme]) .text-indigo-200 { color: rgba(255,255,255,0.72) !importa
 html:not([data-theme]) .bg-blue-50 { background-color: #f5f5f5 !important; }
 html:not([data-theme]) .group:hover .group-hover\:bg-\[\#1a365d\] { background-color: #0a0a0a !important; }
 html:not([data-theme]) .group:hover .group-hover\:text-white { color: #ffffff !important; }
+
+/* === Comprehensive blue / sky / indigo neutralisation === */
+/* Solid blue/sky/indigo backgrounds — collapse to black on customer site */
+html:not([data-theme]) .bg-blue-500,
+html:not([data-theme]) .bg-blue-600,
+html:not([data-theme]) .bg-blue-700,
+html:not([data-theme]) .bg-blue-800,
+html:not([data-theme]) .bg-blue-900,
+html:not([data-theme]) .bg-sky-500,
+html:not([data-theme]) .bg-sky-600,
+html:not([data-theme]) .bg-sky-700,
+html:not([data-theme]) .bg-sky-800,
+html:not([data-theme]) .bg-indigo-500,
+html:not([data-theme]) .bg-indigo-600,
+html:not([data-theme]) .bg-indigo-700,
+html:not([data-theme]) .bg-indigo-800,
+html:not([data-theme]) .hover\:bg-blue-600:hover,
+html:not([data-theme]) .hover\:bg-blue-700:hover { background-color: #0a0a0a !important; color: #ffffff !important; }
+
+/* Soft tint blue/indigo backgrounds (cards, badges) — collapse to neutral */
+html:not([data-theme]) .bg-blue-100,
+html:not([data-theme]) .bg-blue-200,
+html:not([data-theme]) .bg-sky-50,
+html:not([data-theme]) .bg-sky-100,
+html:not([data-theme]) .bg-indigo-50,
+html:not([data-theme]) .bg-indigo-100,
+html:not([data-theme]) .bg-primary-50,
+html:not([data-theme]) .bg-primary-100,
+html:not([data-theme]) .bg-primary-200 { background-color: #f5f5f5 !important; color: #0a0a0a !important; }
+
+/* Blue / sky / indigo text — solid darks become black, lights inherit */
+html:not([data-theme]) .text-blue-500,
+html:not([data-theme]) .text-blue-600,
+html:not([data-theme]) .text-blue-700,
+html:not([data-theme]) .text-blue-800,
+html:not([data-theme]) .text-blue-900,
+html:not([data-theme]) .text-sky-500,
+html:not([data-theme]) .text-sky-600,
+html:not([data-theme]) .text-sky-700,
+html:not([data-theme]) .text-indigo-500,
+html:not([data-theme]) .text-indigo-600,
+html:not([data-theme]) .text-indigo-700,
+html:not([data-theme]) .text-indigo-800 { color: #0a0a0a !important; }
+
+/* Blue / sky / indigo borders → neutral */
+html:not([data-theme]) .border-blue-200,
+html:not([data-theme]) .border-blue-300,
+html:not([data-theme]) .border-blue-400,
+html:not([data-theme]) .border-blue-500,
+html:not([data-theme]) .border-blue-600,
+html:not([data-theme]) .border-blue-700,
+html:not([data-theme]) .border-blue-800,
+html:not([data-theme]) .border-blue-900,
+html:not([data-theme]) .border-sky-200,
+html:not([data-theme]) .border-sky-300,
+html:not([data-theme]) .border-indigo-200,
+html:not([data-theme]) .border-indigo-300,
+html:not([data-theme]) .border-indigo-500 { border-color: #e5e5e5 !important; }
+
+/* Gradient stops referencing blue/sky/indigo/primary */
+html:not([data-theme]) .from-blue-500,
+html:not([data-theme]) .from-blue-600,
+html:not([data-theme]) .from-blue-700,
+html:not([data-theme]) .from-sky-500,
+html:not([data-theme]) .from-sky-600,
+html:not([data-theme]) .from-indigo-500,
+html:not([data-theme]) .from-indigo-600 { --tw-gradient-from: #0a0a0a !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(10,10,10,0)) !important; }
+html:not([data-theme]) .to-blue-500,
+html:not([data-theme]) .to-blue-600,
+html:not([data-theme]) .to-blue-700,
+html:not([data-theme]) .to-sky-500,
+html:not([data-theme]) .to-sky-600,
+html:not([data-theme]) .to-indigo-500,
+html:not([data-theme]) .to-indigo-600 { --tw-gradient-to: #0a0a0a !important; }
+html:not([data-theme]) .via-blue-500,
+html:not([data-theme]) .via-blue-600,
+html:not([data-theme]) .via-indigo-500 { --tw-gradient-stops: var(--tw-gradient-from), #171717, var(--tw-gradient-to, rgba(23,23,23,0)) !important; }
