@@ -107,7 +107,10 @@ function BidComposer({ order, onBidSent }) {
       await api.post(`/quote-requests/${order.id}/bids`, {
         price: n, vehicle_type: vehicle, eta_minutes: Number(eta) || 30, message,
       })
-      toast.success('Offer sent to customer')
+      toast.success('Offer sent to customer', {
+        icon: '🚖',
+        style: { background: '#0a0a0a', color: '#ffffff', border: '1px solid #1e1e1e', borderRadius: 10, fontSize: 13 },
+      })
       setPrice(''); setMessage('')
       onBidSent?.()
     } catch (err) {
