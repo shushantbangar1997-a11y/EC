@@ -101,6 +101,9 @@ export default function HeroSlideshow({ images, slideMs, onSlideChange }) {
               src={slide.srcDesktop || slide.src}
               alt={slide.alt}
               onLoad={() => setLoaded(l => ({ ...l, [i]: true }))}
+              fetchpriority={i === 0 ? 'high' : 'low'}
+              loading={i === 0 ? 'eager' : 'lazy'}
+              decoding={i === 0 ? 'sync' : 'async'}
               style={{
                 display: 'block',
                 width: '100%',
