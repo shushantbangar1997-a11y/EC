@@ -1,20 +1,19 @@
 import React from 'react'
 
 /*
-  Car-on-infinity-loop brand mark — Uber / Google Maps style.
+  Car-on-infinity-road brand mark.
 
-  A top-down black-car icon drives continuously around a lemniscate
-  (figure-8 / infinity) path, mimicking the Uber driver icon on a map.
+  Road cross-section (layered SVG strokes on the same path):
+    ①  wide faint glow  — ambient street-light haze
+    ②  white edge band  — visible road border / white edge lines
+    ③  dark asphalt     — road surface, slightly narrower than ② leaving
+                          a white stripe on each side (the edge lines)
+    ④  dashed centre    — painted centre lane dividers
 
-  Technique:
-  - SVG <animateMotion> + <mpath> moves the car group along the path natively
-  - rotate="auto" orients the car to face the direction of travel at every point
-  - Car points in the +X direction so "auto" aligns it correctly
-  - Route drawn as layered strokes (glow → road → bright centre) = Google Maps feel
-  - Yellow headlight beams + red tail lights for realism
+  Car points in +X direction so animateMotion rotate="auto" aligns nose
+  with the travel direction at every point on the lemniscate.
 */
 
-// Lemniscate path, traversable as a single closed loop, center crossing at (100,40)
 const D = [
   'M 100,40',
   'C 100,15 80,3  55,3',
@@ -27,125 +26,159 @@ const D = [
   'C 120,77 100,65 100,40',
 ].join(' ')
 
-export default function InfinityLogo({ size = 58 }) {
-  const W = Math.round(size * 2.5)   // e.g. 145
-  const H = size                      // e.g. 58
+const CSS = `
+@keyframes beamPulse {
+  0%,100% { opacity: 0.18; }
+  50%      { opacity: 0.42; }
+}
+@keyframes tailPulse {
+  0%,100% { opacity: 0.65; }
+  50%      { opacity: 1;    }
+}
+`
+
+export default function InfinityLogo({ size = 72 }) {
+  const W = Math.round(size * 2.5)
+  const H = size
 
   return (
     <>
-      <style>{`
-        @keyframes beamPulse {
-          0%,100% { opacity: 0.15; }
-          50%      { opacity: 0.35; }
-        }
-        @keyframes tailPulse {
-          0%,100% { opacity: 0.7; }
-          50%      { opacity: 1;   }
-        }
-      `}</style>
+      <style>{CSS}</style>
 
       <svg
         width={W}
         height={H}
         viewBox="0 0 200 80"
         fill="none"
-        aria-label="Car driving in infinity loop — Everywhere Transfers"
+        aria-label="Car driving in infinity road — Everywhere Transfers"
         style={{ display: 'block', overflow: 'visible' }}
       >
-        {/* ── Route path (layered, Google Maps style) ──────────────── */}
 
-        {/* Outer glow halo */}
-        <path d={D} stroke="rgba(255,255,255,0.07)" strokeWidth="18" strokeLinecap="round" />
-        {/* Road width */}
-        <path d={D} stroke="rgba(255,255,255,0.13)" strokeWidth="11" strokeLinecap="round" />
-        {/* Road surface */}
-        <path d={D} stroke="rgba(20,20,20,0.85)"    strokeWidth="8"  strokeLinecap="round" />
-        {/* Kerb / edge lines */}
-        <path d={D} stroke="rgba(255,255,255,0.28)" strokeWidth="5"  strokeLinecap="round" />
-        {/* Inner asphalt */}
-        <path d={D} stroke="rgba(18,18,18,0.95)"    strokeWidth="3.5" strokeLinecap="round" />
-        {/* Bright centre line */}
-        <path d={D} stroke="rgba(255,255,255,0.45)" strokeWidth="1"  strokeLinecap="round" />
-        {/* Dashed centre markings */}
+        {/* ══════════════════════════════════════════════════════
+            ROAD  (4 concentric strokes = realistic cross-section)
+            ══════════════════════════════════════════════════════ */}
+
+        {/* ① Ambient glow — street-light haze around road */}
         <path d={D}
-          stroke="rgba(255,255,255,0.30)"
-          strokeWidth="0.7"
+          stroke="rgba(255,255,255,0.06)"
+          strokeWidth="38"
           strokeLinecap="round"
-          strokeDasharray="6 9"
         />
 
-        {/* ── Car — top-down, pointing RIGHT (+X = forward for auto-rotate) ── */}
+        {/* ② White edge band — outermost road marking */}
+        <path d={D}
+          stroke="rgba(255,255,255,0.38)"
+          strokeWidth="26"
+          strokeLinecap="round"
+        />
+
+        {/* ③ Asphalt surface — dark, slightly narrower than ②
+              The 2.5-unit gap on each side = visible white edge lines */}
+        <path d={D}
+          stroke="#1c1c1c"
+          strokeWidth="21"
+          strokeLinecap="round"
+        />
+
+        {/* Subtle surface texture: very faint lighter tone on asphalt */}
+        <path d={D}
+          stroke="rgba(255,255,255,0.03)"
+          strokeWidth="19"
+          strokeLinecap="round"
+        />
+
+        {/* ④ Dashed centre lane markings — yellow, classic road style */}
+        <path d={D}
+          stroke="rgba(255,220,60,0.70)"
+          strokeWidth="1.4"
+          strokeLinecap="butt"
+          strokeDasharray="7 9"
+        />
+
+        {/* Thin white inner edge accent (kerb reflex effect) */}
+        <path d={D}
+          stroke="rgba(255,255,255,0.12)"
+          strokeWidth="21"
+          strokeLinecap="round"
+          strokeDasharray="0"
+        />
+
+        {/* ══════════════════════════════════════════════════════
+            CAR  — top-down, nose pointing in +X direction
+            ══════════════════════════════════════════════════════ */}
         <g>
-          {/*
-            animateMotion moves this <g> along the path.
-            rotate="auto" rotates it so its +X axis tracks the tangent.
-          */}
-          <animateMotion dur="4.2s" repeatCount="indefinite" rotate="auto">
-            <mpath href="#routePath" />
+          <animateMotion dur="4.4s" repeatCount="indefinite" rotate="auto">
+            <mpath href="#routeRef" />
           </animateMotion>
 
-          {/* Ground shadow */}
-          <ellipse cx="0" cy="2" rx="12" ry="4.5" fill="rgba(0,0,0,0.45)" />
+          {/* Ground shadow (oval beneath car, offset slightly forward) */}
+          <ellipse cx="1" cy="0" rx="14" ry="5.5" fill="rgba(0,0,0,0.55)" />
 
-          {/* ── Headlight beams (in front of car, +X side) ─────── */}
-          <ellipse
-            cx="18" cy="-3.5" rx="9" ry="3"
-            fill="rgba(255,245,160,0.22)"
-            style={{ animation: 'beamPulse 1.8s ease-in-out infinite' }}
+          {/* Wet-asphalt reflection glow */}
+          <ellipse cx="0" cy="0" rx="12" ry="4" fill="rgba(255,255,255,0.04)" />
+
+          {/* ── Headlight beam cones (ahead of car) ────────────── */}
+          <ellipse cx="22" cy="-4.2" rx="11" ry="3.5"
+            fill="rgba(255,248,180,0.20)"
+            style={{ animation: 'beamPulse 2s ease-in-out infinite' }}
           />
-          <ellipse
-            cx="18" cy="3.5" rx="9" ry="3"
-            fill="rgba(255,245,160,0.22)"
-            style={{ animation: 'beamPulse 1.8s ease-in-out infinite 0.9s' }}
+          <ellipse cx="22" cy="4.2" rx="11" ry="3.5"
+            fill="rgba(255,248,180,0.20)"
+            style={{ animation: 'beamPulse 2s ease-in-out infinite 1s' }}
           />
 
-          {/* ── Main car body ────────────────────────────────────── */}
-          <rect x="-11" y="-7" width="22" height="14" rx="4.5" fill="white" />
+          {/* ── Car body ─────────────────────────────────────────── */}
+          <rect x="-12" y="-7.5" width="24" height="15" rx="5" fill="white" />
 
-          {/* Windshield — front (right / +X side) */}
-          <rect x="2" y="-5" width="6.5" height="10" rx="2" fill="rgba(25,25,40,0.55)" />
+          {/* Front windshield (right / +X side) */}
+          <rect x="2.5" y="-5.5" width="7" height="11" rx="2.2"
+            fill="rgba(20,20,35,0.55)" />
 
           {/* Rear window */}
-          <rect x="-7.5" y="-4" width="5" height="8" rx="1.8" fill="rgba(25,25,40,0.42)" />
+          <rect x="-8.5" y="-4.5" width="5.5" height="9" rx="2"
+            fill="rgba(20,20,35,0.42)" />
 
-          {/* Centre body stripe (roof line illusion) */}
-          <rect x="-6" y="-1.5" width="8" height="3" rx="1" fill="rgba(220,220,220,0.18)" />
+          {/* Roof / body crease highlight */}
+          <rect x="-5" y="-2" width="7" height="4" rx="1.2"
+            fill="rgba(230,230,230,0.15)" />
 
-          {/* ── Wheels (dark, 4 corners) ─────────────────────────── */}
-          {/* Front-left  */}  <rect x="3"  y="-10"  width="6" height="3" rx="1.2" fill="rgba(40,40,40,0.95)" />
-          {/* Front-right */}  <rect x="3"  y="7"    width="6" height="3" rx="1.2" fill="rgba(40,40,40,0.95)" />
-          {/* Rear-left   */}  <rect x="-9" y="-10"  width="6" height="3" rx="1.2" fill="rgba(40,40,40,0.95)" />
-          {/* Rear-right  */}  <rect x="-9" y="7"    width="6" height="3" rx="1.2" fill="rgba(40,40,40,0.95)" />
+          {/* ── Wheels — 4 corners, dark rubber ─────────────────── */}
+          {/* Front-left  */}<rect x="3"   y="-11" width="7" height="3.5" rx="1.5"
+            fill="rgba(35,35,35,0.95)" />
+          {/* Front-right */}<rect x="3"   y="7.5"  width="7" height="3.5" rx="1.5"
+            fill="rgba(35,35,35,0.95)" />
+          {/* Rear-left   */}<rect x="-10" y="-11" width="7" height="3.5" rx="1.5"
+            fill="rgba(35,35,35,0.95)" />
+          {/* Rear-right  */}<rect x="-10" y="7.5"  width="7" height="3.5" rx="1.5"
+            fill="rgba(35,35,35,0.95)" />
 
           {/* ── Headlights (amber) ───────────────────────────────── */}
-          <ellipse cx="12" cy="-3.8" rx="2"   ry="1.4" fill="rgba(255,235,80,0.95)" />
-          <ellipse cx="12" cy="3.8"  rx="2"   ry="1.4" fill="rgba(255,235,80,0.95)" />
+          <ellipse cx="13" cy="-4.5" rx="2.2" ry="1.5" fill="rgba(255,235,80,0.97)" />
+          <ellipse cx="13" cy="4.5"  rx="2.2" ry="1.5" fill="rgba(255,235,80,0.97)" />
 
-          {/* ── Tail lights (red) ────────────────────────────────── */}
-          <ellipse
-            cx="-12" cy="-4" rx="1.8" ry="1.2"
-            fill="rgba(255,60,60,0.85)"
-            style={{ animation: 'tailPulse 1.4s ease-in-out infinite' }}
+          {/* ── Tail lights (red, pulsing) ───────────────────────── */}
+          <ellipse cx="-13" cy="-4.5" rx="2" ry="1.4"
+            fill="rgba(255,55,55,0.88)"
+            style={{ animation: 'tailPulse 1.6s ease-in-out infinite' }}
           />
-          <ellipse
-            cx="-12" cy="4" rx="1.8" ry="1.2"
-            fill="rgba(255,60,60,0.85)"
-            style={{ animation: 'tailPulse 1.4s ease-in-out infinite 0.7s' }}
+          <ellipse cx="-13" cy="4.5" rx="2" ry="1.4"
+            fill="rgba(255,55,55,0.88)"
+            style={{ animation: 'tailPulse 1.6s ease-in-out infinite 0.8s' }}
           />
         </g>
 
-        {/* Hidden path for animateMotion reference */}
-        <path id="routePath" d={D} stroke="none" fill="none" />
+        {/* Reference path for animateMotion (invisible) */}
+        <path id="routeRef" d={D} stroke="none" fill="none" />
       </svg>
 
-      {/* Brand text — outside the SVG, always static */}
+      {/* Brand text — static, never moves */}
       <p style={{
         fontSize: 9.5,
         fontWeight: 700,
         letterSpacing: '0.20em',
         textTransform: 'lowercase',
-        color: 'rgba(255,255,255,0.45)',
-        marginTop: 8,
+        color: 'rgba(255,255,255,0.42)',
+        marginTop: 10,
         fontFamily: 'inherit',
         userSelect: 'none',
         lineHeight: 1,
