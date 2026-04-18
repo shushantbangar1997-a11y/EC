@@ -13,6 +13,7 @@ import {
 } from 'react-icons/fi'
 import PlaceAutocomplete from './PlaceAutocomplete'
 import SlideButton from './SlideButton'
+import InfinityLogo from './InfinityLogo'
 import RideDatePicker from './RideDatePicker'
 import {
   detectRouteType, getPriceEstimate, formatPriceRange,
@@ -575,7 +576,9 @@ export default function DispatchPanel({ onRouteChange, presetVehicle, hideStats 
               {phase === 'idle' && (
                 <div className="mb-7">
                   <div className="text-center mb-7">
-                    <img src="/logo.png?v=4" alt="Everywhere Cars" className="h-11 w-auto mx-auto mb-5 opacity-95" />
+                    <div className="flex flex-col items-center mb-5">
+                      <InfinityLogo size={52} />
+                    </div>
                     <h1 className="font-black mb-2" style={{ color: 'var(--text-primary)', fontSize: 'clamp(1.6rem, 4vw, 2.2rem)', letterSpacing: '-0.02em', lineHeight: 1.15 }}>
                       Your Ride,{' '}
                       <span style={{ color: GOLD }}>Your Price.</span>
