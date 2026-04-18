@@ -5,7 +5,7 @@ import {
   FiUsers, FiBriefcase, FiArrowRight, FiPhone,
 } from 'react-icons/fi'
 import DispatchPanel from '../components/DispatchPanel'
-import HeroSlideshow from '../components/HeroSlideshow'
+import HeroBackground from '../components/HeroBackground'
 import FleetSlider from '../components/FleetSlider'
 import useSimulatedStats from '../hooks/useSimulatedStats'
 
@@ -32,14 +32,14 @@ export default function Home() {
     <div style={{ background: '#ffffff' }}>
 
       {/* ── Hero ───────────────────────────────────────────────────────── */}
-      <section className="hero-section" style={{ position: 'relative', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-        <HeroSlideshow />
+      <section className="hero-section" style={{ position: 'relative', display: 'flex', flexDirection: 'column', overflow: 'hidden', background: '#0a0a0a' }}>
+        <HeroBackground />
 
-        {/* Overlays */}
+        {/* Overlays — slightly heavier than photo hero so white text stays readable on grey tones */}
         <div style={{ position: 'absolute', inset: 0, zIndex: 3, pointerEvents: 'none' }}>
-          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '40%', background: 'linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, transparent 100%)' }} />
-          <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.32)' }} />
-          <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '50%', background: 'linear-gradient(to top, rgba(0,0,0,0.65) 0%, transparent 100%)' }} />
+          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '40%', background: 'linear-gradient(to bottom, rgba(0,0,0,0.60) 0%, transparent 100%)' }} />
+          <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.38)' }} />
+          <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '55%', background: 'linear-gradient(to top, rgba(0,0,0,0.60) 0%, transparent 100%)' }} />
         </div>
 
         <div ref={panelRef} style={{ position: 'relative', zIndex: 4, flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 'clamp(48px,8vw,80px) 16px clamp(48px,8vw,90px)' }}>
@@ -63,10 +63,10 @@ export default function Home() {
           </div>
 
           {/* Headline */}
-          <h1 style={{ fontSize: 'clamp(2rem, 5vw, 3.5rem)', fontWeight: 800, color: '#ffffff', textAlign: 'center', letterSpacing: -1, lineHeight: 1.1, marginBottom: 10, maxWidth: 680 }}>
+          <h1 style={{ fontSize: 'clamp(2rem, 5vw, 3.5rem)', fontWeight: 800, color: '#ffffff', textAlign: 'center', letterSpacing: -1, lineHeight: 1.1, marginBottom: 10, maxWidth: 680, textShadow: '0 2px 20px rgba(0,0,0,0.9), 0 1px 6px rgba(0,0,0,1)' }}>
             NYC's Premium<br />Transfer Marketplace
           </h1>
-          <p style={{ fontSize: 16, color: 'rgba(255,255,255,0.72)', textAlign: 'center', maxWidth: 420, marginBottom: 36, lineHeight: 1.6 }}>
+          <p style={{ fontSize: 16, color: 'rgba(255,255,255,0.82)', textAlign: 'center', maxWidth: 420, marginBottom: 36, lineHeight: 1.6, textShadow: '0 1px 10px rgba(0,0,0,0.95)' }}>
             Post your ride free. Operators compete. You pick the best price.
           </p>
 
