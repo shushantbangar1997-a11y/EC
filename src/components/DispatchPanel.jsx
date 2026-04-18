@@ -471,7 +471,7 @@ export default function DispatchPanel({ onRouteChange, presetVehicle, hideStats 
           </div>
         )}
 
-        <div className="p-6 sm:p-8">
+        <div className="p-4 sm:p-6">
 
           {phase === 'bids' ? (
             <div>
@@ -778,7 +778,7 @@ export default function DispatchPanel({ onRouteChange, presetVehicle, hideStats 
               {isPhaseVisible('contact') && phase !== 'idle' && (
                 <div className="mt-4 space-y-3" style={{ animation: 'slideInUp 280ms ease forwards' }}>
                   <div className="h-px" style={{ background: 'var(--bg-field)' }} />
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     <div>
                       <span className="text-xs font-mono font-bold tracking-widest block mb-1.5" style={{ color: ELECTRIC }}>NAME</span>
                       <input
@@ -831,6 +831,9 @@ export default function DispatchPanel({ onRouteChange, presetVehicle, hideStats 
           font-size: 0.9rem;
           outline: none;
           transition: border-color 220ms cubic-bezier(0.4,0,0.2,1), background 220ms, color 300ms;
+        }
+        @media (max-width: 640px) {
+          .dispatch-field { font-size: 1rem; }
         }
         .dispatch-field::placeholder { color: var(--text-muted); }
         .dispatch-field:focus {

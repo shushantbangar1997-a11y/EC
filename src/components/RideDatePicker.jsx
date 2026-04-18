@@ -107,7 +107,7 @@ export default function RideDatePicker({ initialDate, initialTime, minDate, onCo
             </h3>
             <button
               onClick={onClose}
-              className="flex items-center justify-center w-8 h-8 rounded-full transition-colors"
+              className="flex items-center justify-center w-10 h-10 rounded-full transition-colors"
               style={{ background: 'var(--bg-field)', color: 'var(--text-secondary)' }}
             >
               <FiX size={15} />
@@ -123,14 +123,14 @@ export default function RideDatePicker({ initialDate, initialTime, minDate, onCo
                 <button
                   onClick={() => changeWeek('prev')}
                   disabled={prevWeekDisabled}
-                  className="flex items-center justify-center w-7 h-7 rounded-lg transition-colors disabled:opacity-30"
+                  className="flex items-center justify-center w-9 h-9 rounded-lg transition-colors disabled:opacity-30"
                   style={{ background: 'var(--bg-field)', color: 'var(--text-secondary)' }}
                 >
                   <FiChevronLeft size={14} />
                 </button>
                 <button
                   onClick={() => changeWeek('next')}
-                  className="flex items-center justify-center w-7 h-7 rounded-lg transition-colors"
+                  className="flex items-center justify-center w-9 h-9 rounded-lg transition-colors"
                   style={{ background: 'var(--bg-field)', color: 'var(--text-secondary)' }}
                 >
                   <FiChevronRight size={14} />
@@ -198,7 +198,7 @@ export default function RideDatePicker({ initialDate, initialTime, minDate, onCo
             </span>
             <div
               ref={timeRef}
-              className="grid grid-cols-4 gap-1.5 max-h-36 overflow-y-auto"
+              className="grid grid-cols-4 gap-1.5 max-h-44 overflow-y-auto"
               style={{ scrollbarWidth: 'none' }}
             >
               {TIME_SLOTS.map((slot) => {
@@ -207,11 +207,12 @@ export default function RideDatePicker({ initialDate, initialTime, minDate, onCo
                   <button
                     key={slot.value}
                     onClick={() => setSelectedTime(slot.value)}
-                    className="relative text-xs font-medium py-2 rounded-lg transition-colors"
+                    className="relative text-xs font-medium py-2.5 rounded-lg transition-colors"
                     style={{
                       background: isSel ? 'var(--text-primary)' : 'var(--bg-field)',
                       color: isSel ? 'var(--bg-surface)' : 'var(--text-secondary)',
                       border: isSel ? 'none' : '1px solid transparent',
+                      minHeight: 40,
                     }}
                   >
                     {slot.label}
@@ -224,15 +225,15 @@ export default function RideDatePicker({ initialDate, initialTime, minDate, onCo
           <div className="flex gap-2 pt-3" style={{ borderTop: '1px solid var(--bg-field-hover)' }}>
             <button
               onClick={onClose}
-              className="flex-1 py-2.5 rounded-xl text-sm font-semibold transition-colors"
-              style={{ background: 'var(--bg-field)', color: 'var(--text-secondary)' }}
+              className="flex-1 py-3.5 rounded-xl text-sm font-semibold transition-colors"
+              style={{ background: 'var(--bg-field)', color: 'var(--text-secondary)', minHeight: 48 }}
             >
               Cancel
             </button>
             <button
               onClick={handleConfirm}
-              className="flex-1 py-2.5 rounded-xl text-sm font-semibold transition-colors"
-              style={{ background: 'var(--text-primary)', color: 'var(--bg-surface)' }}
+              className="flex-1 py-3.5 rounded-xl text-sm font-semibold transition-colors"
+              style={{ background: 'var(--text-primary)', color: 'var(--bg-surface)', minHeight: 48 }}
             >
               Confirm
             </button>

@@ -32,7 +32,7 @@ export default function Home() {
     <div style={{ background: '#ffffff' }}>
 
       {/* ── Hero ───────────────────────────────────────────────────────── */}
-      <section style={{ position: 'relative', minHeight: '100vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+      <section className="hero-section" style={{ position: 'relative', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         <HeroSlideshow />
 
         {/* Overlays */}
@@ -42,22 +42,23 @@ export default function Home() {
           <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '50%', background: 'linear-gradient(to top, rgba(0,0,0,0.65) 0%, transparent 100%)' }} />
         </div>
 
-        <div ref={panelRef} style={{ position: 'relative', zIndex: 4, flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '80px 16px 90px' }}>
+        <div ref={panelRef} style={{ position: 'relative', zIndex: 4, flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 'clamp(48px,8vw,80px) 16px clamp(48px,8vw,90px)' }}>
 
           {/* Live stats bar */}
           <div style={{
-            display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20,
-            padding: '7px 18px', borderRadius: 999,
+            display: 'flex', alignItems: 'center', gap: 8, marginBottom: 20,
+            padding: '6px 14px', borderRadius: 999,
             background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(14px)',
             border: '1px solid rgba(255,255,255,0.15)',
+            maxWidth: 'calc(100vw - 32px)', overflow: 'hidden',
           }}>
             <span style={{ width: 6, height: 6, borderRadius: 999, background: '#22c55e', flexShrink: 0, display: 'inline-block' }} className="animate-pulse" />
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12, fontSize: 12, fontFamily: 'monospace', color: 'rgba(255,255,255,0.72)' }}>
-              <span><span style={{ fontWeight: 700, color: '#ffffff' }}>{stats.vehicles}</span> vehicles ready near NYC</span>
-              <span style={{ color: 'rgba(255,255,255,0.25)' }}>|</span>
-              <span>Avg response: <span style={{ fontWeight: 700, color: '#ffffff' }}>{stats.response} min</span></span>
-              <span style={{ color: 'rgba(255,255,255,0.25)' }} className="hidden sm:inline">|</span>
-              <span className="hidden sm:inline">Rides today: <span style={{ fontWeight: 700, color: '#ffffff' }}>{stats.rides}</span></span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 11, fontFamily: 'monospace', color: 'rgba(255,255,255,0.72)', overflow: 'hidden', minWidth: 0 }}>
+              <span style={{ whiteSpace: 'nowrap' }}><span style={{ fontWeight: 700, color: '#ffffff' }}>{stats.vehicles}</span> vehicles ready</span>
+              <span style={{ color: 'rgba(255,255,255,0.25)', flexShrink: 0 }}>|</span>
+              <span style={{ whiteSpace: 'nowrap' }}>~<span style={{ fontWeight: 700, color: '#ffffff' }}>{stats.response} min</span> response</span>
+              <span style={{ color: 'rgba(255,255,255,0.25)', flexShrink: 0 }} className="hidden sm:inline">|</span>
+              <span className="hidden sm:inline" style={{ whiteSpace: 'nowrap' }}>Rides today: <span style={{ fontWeight: 700, color: '#ffffff' }}>{stats.rides}</span></span>
             </div>
           </div>
 

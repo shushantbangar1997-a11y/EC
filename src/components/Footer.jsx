@@ -86,7 +86,7 @@ export default function Footer() {
                 <FiShield size={14} /> Check your inbox for your discount code!
               </div>
             ) : (
-              <form onSubmit={handleNewsletter} style={{ display: 'flex', gap: 8, width: '100%', maxWidth: 400 }}>
+              <form onSubmit={handleNewsletter} className="flex flex-col sm:flex-row" style={{ gap: 8, width: '100%', maxWidth: 400 }}>
                 <div style={{ position: 'relative', flex: 1 }}>
                   <FiMail style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: MUTED }} size={13} />
                   <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="Enter your email"
@@ -179,9 +179,9 @@ export default function Footer() {
         {/* Bottom bar */}
         <div style={{ borderTop: `1px solid ${BORDER}`, paddingTop: 20, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between', gap: 14, fontSize: 11, color: MUTED }} className="md:flex-row">
           <p>&copy; {currentYear} Everywhere Cars. All rights reserved.</p>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
+          <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center', gap: 12 }}>
             {trustBadges.map(({ icon: Icon, label }) => (
-              <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+              <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 5, whiteSpace: 'nowrap' }}>
                 <Icon size={11} style={{ color: 'rgba(255,255,255,0.30)' }} />
                 <span>{label}</span>
               </div>

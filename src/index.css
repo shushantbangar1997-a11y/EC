@@ -10,6 +10,30 @@
 
 html {
   scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+/* Hero section min-height — 100svh honours mobile browser chrome,
+   100vh is the fallback for browsers that don't support svh */
+.hero-section {
+  min-height: 100vh;
+  min-height: 100svh;
+}
+
+/* Eliminate 300ms tap delay and double-tap zoom on all interactive elements */
+a, button, [role="button"], input, select, textarea, label {
+  touch-action: manipulation;
+}
+
+/* Prevent iOS Safari from zooming in when focusing inputs.
+   Any input with font-size < 16px triggers the zoom. */
+@media (max-width: 640px) {
+  input:not([type="range"]),
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
 }
 
 /* ── Customer-facing defaults: clean white monochrome ── */
