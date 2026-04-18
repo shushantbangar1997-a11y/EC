@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
+import { createPortal } from 'react-dom'
 
 /*
   Car-on-infinity-road brand mark.
@@ -687,16 +688,29 @@ export default function InfinityLogo({ size = 80 }) {
     catch { return 0 }
   })
   const [open, setOpen] = useState(false)
-  const wrapRef = useRef(null)
+  const [pickerPos, setPickerPos] = useState({ top: 0, left: 0 })
+  const wrapRef  = useRef(null)
+  const pickerRef = useRef(null)
 
   useEffect(() => {
     try { localStorage.setItem('et_car', carIdx) } catch {}
   }, [carIdx])
 
+  const openPicker = useCallback(() => {
+    if (wrapRef.current) {
+      const r = wrapRef.current.getBoundingClientRect()
+      setPickerPos({ top: r.top - 8, left: r.left + r.width / 2 })
+    }
+    setOpen(o => !o)
+  }, [])
+
   useEffect(() => {
     if (!open) return
     const close = e => {
-      if (wrapRef.current && !wrapRef.current.contains(e.target)) setOpen(false)
+      if (
+        wrapRef.current && !wrapRef.current.contains(e.target) &&
+        pickerRef.current && !pickerRef.current.contains(e.target)
+      ) setOpen(false)
     }
     document.addEventListener('mousedown', close)
     document.addEventListener('touchstart', close)
@@ -722,7 +736,7 @@ export default function InfinityLogo({ size = 80 }) {
         fill="none"
         aria-label="Everywhere Transfers — car on infinity road"
         style={{ display: 'block', overflow: 'visible', cursor: 'pointer' }}
-        onClick={() => setOpen(o => !o)}
+        onClick={openPicker}
       >
         {/* ① Ambient glow */}
         <path d={D} stroke="rgba(255,255,255,0.07)" strokeWidth="28" strokeLinecap="round" />
@@ -763,27 +777,28 @@ export default function InfinityLogo({ size = 80 }) {
         <path id="infinityRef" d={D} stroke="none" fill="none" />
       </svg>
 
-      {/* ── Hidden car picker ────────────────────────────────────────────── */}
-      {open && (
+      {/* ── Hidden car picker (portal → renders at document.body, escapes overflow:hidden) */}
+      {open && createPortal(
         <div
+          ref={pickerRef}
           onClick={e => e.stopPropagation()}
           style={{
-            position: 'absolute',
-            bottom: '100%',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            marginBottom: 10,
-            background: 'rgba(8,8,8,0.88)',
-            backdropFilter: 'blur(12px)',
-            WebkitBackdropFilter: 'blur(12px)',
+            position: 'fixed',
+            top: pickerPos.top,
+            left: pickerPos.left,
+            transform: 'translateX(-50%) translateY(-100%)',
+            marginTop: -8,
+            background: 'rgba(8,8,8,0.92)',
+            backdropFilter: 'blur(14px)',
+            WebkitBackdropFilter: 'blur(14px)',
             borderRadius: 14,
             padding: '10px 8px',
             display: 'grid',
             gridTemplateColumns: 'repeat(6, 52px)',
             gap: 4,
-            zIndex: 999,
-            border: '1px solid rgba(255,255,255,0.10)',
-            boxShadow: '0 8px 40px rgba(0,0,0,0.6)',
+            zIndex: 99999,
+            border: '1px solid rgba(255,255,255,0.12)',
+            boxShadow: '0 8px 40px rgba(0,0,0,0.7)',
             animation: 'pickerIn 0.18s ease-out forwards',
           }}
         >
@@ -816,7 +831,8 @@ export default function InfinityLogo({ size = 80 }) {
               </svg>
             </button>
           ))}
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* Brand text */}
