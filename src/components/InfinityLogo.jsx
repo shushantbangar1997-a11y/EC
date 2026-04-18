@@ -1,18 +1,21 @@
 import React from 'react'
 
 /*
-  3-D animated infinity-loop brand mark.
+  Car-on-infinity-loop brand mark — Uber / Google Maps style.
 
-  Architecture:
-  - Outer div: handles perspective 3-D sway (rotateX / rotateY)
-  - Inner SVG: carries the glow filter pulse + two stroke layers
-      1. dim static trail (full path)
-      2. bright travelling segment (animated stroke-dashoffset)
-      3. tight leading hotspot (faster, narrower segment)
-  - Brand text: outside the rotating div — always static, never moves
+  A top-down black-car icon drives continuously around a lemniscate
+  (figure-8 / infinity) path, mimicking the Uber driver icon on a map.
+
+  Technique:
+  - SVG <animateMotion> + <mpath> moves the car group along the path natively
+  - rotate="auto" orients the car to face the direction of travel at every point
+  - Car points in the +X direction so "auto" aligns it correctly
+  - Route drawn as layered strokes (glow → road → bright centre) = Google Maps feel
+  - Yellow headlight beams + red tail lights for realism
 */
 
-const INF = [
+// Lemniscate path, traversable as a single closed loop, center crossing at (100,40)
+const D = [
   'M 100,40',
   'C 100,15 80,3  55,3',
   'C 30,3  10,20  10,40',
@@ -24,89 +27,118 @@ const INF = [
   'C 120,77 100,65 100,40',
 ].join(' ')
 
-const STYLES = `
-@keyframes inf3d {
-  0%   { transform: perspective(280px) rotateX(14deg)  rotateY(-28deg); }
-  25%  { transform: perspective(280px) rotateX(-7deg)  rotateY(8deg);   }
-  50%  { transform: perspective(280px) rotateX(14deg)  rotateY(28deg);  }
-  75%  { transform: perspective(280px) rotateX(-7deg)  rotateY(-8deg);  }
-  100% { transform: perspective(280px) rotateX(14deg)  rotateY(-28deg); }
-}
-
-@keyframes infFlow {
-  from { stroke-dashoffset: 1000; }
-  to   { stroke-dashoffset: 0;    }
-}
-
-@keyframes infGlow {
-  0%,100% {
-    filter: drop-shadow(0 0 4px rgba(255,255,255,.5))
-            drop-shadow(0 0 10px rgba(255,255,255,.2));
-  }
-  50% {
-    filter: drop-shadow(0 0 9px rgba(255,255,255,.95))
-            drop-shadow(0 0 20px rgba(255,255,255,.45));
-  }
-}
-`
-
-export default function InfinityLogo({ size = 52 }) {
-  const w = Math.round(size * 2.5)
-  const h = size
+export default function InfinityLogo({ size = 58 }) {
+  const W = Math.round(size * 2.5)   // e.g. 145
+  const H = size                      // e.g. 58
 
   return (
     <>
-      <style>{STYLES}</style>
+      <style>{`
+        @keyframes beamPulse {
+          0%,100% { opacity: 0.15; }
+          50%      { opacity: 0.35; }
+        }
+        @keyframes tailPulse {
+          0%,100% { opacity: 0.7; }
+          50%      { opacity: 1;   }
+        }
+      `}</style>
 
-      {/* 3-D sway wrapper — NO filter here to avoid flattening the 3-D context */}
-      <div style={{ animation: 'inf3d 7s ease-in-out infinite', display: 'inline-block' }}>
+      <svg
+        width={W}
+        height={H}
+        viewBox="0 0 200 80"
+        fill="none"
+        aria-label="Car driving in infinity loop — Everywhere Transfers"
+        style={{ display: 'block', overflow: 'visible' }}
+      >
+        {/* ── Route path (layered, Google Maps style) ──────────────── */}
 
-        {/* Glow pulse is on the SVG itself, separate from the 3-D wrapper */}
-        <svg
-          width={w}
-          height={h}
-          viewBox="0 0 200 80"
-          fill="none"
-          aria-label="Everywhere Transfers"
-          style={{ display: 'block', animation: 'infGlow 3.5s ease-in-out infinite' }}
-        >
-          {/* Soft outer halo layers for depth illusion */}
-          <path d={INF} stroke="rgba(255,255,255,0.07)" strokeWidth="14" strokeLinecap="round" />
-          <path d={INF} stroke="rgba(255,255,255,0.13)" strokeWidth="9"  strokeLinecap="round" />
+        {/* Outer glow halo */}
+        <path d={D} stroke="rgba(255,255,255,0.07)" strokeWidth="18" strokeLinecap="round" />
+        {/* Road width */}
+        <path d={D} stroke="rgba(255,255,255,0.13)" strokeWidth="11" strokeLinecap="round" />
+        {/* Road surface */}
+        <path d={D} stroke="rgba(20,20,20,0.85)"    strokeWidth="8"  strokeLinecap="round" />
+        {/* Kerb / edge lines */}
+        <path d={D} stroke="rgba(255,255,255,0.28)" strokeWidth="5"  strokeLinecap="round" />
+        {/* Inner asphalt */}
+        <path d={D} stroke="rgba(18,18,18,0.95)"    strokeWidth="3.5" strokeLinecap="round" />
+        {/* Bright centre line */}
+        <path d={D} stroke="rgba(255,255,255,0.45)" strokeWidth="1"  strokeLinecap="round" />
+        {/* Dashed centre markings */}
+        <path d={D}
+          stroke="rgba(255,255,255,0.30)"
+          strokeWidth="0.7"
+          strokeLinecap="round"
+          strokeDasharray="6 9"
+        />
 
-          {/* Static base trail */}
-          <path
-            d={INF}
-            stroke="rgba(255,255,255,0.20)"
-            strokeWidth="4"
-            strokeLinecap="round"
+        {/* ── Car — top-down, pointing RIGHT (+X = forward for auto-rotate) ── */}
+        <g>
+          {/*
+            animateMotion moves this <g> along the path.
+            rotate="auto" rotates it so its +X axis tracks the tangent.
+          */}
+          <animateMotion dur="4.2s" repeatCount="indefinite" rotate="auto">
+            <mpath href="#routePath" />
+          </animateMotion>
+
+          {/* Ground shadow */}
+          <ellipse cx="0" cy="2" rx="12" ry="4.5" fill="rgba(0,0,0,0.45)" />
+
+          {/* ── Headlight beams (in front of car, +X side) ─────── */}
+          <ellipse
+            cx="18" cy="-3.5" rx="9" ry="3"
+            fill="rgba(255,245,160,0.22)"
+            style={{ animation: 'beamPulse 1.8s ease-in-out infinite' }}
+          />
+          <ellipse
+            cx="18" cy="3.5" rx="9" ry="3"
+            fill="rgba(255,245,160,0.22)"
+            style={{ animation: 'beamPulse 1.8s ease-in-out infinite 0.9s' }}
           />
 
-          {/* Travelling bright segment */}
-          <path
-            d={INF}
-            stroke="rgba(255,255,255,0.95)"
-            strokeWidth="4"
-            strokeLinecap="round"
-            pathLength="1000"
-            strokeDasharray="200 800"
-            style={{ animation: 'infFlow 2.8s linear infinite' }}
-          />
+          {/* ── Main car body ────────────────────────────────────── */}
+          <rect x="-11" y="-7" width="22" height="14" rx="4.5" fill="white" />
 
-          {/* Tight leading hotspot — sharper, slightly faster */}
-          <path
-            d={INF}
-            stroke="white"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            pathLength="1000"
-            strokeDasharray="35 965"
-            style={{ animation: 'infFlow 2.8s linear infinite' }}
-          />
-        </svg>
-      </div>
+          {/* Windshield — front (right / +X side) */}
+          <rect x="2" y="-5" width="6.5" height="10" rx="2" fill="rgba(25,25,40,0.55)" />
 
-      {/* Brand text — outside the rotating div, always static */}
+          {/* Rear window */}
+          <rect x="-7.5" y="-4" width="5" height="8" rx="1.8" fill="rgba(25,25,40,0.42)" />
+
+          {/* Centre body stripe (roof line illusion) */}
+          <rect x="-6" y="-1.5" width="8" height="3" rx="1" fill="rgba(220,220,220,0.18)" />
+
+          {/* ── Wheels (dark, 4 corners) ─────────────────────────── */}
+          {/* Front-left  */}  <rect x="3"  y="-10"  width="6" height="3" rx="1.2" fill="rgba(40,40,40,0.95)" />
+          {/* Front-right */}  <rect x="3"  y="7"    width="6" height="3" rx="1.2" fill="rgba(40,40,40,0.95)" />
+          {/* Rear-left   */}  <rect x="-9" y="-10"  width="6" height="3" rx="1.2" fill="rgba(40,40,40,0.95)" />
+          {/* Rear-right  */}  <rect x="-9" y="7"    width="6" height="3" rx="1.2" fill="rgba(40,40,40,0.95)" />
+
+          {/* ── Headlights (amber) ───────────────────────────────── */}
+          <ellipse cx="12" cy="-3.8" rx="2"   ry="1.4" fill="rgba(255,235,80,0.95)" />
+          <ellipse cx="12" cy="3.8"  rx="2"   ry="1.4" fill="rgba(255,235,80,0.95)" />
+
+          {/* ── Tail lights (red) ────────────────────────────────── */}
+          <ellipse
+            cx="-12" cy="-4" rx="1.8" ry="1.2"
+            fill="rgba(255,60,60,0.85)"
+            style={{ animation: 'tailPulse 1.4s ease-in-out infinite' }}
+          />
+          <ellipse
+            cx="-12" cy="4" rx="1.8" ry="1.2"
+            fill="rgba(255,60,60,0.85)"
+            style={{ animation: 'tailPulse 1.4s ease-in-out infinite 0.7s' }}
+          />
+        </g>
+
+        {/* Hidden path for animateMotion reference */}
+        <path id="routePath" d={D} stroke="none" fill="none" />
+      </svg>
+
+      {/* Brand text — outside the SVG, always static */}
       <p style={{
         fontSize: 9.5,
         fontWeight: 700,

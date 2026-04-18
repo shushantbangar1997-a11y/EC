@@ -577,7 +577,7 @@ export default function DispatchPanel({ onRouteChange, presetVehicle, hideStats 
                 <div className="mb-7">
                   <div className="text-center mb-7">
                     <div className="flex flex-col items-center mb-5">
-                      <InfinityLogo size={52} />
+                      <InfinityLogo size={64} />
                     </div>
                     <h1 className="font-black mb-2" style={{ color: 'var(--text-primary)', fontSize: 'clamp(1.6rem, 4vw, 2.2rem)', letterSpacing: '-0.02em', lineHeight: 1.15 }}>
                       Your Ride,{' '}
