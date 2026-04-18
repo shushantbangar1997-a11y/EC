@@ -5,7 +5,7 @@ import {
   FiUsers, FiBriefcase, FiArrowRight, FiPhone,
 } from 'react-icons/fi'
 import DispatchPanel from '../components/DispatchPanel'
-import HeroBackground from '../components/HeroBackground'
+import HeroSlideshow from '../components/HeroSlideshow'
 import FleetSlider from '../components/FleetSlider'
 import useSimulatedStats from '../hooks/useSimulatedStats'
 
@@ -33,13 +33,13 @@ export default function Home() {
 
       {/* ── Hero ───────────────────────────────────────────────────────── */}
       <section className="hero-section" style={{ position: 'relative', display: 'flex', flexDirection: 'column', overflow: 'hidden', background: '#0a0a0a' }}>
-        <HeroBackground />
+        <HeroSlideshow />
 
-        {/* Overlays — slightly heavier than photo hero so white text stays readable on grey tones */}
+        {/* Overlays — balanced for dark cinematic photos */}
         <div style={{ position: 'absolute', inset: 0, zIndex: 3, pointerEvents: 'none' }}>
-          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '40%', background: 'linear-gradient(to bottom, rgba(0,0,0,0.60) 0%, transparent 100%)' }} />
-          <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.38)' }} />
-          <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '55%', background: 'linear-gradient(to top, rgba(0,0,0,0.60) 0%, transparent 100%)' }} />
+          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '45%', background: 'linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, transparent 100%)' }} />
+          <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.32)' }} />
+          <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '55%', background: 'linear-gradient(to top, rgba(0,0,0,0.65) 0%, transparent 100%)' }} />
         </div>
 
         <div ref={panelRef} style={{ position: 'relative', zIndex: 4, flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 'clamp(48px,8vw,80px) 16px clamp(48px,8vw,90px)' }}>

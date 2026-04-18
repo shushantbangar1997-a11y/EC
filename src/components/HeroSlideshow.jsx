@@ -1,16 +1,36 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 
 const DEFAULT_SLIDES = [
-  { src: '/images/fleet-sedan.png',    alt: 'Luxury sedan' },
-  { src: '/images/fleet-sedan2.png',   alt: 'Black Mercedes-Benz S-Class sedan' },
-  { src: '/images/fleet-suv.png',      alt: 'Luxury SUV — Cadillac Escalade' },
-  { src: '/images/fleet-suv2.png',     alt: 'White Cadillac Escalade SUV' },
-  { src: '/images/fleet-suv3.png',     alt: 'Black Lincoln Navigator SUV' },
-  { src: '/images/fleet-sprinter.png', alt: 'Sprinter van — up to 14 passengers' },
-  { src: '/images/fleet-sprinter2.png', alt: 'Executive black Sprinter van' },
-  { src: '/images/fleet-limo.png',     alt: 'Black stretch limousine' },
-  { src: '/images/fleet-minibus.png',  alt: 'Luxury mini bus — group transportation' },
-  { src: '/images/fleet-coach.png',    alt: 'Coach bus — 20 to 55 passengers' },
+  {
+    srcDesktop: '/images/hero-1-desktop.png',
+    srcMobile:  '/images/hero-1-mobile.png',
+    alt: 'Black Mercedes sedan on rain-wet Fifth Avenue at night',
+  },
+  {
+    srcDesktop: '/images/hero-2-desktop.png',
+    srcMobile:  '/images/hero-2-mobile.png',
+    alt: 'Black Cadillac Escalade outside JFK airport at dusk',
+  },
+  {
+    srcDesktop: '/images/hero-3-desktop.png',
+    srcMobile:  '/images/hero-3-mobile.png',
+    alt: 'Executive Sprinter van on Brooklyn Bridge — NYC skyline',
+  },
+  {
+    srcDesktop: '/images/hero-4-desktop.png',
+    srcMobile:  '/images/hero-4-mobile.png',
+    alt: 'Black Lincoln Navigator outside luxury Manhattan hotel',
+  },
+  {
+    srcDesktop: '/images/hero-5-desktop.png',
+    srcMobile:  '/images/hero-5-mobile.png',
+    alt: 'Black stretch limousine on Park Avenue Manhattan at night',
+  },
+  {
+    srcDesktop: '/images/hero-6-desktop.png',
+    srcMobile:  '/images/hero-6-mobile.png',
+    alt: 'Fleet of black luxury vehicles outside NYC corporate tower',
+  },
 ]
 
 const DEFAULT_SLIDE_MS = 5500
@@ -63,21 +83,40 @@ export default function HeroSlideshow({ images, slideMs, onSlideChange }) {
             zIndex: i === active ? 2 : 1,
           }}
         >
-          <img
-            src={slide.src}
-            alt={slide.alt}
+          {/*
+            <picture> serves a different image source per screen size —
+            phones (<= 640 px wide) get the 9:16 portrait image so the
+            composition fills the tall screen correctly;
+            desktops get the wide 16:9 landscape image.
+            The browser downloads ONLY the matching source — no wasted bandwidth.
+          */}
+          <picture
             onLoad={() => setLoaded(l => ({ ...l, [i]: true }))}
-            className="absolute inset-0 w-full h-full object-cover"
-            style={{
-              willChange: 'transform',
-              animation: !prefersReduced && i === active && loaded[i]
-                ? `heroKenBurns ${SLIDE_MS * 1.6}ms ease-out forwards`
-                : 'none',
-            }}
-          />
+            style={{ position: 'absolute', inset: 0, display: 'block', width: '100%', height: '100%' }}
+          >
+            {slide.srcMobile && (
+              <source media="(max-width: 640px)" srcSet={slide.srcMobile} />
+            )}
+            <img
+              src={slide.srcDesktop || slide.src}
+              alt={slide.alt}
+              onLoad={() => setLoaded(l => ({ ...l, [i]: true }))}
+              style={{
+                display: 'block',
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+                willChange: 'transform',
+                animation: !prefersReduced && i === active && loaded[i]
+                  ? `heroKenBurns ${SLIDE_MS * 1.6}ms ease-out forwards`
+                  : 'none',
+              }}
+            />
+          </picture>
         </div>
       ))}
 
+      {/* Progress dots */}
       <div
         className="absolute bottom-0 left-0 right-0 flex items-center justify-center gap-2 pb-5"
         style={{ zIndex: 10 }}
@@ -107,7 +146,7 @@ export default function HeroSlideshow({ images, slideMs, onSlideChange }) {
                 style={{
                   position: 'absolute',
                   inset: 0,
-                  background: '#F6C90E',
+                  background: '#ffffff',
                   transformOrigin: 'left center',
                   animation: prefersReduced
                     ? 'none'

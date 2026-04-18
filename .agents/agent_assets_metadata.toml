@@ -198,6 +198,78 @@ uri = "file://public/images/fleet-sprinter-5.png"
 type = "image"
 title = "generated_image"
 
+[[generated]]
+id = "F-rDttOSsn25NCiukWdAg"
+uri = "file://public/images/hero-1-desktop.png"
+type = "image"
+title = "hero 1 desktop sedan fifth avenue"
+
+[[generated]]
+id = "zajqBGMZJVtUdSNGaHSM_"
+uri = "file://public/images/hero-2-desktop.png"
+type = "image"
+title = "hero 2 desktop escalade JFK"
+
+[[generated]]
+id = "92XgSS2YBpOJNm0ztUiKR"
+uri = "file://public/images/hero-3-desktop.png"
+type = "image"
+title = "hero 3 desktop sprinter brooklyn bridge"
+
+[[generated]]
+id = "3dyzqXxoFkMP0WCEUjvlF"
+uri = "file://public/images/hero-4-desktop.png"
+type = "image"
+title = "hero 4 desktop navigator hotel"
+
+[[generated]]
+id = "gOoMF2DBhRjE6FPgbC0lE"
+uri = "file://public/images/hero-5-desktop.png"
+type = "image"
+title = "hero 5 desktop limo park avenue"
+
+[[generated]]
+id = "_Zok-JiZL844wDRiUHRXu"
+uri = "file://public/images/hero-6-desktop.png"
+type = "image"
+title = "hero 6 desktop fleet corporate"
+
+[[generated]]
+id = "9i2j3Iifrl1gFOoAjYD_S"
+uri = "file://public/images/hero-1-mobile.png"
+type = "image"
+title = "hero 1 mobile sedan portrait"
+
+[[generated]]
+id = "1L8m0EojLyEgAZGkHBd5g"
+uri = "file://public/images/hero-2-mobile.png"
+type = "image"
+title = "hero 2 mobile escalade portrait"
+
+[[generated]]
+id = "J0hYMiCxpiF-pW4Xdttg7"
+uri = "file://public/images/hero-3-mobile.png"
+type = "image"
+title = "hero 3 mobile sprinter portrait"
+
+[[generated]]
+id = "weqPUe4LadNuhKynPLhIJ"
+uri = "file://public/images/hero-4-mobile.png"
+type = "image"
+title = "hero 4 mobile navigator portrait"
+
+[[generated]]
+id = "tsb_oZFEbj0H-56Nf3NTX"
+uri = "file://public/images/hero-5-mobile.png"
+type = "image"
+title = "hero 5 mobile limo portrait"
+
+[[generated]]
+id = "OKSDxSr5oWKfQsp1lYaCy"
+uri = "file://public/images/hero-6-mobile.png"
+type = "image"
+title = "hero 6 mobile fleet portrait"
+
 [[outputs]]
 id = "r7Z0jb9dHXujQvN9sq3u4"
 uri = "file://attached_assets/stock_images/escalade-airport.jpg"
