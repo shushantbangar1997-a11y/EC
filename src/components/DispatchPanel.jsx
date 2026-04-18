@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
+import { AnimatePresence } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useTheme } from '../context/ThemeContext'
@@ -8,10 +9,11 @@ import useSimulatedStats from '../hooks/useSimulatedStats'
 import {
   FiMic, FiMicOff, FiArrowRight, FiPlus, FiMinus,
   FiStar, FiPhone, FiMessageCircle, FiClock, FiZap,
-  FiNavigation2, FiMapPin, FiCheckCircle,
+  FiNavigation2, FiMapPin, FiCheckCircle, FiCalendar,
 } from 'react-icons/fi'
 import PlaceAutocomplete from './PlaceAutocomplete'
 import SlideButton from './SlideButton'
+import RideDatePicker from './RideDatePicker'
 import {
   detectRouteType, getPriceEstimate, formatPriceRange,
   detectAirport, detectHotel, isPeakHour,
@@ -212,6 +214,7 @@ export default function DispatchPanel({ onRouteChange, presetVehicle, hideStats 
     if (presetVehicle) setVehicle(presetVehicle)
   }, [presetVehicle])
 
+  const [showDatePicker, setShowDatePicker] = useState(false)
   const [name, setName] = useState('')
   const [contact, setContact] = useState('')
   const [submitting, setSubmitting] = useState(false)
@@ -404,7 +407,7 @@ export default function DispatchPanel({ onRouteChange, presetVehicle, hideStats 
   }
 
   const resetAll = () => {
-    setPhase('idle'); setPickup(''); setDropoff(''); setDate(''); setTime('')
+    setPhase('idle'); setPickup(''); setDropoff(''); setDate(''); setTime(''); setShowDatePicker(false)
     setPassengers(1); setVehicle('sedan'); setName(''); setContact('')
     setBids([]); setPostedRide(null); setNoOffersMsg(false); setCountdown(600); setAcceptedBid(null)
     setSliderStatus('idle')
@@ -683,27 +686,30 @@ export default function DispatchPanel({ onRouteChange, presetVehicle, hideStats 
 
               {isPhaseVisible('details') && phase !== 'idle' && (
                 <div className="mt-4 space-y-4" style={{ animation: 'slideInUp 280ms ease forwards' }}>
-                  <div className="grid grid-cols-3 gap-2">
+                  <div className="grid grid-cols-2 gap-2">
                     <div>
-                      <span className="text-xs font-mono font-bold tracking-widest block mb-1.5" style={{ color: ELECTRIC }}>DATE</span>
-                      <input
-                        type="date"
-                        min={todayStr}
-                        value={date}
-                        onChange={e => setDate(e.target.value)}
-                        className="dispatch-field text-sm"
-                        style={{ colorScheme: isDark ? 'dark' : 'light' }}
-                      />
-                    </div>
-                    <div>
-                      <span className="text-xs font-mono font-bold tracking-widest block mb-1.5" style={{ color: ELECTRIC }}>TIME</span>
-                      <input
-                        type="time"
-                        value={time}
-                        onChange={e => setTime(e.target.value)}
-                        className="dispatch-field text-sm"
-                        style={{ colorScheme: isDark ? 'dark' : 'light' }}
-                      />
+                      <span className="text-xs font-mono font-bold tracking-widest block mb-1.5" style={{ color: ELECTRIC }}>DATE & TIME</span>
+                      <button
+                        type="button"
+                        onClick={() => setShowDatePicker(true)}
+                        className="dispatch-field text-sm w-full flex items-center gap-2 text-left"
+                        style={{ color: date && time ? 'var(--text-primary)' : 'var(--text-muted)', minHeight: 44 }}
+                      >
+                        <FiCalendar size={14} style={{ flexShrink: 0, color: 'var(--text-muted)' }} />
+                        {date && time ? (
+                          <span>
+                            {new Date(date + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                            {' · '}
+                            {(() => {
+                              const [hh, mm] = time.split(':')
+                              const h = parseInt(hh, 10)
+                              return `${h === 0 ? 12 : h > 12 ? h - 12 : h}:${mm} ${h < 12 ? 'AM' : 'PM'}`
+                            })()}
+                          </span>
+                        ) : (
+                          <span>Pick date & time</span>
+                        )}
+                      </button>
                     </div>
                     <div>
                       <span className="text-xs font-mono font-bold tracking-widest block mb-1.5" style={{ color: ELECTRIC }}>PAX</span>
@@ -851,6 +857,18 @@ export default function DispatchPanel({ onRouteChange, presetVehicle, hideStats 
           color: #ffffff;
         }
       `}</style>
+
+      <AnimatePresence>
+        {showDatePicker && (
+          <RideDatePicker
+            initialDate={date}
+            initialTime={time}
+            minDate={todayStr}
+            onConfirm={(d, t) => { setDate(d); setTime(t); setShowDatePicker(false) }}
+            onClose={() => setShowDatePicker(false)}
+          />
+        )}
+      </AnimatePresence>
     </div>
   )
 }
