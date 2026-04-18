@@ -64,10 +64,11 @@ function AppContent() {
   const location = useLocation()
   const isAdminPortal = location.pathname.startsWith('/admin') &&
     !['/admin/dashboard', '/admin/users', '/admin/revenue'].includes(location.pathname)
+  const isAuthPage = ['/login', '/signup'].includes(location.pathname)
 
   return (
     <div className="flex flex-col min-h-screen" style={{ background: 'var(--bg-page)', transition: 'background 300ms ease' }}>
-      {!isAdminPortal && <Navbar />}
+      {!isAdminPortal && !isAuthPage && <Navbar />}
       <main className="flex-grow">
           <Routes>
             {/* Public Routes */}
@@ -229,8 +230,8 @@ function AppContent() {
             <Route path="*" element={<NotFound />} />
           </Routes>
         </main>
-        {!isAdminPortal && <Footer />}
-        {!isAdminPortal && <WhatsAppWidget />}
+        {!isAdminPortal && !isAuthPage && <Footer />}
+        {!isAdminPortal && !isAuthPage && <WhatsAppWidget />}
         <Toaster
           position="top-right"
           toastOptions={{

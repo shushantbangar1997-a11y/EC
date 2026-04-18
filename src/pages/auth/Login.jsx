@@ -1,176 +1,162 @@
-import React, { useState } from 'react';
-import { useNavigate, Link, useLocation } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
-import toast from 'react-hot-toast';
-import { FiMail, FiLock, FiEye, FiEyeOff } from 'react-icons/fi';
+import React, { useState } from 'react'
+import { useNavigate, Link, useLocation } from 'react-router-dom'
+import { useAuth } from '../../context/AuthContext'
+import toast from 'react-hot-toast'
+import { FiMail, FiLock, FiEye, FiEyeOff, FiArrowRight } from 'react-icons/fi'
 
 const Login = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const { login } = useAuth();
-  const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-  });
+  const navigate = useNavigate()
+  const location = useLocation()
+  const { login } = useAuth()
+  const [loading, setLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
+  const [formData, setFormData] = useState({ email: '', password: '' })
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
+  const isAdmin = !!location.state?.adminLogin
+
+  const handleChange = (e) => {
+    const { name, value } = e.target
+    setFormData(prev => ({ ...prev, [name]: value }))
+  }
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-
+    e.preventDefault()
     if (!formData.email || !formData.password) {
-      toast.error('Please fill in all fields');
-      return;
+      toast.error('Please fill in all fields')
+      return
     }
-
-    setLoading(true);
+    setLoading(true)
     try {
-      const response = await login(formData.email, formData.password);
-
-      toast.success('Welcome back!');
+      const response = await login(formData.email, formData.password)
+      toast.success('Welcome back!')
 
       const pending = location.state?.fromBidBoard
         ? location.state
-        : (() => { try { const s = sessionStorage.getItem('pendingBidBooking'); return s ? JSON.parse(s) : null; } catch { return null; } })();
+        : (() => { try { const s = sessionStorage.getItem('pendingBidBooking'); return s ? JSON.parse(s) : null } catch { return null } })()
 
       if (pending?.fromBidBoard) {
-        try { sessionStorage.removeItem('pendingBidBooking'); } catch {}
-        navigate('/book', { state: pending });
-        return;
+        try { sessionStorage.removeItem('pendingBidBooking') } catch {}
+        navigate('/book', { state: pending })
+        return
       }
 
-      // Redirect based on role — admins land on the new bidding portal
-      if (response?.user?.role === 'admin') {
-        navigate('/admin/live-feed');
-      } else if (response?.user?.role === 'operator') {
-        navigate('/operator/dashboard');
-      } else {
-        navigate('/my-rides');
-      }
+      if (response?.user?.role === 'admin') navigate('/admin/live-feed')
+      else if (response?.user?.role === 'operator') navigate('/operator/dashboard')
+      else navigate('/my-rides')
     } catch (error) {
-      toast.error(error.message || 'Invalid email or password');
+      toast.error(error.message || 'Invalid email or password')
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   return (
-    <div className="min-h-screen bg-black flex items-center justify-center px-4 py-12">
-      {/* Background pattern */}
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute top-20 right-10 w-96 h-96 bg-white rounded-full blur-3xl"></div>
-        <div className="absolute bottom-20 left-10 w-96 h-96 bg-white rounded-full blur-3xl"></div>
-      </div>
+    <div style={{
+      minHeight: '100vh',
+      background: '#0a0a0a',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: '24px 16px',
+    }}>
 
-      <div className="relative z-10 w-full max-w-md">
-        <div className="bg-white rounded-2xl shadow-2xl p-8">
-          {/* Logo/Header */}
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-[#1a365d] mb-2">Welcome Back</h1>
-            <p className="text-gray-600">Sign in to your Everywhere Cars account</p>
-          </div>
+      {/* Logo / brand */}
+      <Link to="/" style={{ marginBottom: 32, display: 'block', textDecoration: 'none' }}>
+        <img src="/logo.png?v=4" alt="Everywhere Transfers" style={{ height: 30, filter: 'brightness(0) invert(1)', opacity: 0.9 }} />
+      </Link>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Email Input */}
-            <div>
-              <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-2">
-                Email Address
-              </label>
-              <div className="relative">
-                <FiMail className="absolute left-3 top-3.5 text-[#1a365d]" size={20} />
-                <input
-                  id="email"
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  placeholder="you@example.com"
-                  className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a365d] focus:border-transparent transition"
-                />
-              </div>
+      {/* Card */}
+      <div style={{
+        width: '100%',
+        maxWidth: 420,
+        background: '#ffffff',
+        borderRadius: 16,
+        padding: '36px 32px',
+        boxShadow: '0 24px 80px rgba(0,0,0,0.5)',
+      }}>
+        <h1 style={{ fontSize: 22, fontWeight: 800, color: '#0a0a0a', marginBottom: 4, letterSpacing: -0.3 }}>
+          {isAdmin ? 'Admin Login' : 'Welcome back'}
+        </h1>
+        <p style={{ fontSize: 13, color: '#737373', marginBottom: 28 }}>
+          {isAdmin ? 'Sign in to the admin portal' : 'Sign in to your Everywhere Transfers account'}
+        </p>
+
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+
+          {/* Email */}
+          <div>
+            <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#171717', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+              Email
+            </label>
+            <div style={{ position: 'relative' }}>
+              <FiMail size={15} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#a3a3a3', pointerEvents: 'none' }} />
+              <input
+                type="email" name="email" value={formData.email} onChange={handleChange}
+                placeholder="you@example.com"
+                style={{ width: '100%', padding: '11px 12px 11px 36px', border: '1.5px solid #e5e5e5', borderRadius: 8, fontSize: 14, color: '#171717', background: '#fafafa', outline: 'none', boxSizing: 'border-box', transition: 'border-color 150ms' }}
+                onFocus={e => e.target.style.borderColor = '#0a0a0a'}
+                onBlur={e => e.target.style.borderColor = '#e5e5e5'}
+              />
             </div>
+          </div>
 
-            {/* Password Input */}
-            <div>
-              <label htmlFor="password" className="block text-sm font-semibold text-gray-700 mb-2">
-                Password
-              </label>
-              <div className="relative">
-                <FiLock className="absolute left-3 top-3.5 text-[#1a365d]" size={20} />
-                <input
-                  id="password"
-                  type={showPassword ? 'text' : 'password'}
-                  name="password"
-                  value={formData.password}
-                  onChange={handleInputChange}
-                  placeholder="••••••••"
-                  className="w-full pl-10 pr-12 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a365d] focus:border-transparent transition"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-3.5 text-gray-500 hover:text-gray-700 transition"
-                >
-                  {showPassword ? <FiEyeOff size={20} /> : <FiEye size={20} />}
-                </button>
-              </div>
+          {/* Password */}
+          <div>
+            <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#171717', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+              Password
+            </label>
+            <div style={{ position: 'relative' }}>
+              <FiLock size={15} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#a3a3a3', pointerEvents: 'none' }} />
+              <input
+                type={showPassword ? 'text' : 'password'} name="password" value={formData.password} onChange={handleChange}
+                placeholder="••••••••"
+                style={{ width: '100%', padding: '11px 40px 11px 36px', border: '1.5px solid #e5e5e5', borderRadius: 8, fontSize: 14, color: '#171717', background: '#fafafa', outline: 'none', boxSizing: 'border-box', transition: 'border-color 150ms' }}
+                onFocus={e => e.target.style.borderColor = '#0a0a0a'}
+                onBlur={e => e.target.style.borderColor = '#e5e5e5'}
+              />
+              <button type="button" onClick={() => setShowPassword(p => !p)} style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: '#a3a3a3', padding: 0, display: 'flex', alignItems: 'center' }}>
+                {showPassword ? <FiEyeOff size={15} /> : <FiEye size={15} />}
+              </button>
             </div>
-
-            {/* Log In Button */}
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-[#1a365d] text-white font-bold py-2.5 rounded-lg hover:bg-[#0f1f3d] transition disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {loading ? 'Logging in...' : 'Log In'}
-            </button>
-          </form>
-
-          {/* Divider */}
-          <div className="my-6 flex items-center">
-            <div className="flex-1 border-t border-gray-300"></div>
-            <span className="px-4 text-sm text-gray-500">or</span>
-            <div className="flex-1 border-t border-gray-300"></div>
           </div>
 
-          {/* Sign Up Link */}
-          <div className="text-center">
-            <p className="text-gray-600">
-              Don't have an account?{' '}
-              <Link to="/signup" className="text-[#1a365d] font-semibold hover:underline">
-                Sign Up
-              </Link>
-            </p>
-          </div>
+          {/* Submit */}
+          <button type="submit" disabled={loading} style={{
+            marginTop: 4,
+            width: '100%', padding: '13px 16px',
+            background: loading ? '#525252' : '#0a0a0a',
+            color: '#ffffff', border: 'none', borderRadius: 10,
+            fontWeight: 700, fontSize: 14, cursor: loading ? 'not-allowed' : 'pointer',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+            transition: 'background 150ms',
+          }}
+            onMouseEnter={e => { if (!loading) e.currentTarget.style.background = '#262626' }}
+            onMouseLeave={e => { if (!loading) e.currentTarget.style.background = '#0a0a0a' }}
+          >
+            {loading ? 'Signing in…' : <><span>Log In</span><FiArrowRight size={14} /></>}
+          </button>
+        </form>
 
-          {/* Footer Note */}
-          <div className="mt-6 pt-6 border-t border-gray-200">
-            <p className="text-xs text-gray-500 text-center">
-              By signing in, you agree to our Terms of Service and Privacy Policy
-            </p>
-          </div>
+        {/* Divider */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, margin: '24px 0' }}>
+          <div style={{ flex: 1, height: 1, background: '#e5e5e5' }} />
+          <span style={{ fontSize: 12, color: '#a3a3a3' }}>or</span>
+          <div style={{ flex: 1, height: 1, background: '#e5e5e5' }} />
         </div>
 
-        {/* Help Text */}
-        <div className="mt-6 text-center">
-          <p className="text-gray-200 text-sm">
-            Need help? Contact us at{' '}
-            <a href="mailto:support@everywherecars.com" className="text-white font-semibold hover:underline">
-              support@everywherecars.com
-            </a>
-          </p>
-        </div>
+        <p style={{ textAlign: 'center', fontSize: 13, color: '#525252' }}>
+          Don't have an account?{' '}
+          <Link to="/signup" style={{ color: '#0a0a0a', fontWeight: 700, textDecoration: 'none' }}>Sign Up</Link>
+        </p>
       </div>
+
+      {/* Footer note */}
+      <p style={{ marginTop: 24, fontSize: 12, color: 'rgba(255,255,255,0.3)', textAlign: 'center' }}>
+        Questions? <a href="mailto:support@everywheretransfers.com" style={{ color: 'rgba(255,255,255,0.5)', textDecoration: 'none' }}>support@everywheretransfers.com</a>
+      </p>
     </div>
-  );
-};
+  )
+}
 
-export default Login;
+export default Login
