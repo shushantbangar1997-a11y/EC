@@ -109,15 +109,18 @@ const Navbar = () => {
   const [isProfileOpen,    setIsProfileOpen]    = useState(false)
   const [isServicesOpen,   setIsServicesOpen]   = useState(false)
   const [isExploreOpen,    setIsExploreOpen]    = useState(false)
+  const [isLoginOpen,      setIsLoginOpen]      = useState(false)
   const [mobileServices,   setMobileServices]   = useState(false)
   const [mobileExplore,    setMobileExplore]    = useState(false)
   const servicesRef = useRef(null)
   const exploreRef  = useRef(null)
   const profileRef  = useRef(null)
+  const loginRef    = useRef(null)
 
   const closeAll = () => {
     setIsMenuOpen(false); setIsProfileOpen(false)
     setIsServicesOpen(false); setIsExploreOpen(false)
+    setIsLoginOpen(false)
     setMobileServices(false); setMobileExplore(false)
   }
   const handleLogout = () => { logout(); closeAll(); navigate('/') }
@@ -127,6 +130,7 @@ const Navbar = () => {
       if (servicesRef.current && !servicesRef.current.contains(e.target)) setIsServicesOpen(false)
       if (exploreRef.current  && !exploreRef.current.contains(e.target))  setIsExploreOpen(false)
       if (profileRef.current  && !profileRef.current.contains(e.target))  setIsProfileOpen(false)
+      if (loginRef.current    && !loginRef.current.contains(e.target))    setIsLoginOpen(false)
     }
     document.addEventListener('mousedown', handleClick)
     return () => document.removeEventListener('mousedown', handleClick)
@@ -241,16 +245,45 @@ const Navbar = () => {
             </div>
           ) : (
             <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-              <Link to="/login" state={{ adminLogin: true }} style={{ padding: '7px 14px', fontSize: 13, fontWeight: 500, color: 'rgba(255,255,255,0.72)', textDecoration: 'none', border: '1px solid rgba(255,255,255,0.2)', borderRadius: 8, transition: 'color 120ms, border-color 120ms' }}
-                onMouseEnter={e => { e.currentTarget.style.color = '#fff'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.4)' }}
-                onMouseLeave={e => { e.currentTarget.style.color = 'rgba(255,255,255,0.72)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)' }}>
-                <FiUser size={12} style={{ display: 'inline', marginRight: 5, marginBottom: -1 }} />
-                Admin
-              </Link>
-              <Link to="/signup" style={{ padding: '7px 16px', fontSize: 13, fontWeight: 700, color: '#0a0a0a', background: '#ffffff', textDecoration: 'none', borderRadius: 8, letterSpacing: 0.1, transition: 'background 120ms' }}
+
+              {/* Login dropdown */}
+              <div style={{ position: 'relative' }} ref={loginRef}>
+                <button
+                  onClick={() => setIsLoginOpen(o => !o)}
+                  style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '7px 14px', fontSize: 13, fontWeight: 500, color: 'rgba(255,255,255,0.72)', background: 'none', border: '1px solid rgba(255,255,255,0.2)', borderRadius: 8, cursor: 'pointer', transition: 'color 120ms, border-color 120ms' }}
+                  onMouseEnter={e => { e.currentTarget.style.color = '#fff'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.4)' }}
+                  onMouseLeave={e => { e.currentTarget.style.color = 'rgba(255,255,255,0.72)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)' }}
+                >
+                  <FiUser size={12} />
+                  Log In
+                  <FiChevronDown size={11} style={{ transform: isLoginOpen ? 'rotate(180deg)' : 'none', transition: 'transform 200ms' }} />
+                </button>
+
+                {isLoginOpen && (
+                  <div style={{ position: 'absolute', right: 0, top: 'calc(100% + 8px)', background: '#ffffff', borderRadius: 12, boxShadow: '0 8px 40px rgba(0,0,0,0.16)', border: '1px solid #e5e5e5', padding: '6px 0', minWidth: 190, zIndex: 60 }}>
+                    <Link to="/login" onClick={closeAll}
+                      style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 16px', fontSize: 13, fontWeight: 500, color: '#171717', textDecoration: 'none', transition: 'background 120ms' }}
+                      onMouseEnter={e => e.currentTarget.style.background = '#f5f5f5'}
+                      onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+                      <FiUser size={13} /> Log In
+                    </Link>
+                    <div style={{ borderTop: '1px solid #f0f0f0', margin: '4px 12px' }} />
+                    <Link to="/login" state={{ adminLogin: true }} onClick={closeAll}
+                      style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 16px', fontSize: 13, fontWeight: 500, color: '#525252', textDecoration: 'none', transition: 'background 120ms' }}
+                      onMouseEnter={e => e.currentTarget.style.background = '#f5f5f5'}
+                      onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+                      <FiSettings size={13} /> Log In as Admin
+                    </Link>
+                  </div>
+                )}
+              </div>
+
+              {/* Sign Up */}
+              <Link to="/signup"
+                style={{ padding: '7px 16px', fontSize: 13, fontWeight: 700, color: '#0a0a0a', background: '#ffffff', textDecoration: 'none', borderRadius: 8, letterSpacing: 0.1, transition: 'background 120ms' }}
                 onMouseEnter={e => e.currentTarget.style.background = '#e5e5e5'}
                 onMouseLeave={e => e.currentTarget.style.background = '#ffffff'}>
-                Book Now
+                Sign Up
               </Link>
             </div>
           )}
@@ -307,8 +340,13 @@ const Navbar = () => {
                 <button onClick={handleLogout} style={{ padding: '10px 12px', fontSize: 14, color: 'rgba(255,255,255,0.6)', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left' }}>Log Out</button>
               ) : (
                 <>
-                  <Link to="/login" onClick={closeAll} style={{ padding: '10px 12px', fontSize: 14, color: 'rgba(255,255,255,0.8)', textDecoration: 'none' }}>Log In</Link>
-                  <Link to="/signup" onClick={closeAll} style={{ padding: '11px 16px', fontSize: 14, fontWeight: 700, color: '#0a0a0a', background: '#ffffff', borderRadius: 8, textDecoration: 'none', textAlign: 'center' }}>Book Now — Free</Link>
+                  <Link to="/login" onClick={closeAll} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 12px', fontSize: 14, color: 'rgba(255,255,255,0.8)', textDecoration: 'none' }}>
+                    <FiUser size={14} /> Log In
+                  </Link>
+                  <Link to="/login" state={{ adminLogin: true }} onClick={closeAll} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 12px', fontSize: 14, color: 'rgba(255,255,255,0.5)', textDecoration: 'none' }}>
+                    <FiSettings size={14} /> Log In as Admin
+                  </Link>
+                  <Link to="/signup" onClick={closeAll} style={{ padding: '11px 16px', fontSize: 14, fontWeight: 700, color: '#0a0a0a', background: '#ffffff', borderRadius: 8, textDecoration: 'none', textAlign: 'center', marginTop: 4 }}>Sign Up</Link>
                 </>
               )}
             </div>
