@@ -6,7 +6,6 @@ import { ThemeProvider } from './context/ThemeContext'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import ProtectedRoute from './components/ProtectedRoute'
-import SplashScreenGate from './components/SplashScreen'
 import WhatsAppWidget from './components/WhatsAppWidget'
 
 // Public Pages
@@ -256,9 +255,7 @@ function App() {
   return (
     <ThemeProvider>
       <AuthProvider>
-        <SplashScreenGate>
-          <AppContent />
-        </SplashScreenGate>
+        <AppContent />
       </AuthProvider>
     </ThemeProvider>
   )
