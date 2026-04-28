@@ -40,6 +40,13 @@ A React + Vite frontend for "Everywhere Cars" — a NYC luxury car service. The 
 
 ## Key Features
 
+### Admin Leads Capture (Task 23)
+- `/admin/leads` (All Leads) and `/admin/leads/hot` (Hot only) — sales pipeline view of every quote request, normalized to status keys `new | quoted | confirmed | lost`. A lead is "hot" if created in the last 24h, has zero bids, and is not confirmed/lost. Default view hides Lost leads.
+- `src/pages/admin/Leads.jsx` — dense sortable table (customer / contact / route / date / vehicle / status / created / one-tap actions), search box, status filter chips with counts, hot-row indicator. Side drawer with full profile, bid history, autosave admin notes (700ms debounce, race-safe across lead switches), Mark as Lost (with optional reason) and Reopen.
+- `src/pages/admin/AdminPortalLayout.jsx` — new "Leads" nav group between Live and Orders with badges for total + hot. Polls `/admin/leads` alongside the existing 5s admin tick.
+- Backend: `GET /api/admin/leads` (with `status` / `hot` / `search` query params; returns enriched leads + counts block), `PATCH /api/admin/leads/:id/notes` (admin notes, 4000-char cap), `POST /api/admin/leads/:id/lose` (with reason), `POST /api/admin/leads/:id/reopen` (restores to `quoted` if bids exist, else `pending`). All scoped to admin/operator role. Helpers: `leadsHotFlag`, `leadStatusKey`, `enrichLead` join the registered customer profile and override guest fields.
+- Field additions on `quote_requests` (`admin_notes`, `lost_reason`, `lost_at`) ride on the existing spread-based `db.updateQuoteRequest` — no schema migration required.
+
 ### Intelligent Dispatch Homepage (Task 12)
 - `Home.jsx` — Rebuilt as split-screen dispatch interface. Left 58%: `DispatchPanel`. Right 42%: `NYCActivityCanvas`. Shared pickup/dropoff state flows up and down to trigger route visualization on canvas. Below-fold trust strip (Licensed & Insured, 250+ Vehicles, 24/7 Support, phone). Dark `#050a0f` page background.
 - `DispatchPanel.jsx` — 5-state booking glass card (idle → route → details → contact → bids). Features: simulated live stats bar (vehicles/response/rides), voice input with waveform, smart badges (airport/hotel/peak-hour), vehicle selector with live price estimate, gold "DISPATCH MY RIDE" CTA with pulse, full bid board with countdown/skeleton/BidCards, typewriter text in bid state.

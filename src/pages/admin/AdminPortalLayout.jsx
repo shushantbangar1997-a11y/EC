@@ -4,6 +4,7 @@ import {
   FiInbox, FiTag, FiTruck, FiDollarSign, FiUser,
   FiLogOut, FiBell, FiZap, FiSun, FiMoon,
   FiChevronLeft, FiChevronRight, FiSearch,
+  FiUsers, FiTrendingUp,
 } from 'react-icons/fi'
 import toast from 'react-hot-toast'
 import { useAuth } from '../../context/AuthContext'
@@ -17,6 +18,13 @@ const NAV_GROUPS = [
     label: 'Live',
     items: [
       { to: '/admin/live-feed', label: 'Live Feed', icon: FiZap, badgeKey: 'liveFeed', liveDot: true },
+    ],
+  },
+  {
+    label: 'Leads',
+    items: [
+      { to: '/admin/leads',     label: 'All Leads', icon: FiUsers,       badgeKey: 'totalLeads' },
+      { to: '/admin/leads/hot', label: 'Hot Leads', icon: FiTrendingUp,  badgeKey: 'hotLeads', liveDot: true },
     ],
   },
   {
@@ -40,7 +48,10 @@ function AdminPortalInner() {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
   const { theme: T, toggle } = useAdminTheme()
-  const [counts, setCounts] = useState({ liveFeed: 0, newOrders: 0, pendingOffers: 0, confirmedTrips: 0 })
+  const [counts, setCounts] = useState({
+    liveFeed: 0, newOrders: 0, pendingOffers: 0, confirmedTrips: 0,
+    totalLeads: 0, hotLeads: 0,
+  })
   const [collapsed, setCollapsed] = useState(false)
   const [searchVal, setSearchVal] = useState('')
   const lastSeenRef = useRef(localStorage.getItem('adminLastSeen') || new Date().toISOString())
@@ -52,13 +63,15 @@ function AdminPortalInner() {
     let stopped = false
     const tick = async () => {
       try {
-        const [ordersRes, bidsRes] = await Promise.all([
+        const [ordersRes, bidsRes, leadsRes] = await Promise.all([
           api.get('/admin/orders', { params: { limit: 100 } }),
           api.get('/admin/my-bids'),
+          api.get('/admin/leads').catch(() => ({ data: { counts: {} } })),
         ])
         if (stopped) return
         const orders = ordersRes.data?.data || []
         const bids   = bidsRes.data?.data  || []
+        const leadCounts = leadsRes.data?.counts || {}
 
         const fresh = []
         for (const o of orders) {
@@ -84,6 +97,8 @@ function AdminPortalInner() {
           newOrders:      liveFeedCount,
           pendingOffers:  bids.filter(b => b.status === 'pending').length,
           confirmedTrips: bids.filter(b => b.status === 'accepted').length,
+          totalLeads:     leadCounts.total || 0,
+          hotLeads:       leadCounts.hot   || 0,
         })
         document.title = liveFeedCount > 0
           ? `(${liveFeedCount}) New Orders · Everywhere Transfers`

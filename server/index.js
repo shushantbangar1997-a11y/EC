@@ -526,6 +526,158 @@ app.get('/api/admin/my-bids', auth, role('admin', 'operator'), (req, res) => {
   }
 })
 
+// ── ADMIN LEADS (sales pipeline view) ────────────────────────────────────────
+//
+// A "lead" is any quote request from a customer — guest or registered. This
+// endpoint returns every quote_request joined with the originating customer's
+// contact info, plus computed fields the Leads UI needs:
+//   status_key  — normalized to 'new' | 'quoted' | 'confirmed' | 'lost'
+//   hot         — needs follow-up (created <24h ago, no bid yet, still open)
+//   bid_count   — how many bids exist for this lead
+//   minutes_since_created
+//
+// Reuses the existing admin auth — no new role.
+function leadsHotFlag(qr, bids) {
+  if (qr.lost_reason || qr.status === 'lost') return false
+  if (['confirmed', 'booked', 'completed'].includes(qr.status)) return false
+  if (bids.length > 0) return false
+  const ageMs = Date.now() - Date.parse(qr.created_at || 0)
+  return ageMs >= 0 && ageMs < 24 * 60 * 60 * 1000
+}
+
+function leadStatusKey(qr, bids) {
+  if (qr.lost_reason || qr.status === 'lost') return 'lost'
+  if (['confirmed', 'booked', 'completed'].includes(qr.status)) return 'confirmed'
+  if (bids.length > 0 || qr.status === 'quoted' || qr.status === 'contacted') return 'quoted'
+  return 'new'
+}
+
+function enrichLead(qr) {
+  const bids = db.getBidsForRequest(qr.id)
+  const customer = qr.customer_id ? db.getUser(qr.customer_id) : null
+  const createdMs = Date.parse(qr.created_at || 0)
+  return {
+    ...qrToLead(qr),
+    // Prefer the registered user's profile contact info when available, fall
+    // back to the values captured on the guest quote form.
+    name:  customer?.name  || qr.customer_name  || qr.name  || 'Guest',
+    email: customer?.email || qr.customer_email || qr.email || '',
+    phone: customer?.phone || qr.customer_phone || qr.phone || '',
+    bids,
+    bid_count: bids.length,
+    status_key: leadStatusKey(qr, bids),
+    hot: leadsHotFlag(qr, bids),
+    minutes_since_created: Number.isFinite(createdMs)
+      ? Math.max(0, Math.floor((Date.now() - createdMs) / 60000))
+      : 0,
+    admin_notes: qr.admin_notes || '',
+    lost_reason: qr.lost_reason || '',
+    lost_at: qr.lost_at || null,
+  }
+}
+
+app.get('/api/admin/leads', auth, role('admin', 'operator'), (req, res) => {
+  try {
+    const { search, status, hot } = req.query
+    // Enrich every quote request once; both the filtered list and the
+    // sidebar-badge counts are derived from the same snapshot.
+    const all = db.listQuoteRequests().map(enrichLead)
+    let list = all
+
+    if (status && status !== 'all') {
+      list = list.filter(l => l.status_key === status)
+    }
+    if (hot === '1' || hot === 'true') {
+      list = list.filter(l => l.hot)
+    }
+    if (search) {
+      const s = String(search).toLowerCase()
+      list = list.filter(l =>
+        l.name?.toLowerCase().includes(s) ||
+        l.email?.toLowerCase().includes(s) ||
+        l.phone?.toLowerCase().includes(s) ||
+        l.pickup?.toLowerCase().includes(s) ||
+        l.dropoff?.toLowerCase().includes(s)
+      )
+    }
+
+    res.json({
+      data: list,
+      counts: {
+        total: all.length,
+        new: all.filter(l => l.status_key === 'new').length,
+        quoted: all.filter(l => l.status_key === 'quoted').length,
+        confirmed: all.filter(l => l.status_key === 'confirmed').length,
+        lost: all.filter(l => l.status_key === 'lost').length,
+        hot: all.filter(l => l.hot).length,
+      },
+      server_time: new Date().toISOString(),
+    })
+  } catch (e) {
+    res.status(500).json({ message: 'Could not fetch leads', error: e.message })
+  }
+})
+
+// Update an admin's freeform notes on a lead.
+app.patch('/api/admin/leads/:id/notes', auth, role('admin', 'operator'), (req, res) => {
+  try {
+    const { admin_notes } = req.body
+    if (typeof admin_notes !== 'string') {
+      return res.status(400).json({ message: 'admin_notes must be a string' })
+    }
+    const updated = db.updateQuoteRequest(req.params.id, {
+      admin_notes: admin_notes.slice(0, 4000),
+    })
+    if (!updated) return res.status(404).json({ message: 'Lead not found' })
+    res.json({ success: true, data: enrichLead(updated) })
+  } catch (e) {
+    res.status(500).json({ message: 'Could not save notes', error: e.message })
+  }
+})
+
+// Mark a lead as Lost (with optional free-text reason). Hidden from default
+// view but retained for search and historical reporting.
+app.post('/api/admin/leads/:id/lose', auth, role('admin', 'operator'), (req, res) => {
+  try {
+    const qr = db.getQuoteRequest(req.params.id)
+    if (!qr) return res.status(404).json({ message: 'Lead not found' })
+    if (['confirmed', 'booked', 'completed'].includes(qr.status)) {
+      return res.status(409).json({ message: `This lead is already ${qr.status} and cannot be marked lost` })
+    }
+    const reason = String(req.body?.reason || '').slice(0, 500)
+    const updated = db.updateQuoteRequest(qr.id, {
+      status: 'lost',
+      lost_reason: reason,
+      lost_at: new Date().toISOString(),
+    })
+    res.json({ success: true, data: enrichLead(updated) })
+  } catch (e) {
+    res.status(500).json({ message: 'Could not mark lead as lost', error: e.message })
+  }
+})
+
+// Reopen a lead that was previously marked Lost.
+app.post('/api/admin/leads/:id/reopen', auth, role('admin', 'operator'), (req, res) => {
+  try {
+    const qr = db.getQuoteRequest(req.params.id)
+    if (!qr) return res.status(404).json({ message: 'Lead not found' })
+    if (qr.status !== 'lost' && !qr.lost_reason) {
+      return res.status(409).json({ message: 'This lead is not in the Lost state' })
+    }
+    // Restore to 'quoted' if there are existing bids, otherwise back to 'pending'
+    const bids = db.getBidsForRequest(qr.id)
+    const nextStatus = bids.length > 0 ? 'quoted' : 'pending'
+    const updated = db.updateQuoteRequest(qr.id, {
+      status: nextStatus,
+      lost_reason: '',
+      lost_at: null,
+    })
+    res.json({ success: true, data: enrichLead(updated) })
+  } catch (e) {
+    res.status(500).json({ message: 'Could not reopen lead', error: e.message })
+  }
+})
+
 // Earnings summary from accepted bids
 app.get('/api/admin/earnings', auth, role('admin', 'operator'), (req, res) => {
   try {

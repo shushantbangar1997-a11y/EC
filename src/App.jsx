@@ -53,6 +53,7 @@ import AdminUsers from './pages/admin/Users'
 import AdminRevenue from './pages/admin/Revenue'
 import AdminPortalLayout from './pages/admin/AdminPortalLayout'
 import AdminOrders from './pages/admin/Orders'
+import AdminLeads from './pages/admin/Leads'
 import AdminMyOffers from './pages/admin/MyOffers'
 import AdminTrips from './pages/admin/Trips'
 import AdminEarnings from './pages/admin/Earnings'
@@ -218,6 +219,8 @@ function AppContent() {
             >
               <Route index element={<Suspense fallback={null}><AdminLiveFeed /></Suspense>} />
               <Route path="live-feed" element={<Suspense fallback={null}><AdminLiveFeed /></Suspense>} />
+              <Route path="leads" element={<AdminLeads />} />
+              <Route path="leads/hot" element={<AdminLeads forceHot />} />
               <Route path="orders" element={<AdminOrders />} />
               <Route path="offers" element={<AdminMyOffers />} />
               <Route path="trips" element={<AdminTrips />} />
