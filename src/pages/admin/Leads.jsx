@@ -375,15 +375,17 @@ export default function Leads({ forceHot = false }) {
   // Apply local search + status + hot filters (server already returns full set)
   const filtered = useMemo(() => {
     const s = search.trim().toLowerCase()
+    const isSearching = s.length > 0
     return leads.filter(l => {
       if (forceHot && !l.hot) return false
       if (statusFilter !== 'all') {
         if (l.status_key !== statusFilter) return false
-      } else if (!forceHot) {
-        // Default view hides Lost leads to keep the pipeline focused.
+      } else if (!forceHot && !isSearching) {
+        // Default All view hides Lost to keep the pipeline focused — but a
+        // user typing a search term still needs to find them.
         if (l.status_key === 'lost') return false
       }
-      if (!s) return true
+      if (!isSearching) return true
       return (
         l.name?.toLowerCase().includes(s) ||
         l.email?.toLowerCase().includes(s) ||
@@ -601,7 +603,10 @@ export default function Leads({ forceHot = false }) {
         <LeadDrawer
           lead={selected}
           onClose={() => setSelected(null)}
-          onChanged={(opts) => { if (!opts?.silent) refresh(); else refresh() }}
+          // Silent autosaves don't need an immediate refetch — the 5s poll
+          // will pick up the change. Status-changing actions (Lose/Reopen)
+          // do trigger an instant refresh so the table reflects them.
+          onChanged={(opts) => { if (!opts?.silent) refresh() }}
         />
       )}
     </div>
