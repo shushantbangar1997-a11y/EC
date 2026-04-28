@@ -16,6 +16,7 @@ import SlideButton from './SlideButton'
 import InfinityLogo from './InfinityLogo'
 import RideDatePicker from './RideDatePicker'
 import BidMessageThread from './BidMessageThread'
+import { formatDistanceToNow } from 'date-fns'
 import {
   detectRouteType, getPriceEstimate, formatPriceRange,
   detectAirport, detectHotel, isPeakHour,
@@ -123,6 +124,11 @@ function BidCard({ bid, onSelect, index, isLowest, disabled, quoteToken }) {
       {(bid.notes || bid.message) && (
         <p className="text-xs italic mb-3 px-2 py-1.5 rounded-lg" style={{ color: 'var(--text-secondary)', background: 'var(--bg-field-hover)' }}>
           "{bid.notes || bid.message}"
+        </p>
+      )}
+      {bid.updated_at && bid.created_at && bid.updated_at !== bid.created_at && (
+        <p className="text-[10px] font-mono mb-2" style={{ color: 'var(--text-muted)' }}>
+          Updated {formatDistanceToNow(new Date(bid.updated_at), { addSuffix: true })}
         </p>
       )}
       <button
@@ -540,9 +546,25 @@ export default function DispatchPanel({ onRouteChange, presetVehicle, hideStats 
                       "{acceptedBid.message}"
                     </div>
                   )}
+                  {acceptedBid.updated_at && (
+                    <div className="text-[10px] font-mono mb-2" style={{ color: 'var(--text-muted)' }}>
+                      Updated {formatDistanceToNow(new Date(acceptedBid.updated_at), { addSuffix: true })}
+                    </div>
+                  )}
                   <div className="text-xs" style={{ color: 'var(--text-muted)' }}>
                     The operator will contact you shortly with pickup details.
                   </div>
+                  {acceptedBid.id && typeof acceptedBid.id === 'string' && (
+                    <div style={{ textAlign: 'left', marginTop: 8 }}>
+                      <BidMessageThread
+                        bidId={acceptedBid.id}
+                        quoteToken={postedRide?.quote_token}
+                        viewerKind="customer"
+                        pollMs={5000}
+                        defaultOpen={true}
+                      />
+                    </div>
+                  )}
                 </div>
               ) : (
                 <div className="space-y-3">
