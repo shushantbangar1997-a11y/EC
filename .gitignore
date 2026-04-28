@@ -34,3 +34,6 @@ pnpm-debug.log*
 
 # OS
 Thumbs.db
+
+# Runtime chat image uploads (per-session, not tracked in git)
+server/uploads/

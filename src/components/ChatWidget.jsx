@@ -254,8 +254,22 @@ export default function ChatWidget() {
             <div>
               <div className="font-semibold text-sm">Everywhere Cars Support</div>
               <div className="text-[11px] text-gray-300 flex items-center gap-1.5">
-                <span className={`inline-block w-1.5 h-1.5 rounded-full ${connected ? 'bg-green-400' : 'bg-gray-500'}`} />
-                {connected ? 'Online — usually replies in minutes' : 'Connecting…'}
+                {(() => {
+                  // Three distinct states so the visitor isn't left guessing:
+                  //   1. Socket not yet connected → grey
+                  //   2. Connected but no admin has spoken in this session yet
+                  //      AND visitor has already sent something → yellow "Connecting you to an agent…"
+                  //   3. Otherwise (idle or admin has replied) → green
+                  const visitorSent = messages.some(m => m.sender_kind === 'visitor')
+                  const adminSpoke  = messages.some(m => m.sender_kind === 'admin')
+                  if (!connected) {
+                    return (<><span className="inline-block w-1.5 h-1.5 rounded-full bg-gray-500" />Connecting…</>)
+                  }
+                  if (visitorSent && !adminSpoke) {
+                    return (<><span className="inline-block w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />Connecting you to an agent…</>)
+                  }
+                  return (<><span className="inline-block w-1.5 h-1.5 rounded-full bg-green-400" />Online — usually replies in minutes</>)
+                })()}
               </div>
             </div>
             <button
