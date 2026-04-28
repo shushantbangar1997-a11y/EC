@@ -39,12 +39,14 @@ function playChime() {
 }
 
 // ── Quick-bid form ────────────────────────────────────────────────────────────
-function QuickBid({ order, onDone, onFlash }) {
+// `existingBid` switches the form into edit mode (PATCH instead of POST).
+function QuickBid({ order, existingBid, onDone, onFlash }) {
   const { theme: T } = useAdminTheme()
-  const [price,   setPrice]   = useState('')
-  const [eta,     setEta]     = useState(30)
-  const [vehicle, setVehicle] = useState(order.vehicle_type || 'sedan')
-  const [msg,     setMsg]     = useState('')
+  const isEdit = !!existingBid
+  const [price,   setPrice]   = useState(isEdit ? String(existingBid.price ?? '') : '')
+  const [eta,     setEta]     = useState(isEdit ? (existingBid.eta_minutes ?? 30) : 30)
+  const [vehicle, setVehicle] = useState((isEdit ? existingBid.vehicle_type : order.vehicle_type) || 'sedan')
+  const [msg,     setMsg]     = useState(isEdit ? (existingBid.message || existingBid.notes || '') : '')
   const [busy,    setBusy]    = useState(false)
 
   const labelStyle = { fontSize: 10, fontWeight: 600, color: T.textMuted, display: 'block', marginBottom: 4, textTransform: 'uppercase', letterSpacing: 0.8 }
@@ -56,16 +58,39 @@ function QuickBid({ order, onDone, onFlash }) {
     if (!n || n <= 0) { toast.error('Enter a valid price'); return }
     setBusy(true)
     try {
-      await api.post(`/quote-requests/${order.id}/bids`, {
-        price: n, vehicle_type: vehicle, eta_minutes: Number(eta) || 30, message: msg,
-      })
-      toast.success('Offer sent!', {
-        icon: '🚖',
-        style: { background: '#0a0a0a', color: '#ffffff', border: '1px solid #1e1e1e', borderRadius: 10, fontSize: 13 },
-      })
+      if (isEdit) {
+        await api.patch(`/bids/${existingBid.id}`, {
+          price: n, vehicle_type: vehicle, eta_minutes: Number(eta) || 30, message: msg,
+        })
+        toast.success('Offer updated', {
+          icon: '✏️',
+          style: { background: '#0a0a0a', color: '#ffffff', border: '1px solid #1e1e1e', borderRadius: 10, fontSize: 13 },
+        })
+      } else {
+        await api.post(`/quote-requests/${order.id}/bids`, {
+          price: n, vehicle_type: vehicle, eta_minutes: Number(eta) || 30, message: msg,
+        })
+        toast.success('Offer sent!', {
+          icon: '🚖',
+          style: { background: '#0a0a0a', color: '#ffffff', border: '1px solid #1e1e1e', borderRadius: 10, fontSize: 13 },
+        })
+      }
       onFlash?.(); onDone?.()
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Failed to send offer')
+      toast.error(err.response?.data?.message || (isEdit ? 'Failed to update offer' : 'Failed to send offer'))
+    } finally { setBusy(false) }
+  }
+
+  const withdraw = async () => {
+    if (!isEdit) return
+    if (!window.confirm('Withdraw this offer? The customer will no longer see it.')) return
+    setBusy(true)
+    try {
+      await api.post(`/bids/${existingBid.id}/withdraw`)
+      toast.success('Offer withdrawn')
+      onDone?.()
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to withdraw')
     } finally { setBusy(false) }
   }
 
@@ -110,9 +135,24 @@ function QuickBid({ order, onDone, onFlash }) {
           display: 'flex', alignItems: 'center', gap: 5, whiteSpace: 'nowrap', letterSpacing: 0.2,
         }}>
           <FiSend size={12} />
-          {busy ? 'Sending…' : 'Send Offer'}
+          {busy ? (isEdit ? 'Saving…' : 'Sending…') : (isEdit ? 'Save Changes' : 'Send Offer')}
         </button>
       </div>
+      {isEdit && (
+        <div style={{ marginTop: 8, display: 'flex', justifyContent: 'flex-end' }}>
+          <button type="button" onClick={withdraw} disabled={busy} style={{
+            padding: '6px 12px',
+            background: 'transparent',
+            color: T.textMuted,
+            border: `1px solid ${T.border}`,
+            borderRadius: 6, fontWeight: 600, fontSize: 11,
+            cursor: busy ? 'not-allowed' : 'pointer',
+            letterSpacing: 0.2,
+          }}>
+            Withdraw offer
+          </button>
+        </div>
+      )}
     </form>
   )
 }
@@ -121,9 +161,11 @@ function QuickBid({ order, onDone, onFlash }) {
 function FeedCard({ order, myBid, isNew, criticalRef, highlighted }) {
   const { theme: T } = useAdminTheme()
   const [open,     setOpen]     = useState(false)
+  const [editOpen, setEditOpen] = useState(false)
   const [flash,    setFlash]    = useState(isNew)
   const [bidFlash, setBidFlash] = useState(false)
   const u = URGENCY[order.urgency_label] || URGENCY.ASAP
+  const myBidEditable = myBid && (myBid.status || 'pending') === 'pending'
 
   useEffect(() => {
     if (isNew) { const t = setTimeout(() => setFlash(false), 2200); return () => clearTimeout(t) }
@@ -165,13 +207,32 @@ function FeedCard({ order, myBid, isNew, criticalRef, highlighted }) {
           </div>
 
           {myBid ? (
-            <span style={{
-              fontSize: 11, fontWeight: 600, padding: '4px 10px', borderRadius: 999,
-              background: T.btnBg, color: T.btnText,
-              display: 'flex', alignItems: 'center', gap: 4, whiteSpace: 'nowrap', flexShrink: 0,
-            }}>
-              <FiCheckCircle size={11} /> You bid ${myBid.price}
-            </span>
+            myBidEditable ? (
+              <button
+                type="button"
+                onClick={() => setEditOpen(o => !o)}
+                title="Click to edit your offer"
+                style={{
+                  fontSize: 11, fontWeight: 600, padding: '4px 10px', borderRadius: 999,
+                  background: editOpen ? T.surfaceAlt : T.btnBg,
+                  color: editOpen ? T.textSub : T.btnText,
+                  border: editOpen ? `1px solid ${T.border}` : 'none',
+                  display: 'flex', alignItems: 'center', gap: 4, whiteSpace: 'nowrap', flexShrink: 0,
+                  cursor: 'pointer', letterSpacing: 0.2,
+                }}
+              >
+                <FiCheckCircle size={11} /> You bid ${myBid.price}
+                <span style={{ opacity: 0.7, marginLeft: 4, fontSize: 10 }}>{editOpen ? '· cancel' : '· edit'}</span>
+              </button>
+            ) : (
+              <span style={{
+                fontSize: 11, fontWeight: 600, padding: '4px 10px', borderRadius: 999,
+                background: T.btnBg, color: T.btnText,
+                display: 'flex', alignItems: 'center', gap: 4, whiteSpace: 'nowrap', flexShrink: 0,
+              }}>
+                <FiCheckCircle size={11} /> You bid ${myBid.price}
+              </span>
+            )
           ) : (
             <span style={{
               fontSize: 11, fontWeight: 600, padding: '4px 10px', borderRadius: 999,
@@ -233,6 +294,11 @@ function FeedCard({ order, myBid, isNew, criticalRef, highlighted }) {
       {open && !myBid && (
         <div style={{ padding: '0 15px 15px' }}>
           <QuickBid order={order} onDone={() => setOpen(false)} onFlash={handleFlash} />
+        </div>
+      )}
+      {editOpen && myBidEditable && (
+        <div style={{ padding: '0 15px 15px' }}>
+          <QuickBid order={order} existingBid={myBid} onDone={() => setEditOpen(false)} onFlash={handleFlash} />
         </div>
       )}
     </div>

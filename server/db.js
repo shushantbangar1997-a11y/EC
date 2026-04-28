@@ -31,6 +31,7 @@ function seed() {
     ],
     quote_requests: [],
     bids: [],
+    bid_messages: [],
     drivers: [
       { id: 'd1', operator_id: 'u2', name: 'James Carter', phone: '+17185550001', vehicle_type: 'sedan', vehicle: 'Lincoln Town Car', plate: 'NYC-1234', status: 'available', created_at: new Date().toISOString() },
       { id: 'd2', operator_id: 'u2', name: 'Maria Santos', phone: '+17185550002', vehicle_type: 'suv', vehicle: 'Cadillac Escalade', plate: 'NYC-5678', status: 'available', created_at: new Date().toISOString() },
@@ -106,6 +107,29 @@ export const db = {
     _db.bids[idx] = { ..._db.bids[idx], ...updates, updated_at: new Date().toISOString() }
     save(_db)
     return _db.bids[idx]
+  },
+  deleteBid: (id) => {
+    const idx = _db.bids.findIndex(b => b.id === id)
+    if (idx === -1) return false
+    _db.bids.splice(idx, 1)
+    if (Array.isArray(_db.bid_messages)) {
+      _db.bid_messages = _db.bid_messages.filter(m => m.bid_id !== id)
+    }
+    save(_db)
+    return true
+  },
+
+  createBidMessage: (data) => {
+    if (!Array.isArray(_db.bid_messages)) _db.bid_messages = []
+    const msg = { id: nextId(), created_at: new Date().toISOString(), ...data }
+    _db.bid_messages.push(msg)
+    save(_db)
+    return msg
+  },
+  listBidMessages: (bid_id) => {
+    if (!Array.isArray(_db.bid_messages)) return []
+    return _db.bid_messages.filter(m => m.bid_id === bid_id)
+      .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
   },
 
   listDrivers: (operator_id) => operator_id ? _db.drivers.filter(d => d.operator_id === operator_id) : _db.drivers,

@@ -15,6 +15,7 @@ import PlaceAutocomplete from './PlaceAutocomplete'
 import SlideButton from './SlideButton'
 import InfinityLogo from './InfinityLogo'
 import RideDatePicker from './RideDatePicker'
+import BidMessageThread from './BidMessageThread'
 import {
   detectRouteType, getPriceEstimate, formatPriceRange,
   detectAirport, detectHotel, isPeakHour,
@@ -77,7 +78,7 @@ function SkeletonCard() {
   )
 }
 
-function BidCard({ bid, onSelect, index, isLowest, disabled }) {
+function BidCard({ bid, onSelect, index, isLowest, disabled, quoteToken }) {
   const [visible, setVisible] = useState(false)
   useEffect(() => {
     const t = setTimeout(() => setVisible(true), index * 320 + 80)
@@ -132,6 +133,16 @@ function BidCard({ bid, onSelect, index, isLowest, disabled }) {
       >
         {disabled ? 'CONFIRMING...' : <>SELECT THIS RIDE <FiArrowRight size={14} /></>}
       </button>
+
+      {/* Per-bid message thread — only for real backend bids (not legacy fallback id=1) */}
+      {bid.id && typeof bid.id === 'string' && (
+        <BidMessageThread
+          bidId={bid.id}
+          quoteToken={quoteToken}
+          viewerKind="customer"
+          pollMs={5000}
+        />
+      )}
     </div>
   )
 }
@@ -544,7 +555,7 @@ export default function DispatchPanel({ onRouteChange, presetVehicle, hideStats 
                   )}
                   {bids.map((bid, i) => {
                     const isLowest = bids.length > 1 && bid.price === Math.min(...bids.map(b => b.price))
-                    return <BidCard key={bid.id || i} bid={bid} onSelect={handleSelectBid} index={i} isLowest={isLowest} disabled={accepting} />
+                    return <BidCard key={bid.id || i} bid={bid} onSelect={handleSelectBid} index={i} isLowest={isLowest} disabled={accepting} quoteToken={postedRide?.quote_token} />
                   })}
                 </div>
               )}

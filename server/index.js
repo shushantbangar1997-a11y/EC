@@ -178,7 +178,11 @@ app.get('/api/quote-requests/:id', (req, res) => {
       return res.status(401).json({ message: 'Authorization required to view this quote request' })
     }
 
-    const bids = db.getBidsForRequest(qr.id)
+    // Customer/guest view excludes withdrawn bids — staff see the full history.
+    const allBids = db.getBidsForRequest(qr.id)
+    const bids = isStaff
+      ? allBids
+      : allBids.filter(b => (b.status || 'pending') !== 'withdrawn')
     res.json({ success: true, data: { ...qrToLead(qr), bids } })
   } catch (e) {
     res.status(500).json({ message: 'Could not fetch quote request', error: e.message })
@@ -313,6 +317,151 @@ app.post('/api/quote-requests/:id/accept-bid', (req, res) => {
     res.json({ success: true, data: { request: qrToLead(updated), bid: db.getBid(bid_id) } })
   } catch (e) {
     res.status(500).json({ message: 'Could not accept bid', error: e.message })
+  }
+})
+
+// ── BID EDIT / WITHDRAW ───────────────────────────────────────────────────────
+
+// Operator edits one of their own pending bids — price, vehicle, ETA, note.
+// Locked once accepted (or declined / withdrawn).
+app.patch('/api/bids/:id', auth, role('operator', 'admin'), (req, res) => {
+  try {
+    const bid = db.getBid(req.params.id)
+    if (!bid) return res.status(404).json({ message: 'Bid not found' })
+    if (bid.operator_id !== req.user.id && req.user.role !== 'admin') {
+      return res.status(403).json({ message: 'You can only edit your own bids' })
+    }
+    const status = bid.status || 'pending'
+    if (status !== 'pending') {
+      return res.status(409).json({ message: `This bid is ${status} and can no longer be edited` })
+    }
+    const { price, vehicle_type, eta_minutes, message, notes } = req.body
+    const updates = {}
+    if (price !== undefined) {
+      const n = Number(price)
+      if (!n || n <= 0) return res.status(400).json({ message: 'Price must be a positive number' })
+      updates.price = n
+    }
+    if (vehicle_type !== undefined) updates.vehicle_type = vehicle_type
+    if (eta_minutes !== undefined) {
+      const e = Number(eta_minutes)
+      if (!Number.isFinite(e) || e < 0) return res.status(400).json({ message: 'ETA must be a non-negative number' })
+      updates.eta_minutes = e
+    }
+    if (message !== undefined || notes !== undefined) {
+      const m = message ?? notes ?? ''
+      updates.message = m
+      updates.notes = m
+    }
+    const updated = db.updateBid(bid.id, updates)
+    // Keep quote_request.bid_price in sync with the latest pending bid for legacy callers
+    if (updates.price !== undefined) {
+      const qr = db.getQuoteRequest(bid.quote_request_id)
+      if (qr && (qr.status === 'quoted' || qr.status === 'pending')) {
+        db.updateQuoteRequest(qr.id, { bid_price: updates.price })
+      }
+    }
+    res.json({ success: true, data: updated })
+  } catch (e) {
+    res.status(500).json({ message: 'Could not update bid', error: e.message })
+  }
+})
+
+// Operator withdraws a pending bid (soft-mark withdrawn so history is preserved)
+app.post('/api/bids/:id/withdraw', auth, role('operator', 'admin'), (req, res) => {
+  try {
+    const bid = db.getBid(req.params.id)
+    if (!bid) return res.status(404).json({ message: 'Bid not found' })
+    if (bid.operator_id !== req.user.id && req.user.role !== 'admin') {
+      return res.status(403).json({ message: 'You can only withdraw your own bids' })
+    }
+    const status = bid.status || 'pending'
+    if (status !== 'pending') {
+      return res.status(409).json({ message: `This bid is ${status} and can no longer be withdrawn` })
+    }
+    const updated = db.updateBid(bid.id, { status: 'withdrawn' })
+    res.json({ success: true, data: updated })
+  } catch (e) {
+    res.status(500).json({ message: 'Could not withdraw bid', error: e.message })
+  }
+})
+
+// ── BID MESSAGES (per-bid thread) ─────────────────────────────────────────────
+
+// Caller may read/write a bid's thread if any of:
+//   (a) operator who owns the bid
+//   (b) admin
+//   (c) logged-in customer who owns the originating quote request
+//   (d) guest holding the matching quote_token (header or query/body)
+function authorizeBidThread(req, bid) {
+  const qr = db.getQuoteRequest(bid.quote_request_id)
+  if (!qr) return { ok: false, status: 404, message: 'Originating ride not found' }
+
+  const tokenHeader = req.headers.authorization
+  let caller = null
+  if (tokenHeader?.startsWith('Bearer ')) {
+    try { caller = jwt.verify(tokenHeader.slice(7), JWT_SECRET) } catch {}
+  }
+  const providedQuoteToken =
+    req.body?.quote_token || req.query?.token || req.headers['x-quote-token']
+
+  // If a JWT is present, evaluate ONLY against the caller's identity. Falling
+  // through to the quote-token mode would let any logged-in (but unrelated)
+  // user piggy-back on a known token to read/write someone else's thread.
+  if (caller) {
+    if (caller.role === 'admin') return { ok: true, qr, sender: { kind: 'admin', id: caller.id } }
+    if (caller.role === 'operator' && bid.operator_id === caller.id) {
+      return { ok: true, qr, sender: { kind: 'operator', id: caller.id } }
+    }
+    if (qr.customer_id && caller.id === qr.customer_id) {
+      return { ok: true, qr, sender: { kind: 'customer', id: caller.id } }
+    }
+    return { ok: false, status: 403, message: 'Not allowed to view this thread' }
+  }
+  // No JWT — guest path. Allow only with a matching unguessable per-quote token.
+  if (qr.quote_token && providedQuoteToken && providedQuoteToken === qr.quote_token) {
+    return { ok: true, qr, sender: { kind: 'customer', id: null, guest: true } }
+  }
+  return { ok: false, status: 401, message: 'Not allowed to view this thread' }
+}
+
+app.get('/api/bids/:id/messages', (req, res) => {
+  try {
+    const bid = db.getBid(req.params.id)
+    if (!bid) return res.status(404).json({ message: 'Bid not found' })
+    const auth = authorizeBidThread(req, bid)
+    if (!auth.ok) return res.status(auth.status).json({ message: auth.message })
+    res.json({ success: true, data: db.listBidMessages(bid.id) })
+  } catch (e) {
+    res.status(500).json({ message: 'Could not load messages', error: e.message })
+  }
+})
+
+app.post('/api/bids/:id/messages', (req, res) => {
+  try {
+    const bid = db.getBid(req.params.id)
+    if (!bid) return res.status(404).json({ message: 'Bid not found' })
+    const auth = authorizeBidThread(req, bid)
+    if (!auth.ok) return res.status(auth.status).json({ message: auth.message })
+    const body = String(req.body?.body || '').trim().slice(0, 1000)
+    if (!body) return res.status(400).json({ message: 'Message body is required' })
+    const sender = auth.sender
+    const senderName = sender.kind === 'customer'
+      ? (auth.qr.customer_name || auth.qr.name || 'Customer')
+      : (db.getUser(sender.id)?.name || 'Operator')
+    const msg = db.createBidMessage({
+      bid_id: bid.id,
+      quote_request_id: bid.quote_request_id,
+      sender_kind: sender.kind === 'admin' ? 'operator' : sender.kind,
+      sender_id: sender.id || null,
+      sender_name: senderName,
+      body,
+    })
+    // Bump bid's updated_at for "Updated just now" UX hints
+    db.updateBid(bid.id, {})
+    res.status(201).json({ success: true, data: msg })
+  } catch (e) {
+    res.status(500).json({ message: 'Could not send message', error: e.message })
   }
 })
 
