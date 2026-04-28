@@ -10,6 +10,7 @@ import toast from 'react-hot-toast'
 import { useAuth } from '../../context/AuthContext'
 import { AdminThemeProvider, useAdminTheme } from '../../context/AdminThemeContext'
 import api from '../../utils/api'
+import { io } from 'socket.io-client'
 
 const EASING = 'cubic-bezier(0.25, 1.1, 0.4, 1)'
 
@@ -116,6 +117,32 @@ function AdminPortalInner() {
     tick()
     const id = setInterval(tick, 5000)
     return () => { stopped = true; clearInterval(id); document.title = 'Everywhere Cars' }
+  }, [])
+
+  // Socket-driven Live Chat badge — updates the moment a visitor lands or
+  // leaves, instead of waiting for the 5s poll. The poll above stays as a
+  // safety net for stale state on reconnect.
+  useEffect(() => {
+    const token = localStorage.getItem('token')
+    if (!token) return
+    const socket = io({ path: '/socket.io', transports: ['websocket', 'polling'] })
+    const recompute = (sessions) => {
+      const online = (sessions || []).filter(s => s.online).length
+      setCounts(prev => prev.activeVisitors === online ? prev : { ...prev, activeVisitors: online })
+    }
+    let snapshotSessions = []
+    socket.on('connect', () => socket.emit('admin:hello', { token }))
+    socket.on('chat:snapshot', ({ sessions }) => {
+      snapshotSessions = Array.isArray(sessions) ? sessions : []
+      recompute(snapshotSessions)
+    })
+    socket.on('chat:session-update', (s) => {
+      const idx = snapshotSessions.findIndex(x => x.session_id === s.session_id)
+      if (idx === -1) snapshotSessions.push(s)
+      else snapshotSessions[idx] = { ...snapshotSessions[idx], ...s }
+      recompute(snapshotSessions)
+    })
+    return () => socket.disconnect()
   }, [])
 
   const markSeen = () => {

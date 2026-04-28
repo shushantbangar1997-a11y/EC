@@ -1038,11 +1038,14 @@ const presence = new Map() // session_id -> { socket_ids:Set, last_seen, page_ur
 const MAX_PRESENCE_ENTRIES   = 5000   // distinct visitor sessions tracked at once
 const MAX_SOCKETS_PER_SESSION = 5     // a single visitor opening many tabs
 const PRESENCE_CLEANUP_MS     = 5000  // grace period for navigations
+const OFFLINE_AUTO_END_MS     = 5 * 60 * 1000  // archive sessions 5 min after last disconnect
 const cleanupTimers = new Map()       // session_id -> Timeout (so we can dedupe)
+const autoEndTimers = new Map()       // session_id -> Timeout for offline → ended transition
 
 // Field-length limits applied before storage/broadcast.
 const MAX_NAME       = 80
 const MAX_EMAIL      = 200
+const MAX_PHONE      = 40
 const MAX_PAGE_URL   = 500
 const MAX_BODY       = 4000
 
@@ -1097,10 +1100,29 @@ function visitorJoinedPresence(socket, session_id, info = {}) {
   if (info.name)     entry.name     = info.name
   if (info.email)    entry.email    = info.email
   if (info.customer_id) entry.customer_id = info.customer_id
-  // Cancel any pending cleanup since we're online again.
+  // Cancel any pending cleanup / auto-end since we're online again.
   const t = cleanupTimers.get(session_id)
   if (t) { clearTimeout(t); cleanupTimers.delete(session_id) }
+  const ae = autoEndTimers.get(session_id)
+  if (ae) { clearTimeout(ae); autoEndTimers.delete(session_id) }
   return true
+}
+
+// Schedule the offline-grace → archive lifecycle. After OFFLINE_AUTO_END_MS
+// of continuous offline time we mark the session ended so the visitor list
+// stays clean. Returning visitors get a fresh session.
+function scheduleAutoEnd(session_id) {
+  if (autoEndTimers.has(session_id)) return
+  const t = setTimeout(() => {
+    autoEndTimers.delete(session_id)
+    if (presence.has(session_id)) return // came back, don't end
+    const row = db.getChatSessionByKey(session_id)
+    if (!row || row.status === 'ended') return
+    db.endChatSession(row.id)
+    io.to(`chat:${session_id}`).emit('chat:ended', { session_id, reason: 'offline_timeout' })
+    broadcastSessionUpdate(session_id)
+  }, OFFLINE_AUTO_END_MS)
+  autoEndTimers.set(session_id, t)
 }
 
 function visitorLeftPresence(socket, session_id) {
@@ -1116,6 +1138,8 @@ function visitorLeftPresence(socket, session_id) {
       if (cur && cur.socket_ids.size === 0) {
         presence.delete(session_id)
         broadcastSessionUpdate(session_id)
+        // Now that we're truly offline, start the 5-minute archive countdown.
+        scheduleAutoEnd(session_id)
       }
     }, PRESENCE_CLEANUP_MS)
     cleanupTimers.set(session_id, t)
@@ -1197,10 +1221,12 @@ io.on('connection', (socket) => {
       } catch {}
     }
 
+    const phone = clean(payload.phone, MAX_PHONE)
     const existing = db.getChatSessionByKey(session_id)
     db.upsertChatSession(session_id, {
       name:        name  || existing?.name  || '',
       email:       email || existing?.email || '',
+      phone:       phone || existing?.phone || '',
       customer_id: customer_id || existing?.customer_id || null,
       page_url:    clean(payload.page_url, MAX_PAGE_URL) || existing?.page_url || '',
       last_seen:   new Date().toISOString(),
@@ -1341,6 +1367,25 @@ io.on('connection', (socket) => {
     if (!row) return
     db.endChatSession(row.id)
     io.to(`chat:${session_id}`).emit('chat:ended', { session_id })
+    broadcastSessionUpdate(session_id)
+  })
+
+  // Read receipts: when an admin opens / focuses a session, mark every
+  // visitor message as read up to "now" and notify both sides so the visitor
+  // sees the double-check indicator turn on in real time.
+  socket.on('admin:mark-read', (payload = {}) => {
+    if (!socket.data.admin) return
+    const session_id = clean(payload.session_id, 80)
+    const row = db.getChatSessionByKey(session_id)
+    if (!row) return
+    const now = new Date().toISOString()
+    const ids = db.markChatMessagesRead(row.id, now)
+    db.upsertChatSession(session_id, { last_admin_read_at: now })
+    if (ids.length) {
+      io.to(`chat:${session_id}`).emit('chat:read', {
+        session_id, message_ids: ids, read_at: now, by: 'admin',
+      })
+    }
     broadcastSessionUpdate(session_id)
   })
 

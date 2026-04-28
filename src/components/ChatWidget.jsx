@@ -108,13 +108,21 @@ export default function ChatWidget() {
       }
     })
 
-    socket.on('chat:ended', () => {
+    socket.on('chat:ended', ({ reason } = {}) => {
       setMessages(prev => [...prev, {
         id: `sys_${Date.now()}`,
         sender_kind: 'system',
-        body: 'The agent ended this conversation.',
+        body: reason === 'offline_timeout'
+          ? 'This conversation was archived after 5 minutes of inactivity. Send a new message to start a fresh chat.'
+          : 'The agent ended this conversation.',
         created_at: new Date().toISOString(),
       }])
+    })
+
+    // Read-receipt deltas — flip the visitor's outbound bubbles to "Read".
+    socket.on('chat:read', ({ message_ids, read_at }) => {
+      const set = new Set(message_ids || [])
+      setMessages(prev => prev.map(m => set.has(m.id) ? { ...m, read_at } : m))
     })
 
     return () => {
@@ -333,8 +341,13 @@ export default function ChatWidget() {
                           )}
                           {m.body && <div>{m.body}</div>}
                         </div>
-                        <div className="text-[10px] text-gray-400 mt-0.5 px-1">
-                          {formatTime(m.created_at)}
+                        <div className="text-[10px] text-gray-400 mt-0.5 px-1 flex items-center gap-1">
+                          <span>{formatTime(m.created_at)}</span>
+                          {mine && (
+                            <span title={m.read_at ? 'Read' : 'Sent'} className={m.read_at ? 'text-green-500' : 'text-gray-400'}>
+                              {m.read_at ? '✓✓' : '✓'}
+                            </span>
+                          )}
                         </div>
                       </div>
                     </div>

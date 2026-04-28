@@ -208,6 +208,22 @@ export const db = {
     save(_db)
     return _db.chat_sessions[idx]
   },
+  // Mark every visitor message in this session as read by admin up to `at`.
+  // Used for read-receipt double-checks. Returns the list of message ids that
+  // transitioned from unread→read so we can broadcast a tight delta.
+  markChatMessagesRead: (chat_session_id, at) => {
+    if (!Array.isArray(_db.chat_messages)) return []
+    const stamp = at || new Date().toISOString()
+    const changed = []
+    for (const m of _db.chat_messages) {
+      if (m.chat_session_id === chat_session_id && m.sender === 'visitor' && !m.read_at) {
+        m.read_at = stamp
+        changed.push(m.id)
+      }
+    }
+    if (changed.length) save(_db)
+    return changed
+  },
 
   listDrivers: (operator_id) => operator_id ? _db.drivers.filter(d => d.operator_id === operator_id) : _db.drivers,
   createDriver: (data) => {

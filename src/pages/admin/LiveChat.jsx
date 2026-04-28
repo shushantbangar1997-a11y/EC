@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState, useCallback } from 'react'
 import { io } from 'socket.io-client'
 import {
   FiSend, FiPaperclip, FiUser, FiCircle, FiSlash, FiSearch, FiImage,
+  FiCheck, FiPlay,
 } from 'react-icons/fi'
 import { useAdminTheme } from '../../context/AdminThemeContext'
 
@@ -107,16 +108,40 @@ export default function LiveChat() {
       setSessions(prev => prev.map(s => s.session_id === session_id ? { ...s, status: 'ended' } : s))
     })
 
+    // Read-receipt deltas: server stamps `read_at` on the matching messages.
+    socket.on('chat:read', ({ session_id, message_ids, read_at }) => {
+      const set = new Set(message_ids || [])
+      setMessagesByKey(prev => {
+        const list = prev[session_id]
+        if (!list) return prev
+        const next = list.map(m => set.has(m.id) ? { ...m, read_at } : m)
+        return { ...prev, [session_id]: next }
+      })
+    })
+
     socket.on('chat:auth-error', (e) => setError(e.message || 'Auth failed'))
 
     return () => socket.disconnect()
   }, [])
 
-  // ── Join a session room when active changes ──────────────────────────────
+  // ── Join a session room when active changes; also mark visitor messages
+  //    as read so the visitor sees double-checks immediately. ──────────────
   useEffect(() => {
     if (!activeKey) return
-    socketRef.current?.emit('admin:join-session', { session_id: activeKey })
+    const sock = socketRef.current
+    sock?.emit('admin:join-session', { session_id: activeKey })
+    sock?.emit('admin:mark-read', { session_id: activeKey })
   }, [activeKey])
+
+  // Also mark-read whenever new visitor messages arrive in the active thread.
+  useEffect(() => {
+    if (!activeKey) return
+    const list = messagesByKey[activeKey] || []
+    const hasUnreadVisitor = list.some(m => m.sender_kind === 'visitor' && !m.read_at)
+    if (hasUnreadVisitor) {
+      socketRef.current?.emit('admin:mark-read', { session_id: activeKey })
+    }
+  }, [messagesByKey, activeKey])
 
   // ── Auto-scroll to bottom on new messages ────────────────────────────────
   useEffect(() => {
@@ -156,6 +181,7 @@ export default function LiveChat() {
         return (
           (s.name || '').toLowerCase().includes(q) ||
           (s.email || '').toLowerCase().includes(q) ||
+          (s.phone || '').toLowerCase().includes(q) ||
           (s.page_url || '').toLowerCase().includes(q) ||
           (s.last_message_preview || '').toLowerCase().includes(q)
         )
@@ -455,14 +481,32 @@ export default function LiveChat() {
             }}>
               {activeMessages.length === 0 && (
                 <div style={{
-                  margin: 'auto', padding: 24, textAlign: 'center',
+                  margin: 'auto', padding: 28, textAlign: 'center',
                   color: T.textSub, fontSize: 12,
                   border: `1px dashed ${T.border}`, borderRadius: 12,
-                  maxWidth: 360,
+                  maxWidth: 380, display: 'flex', flexDirection: 'column',
+                  alignItems: 'center', gap: 14,
                 }}>
-                  No messages yet. Type something below to greet
-                  <strong style={{ color: T.text }}> {activeSession.name || 'this visitor'} </strong>
-                  and start the conversation.
+                  <div>
+                    No messages yet. Greet
+                    <strong style={{ color: T.text }}> {activeSession.name || 'this visitor'} </strong>
+                    to start the conversation.
+                  </div>
+                  <button
+                    onClick={() => sendMessage({
+                      body: `Hi${activeSession.name ? ` ${activeSession.name.split(' ')[0]}` : ''}! Welcome to Everywhere Cars — how can I help you today?`,
+                    })}
+                    disabled={activeSession.status === 'ended'}
+                    style={{
+                      background: T.btnBg, color: T.btnText, border: 'none',
+                      padding: '8px 16px', borderRadius: 8, cursor: 'pointer',
+                      fontSize: 12.5, fontWeight: 700,
+                      display: 'flex', alignItems: 'center', gap: 6,
+                      opacity: activeSession.status === 'ended' ? 0.4 : 1,
+                    }}
+                  >
+                    <FiPlay size={11} /> Start Chat
+                  </button>
                 </div>
               )}
               {activeMessages.map(m => {
@@ -504,8 +548,21 @@ export default function LiveChat() {
                         )}
                         {m.body && <div>{m.body}</div>}
                       </div>
-                      <div style={{ fontSize: 10, color: T.textSub, paddingLeft: mine ? 0 : 6, paddingRight: mine ? 6 : 0 }}>
-                        {fmtTime(m.created_at)}
+                      <div style={{
+                        fontSize: 10, color: T.textSub,
+                        paddingLeft: mine ? 0 : 6, paddingRight: mine ? 6 : 0,
+                        display: 'flex', alignItems: 'center', gap: 3,
+                      }}>
+                        <span>{fmtTime(m.created_at)}</span>
+                        {!mine && m.read_at && (
+                          <span title={`Read ${fmtTime(m.read_at)}`} style={{
+                            display: 'inline-flex', alignItems: 'center',
+                            color: '#22c55e', marginLeft: 2,
+                          }}>
+                            <FiCheck size={10} style={{ marginRight: -5 }} />
+                            <FiCheck size={10} />
+                          </span>
+                        )}
                       </div>
                     </div>
                   </div>
