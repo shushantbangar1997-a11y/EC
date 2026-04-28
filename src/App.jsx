@@ -7,6 +7,7 @@ import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import ProtectedRoute from './components/ProtectedRoute'
 import WhatsAppWidget from './components/WhatsAppWidget'
+import ChatWidget from './components/ChatWidget'
 
 // Public Pages
 import Home from './pages/Home'
@@ -59,6 +60,7 @@ import AdminTrips from './pages/admin/Trips'
 import AdminEarnings from './pages/admin/Earnings'
 import AdminProfile from './pages/admin/Profile'
 const AdminLiveFeed = React.lazy(() => import('./pages/admin/LiveFeed'))
+const AdminLiveChat = React.lazy(() => import('./pages/admin/LiveChat'))
 
 function AppContent() {
   const location = useLocation()
@@ -221,6 +223,7 @@ function AppContent() {
               <Route path="live-feed" element={<Suspense fallback={null}><AdminLiveFeed /></Suspense>} />
               <Route path="leads" element={<AdminLeads />} />
               <Route path="leads/hot" element={<AdminLeads forceHot />} />
+              <Route path="live-chat" element={<Suspense fallback={null}><AdminLiveChat /></Suspense>} />
               <Route path="orders" element={<AdminOrders />} />
               <Route path="offers" element={<AdminMyOffers />} />
               <Route path="trips" element={<AdminTrips />} />
@@ -234,6 +237,7 @@ function AppContent() {
         </main>
         {!isAdminPortal && !isAuthPage && <Footer />}
         {!isAdminPortal && !isAuthPage && <WhatsAppWidget />}
+        {!isAdminPortal && !isAuthPage && <ChatWidget />}
         <Toaster
           position="top-right"
           toastOptions={{

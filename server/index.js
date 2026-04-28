@@ -2,9 +2,13 @@ import express from 'express'
 import cors from 'cors'
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcryptjs'
+import multer from 'multer'
+import { createServer } from 'http'
+import { Server as SocketIOServer } from 'socket.io'
 import { fileURLToPath } from 'url'
-import { join, dirname } from 'path'
-import { existsSync } from 'fs'
+import { join, dirname, extname } from 'path'
+import { existsSync, mkdirSync, writeFileSync } from 'fs'
+import { randomBytes } from 'crypto'
 import { db } from './db.js'
 import { sendWelcomeEmail, sendQuoteConfirmation, sendOperatorNotification } from './emailService.js'
 
@@ -52,6 +56,41 @@ function safe(user) {
   if (!user) return null
   const { password, ...rest } = user
   return rest
+}
+
+// ── Chat helpers (token + input sanitisation) ────────────────────────────────
+//
+// The visitor side of live chat is anonymous, so the only way to prove
+// ownership of a session_id is a server-issued, signed token. We sign with the
+// same JWT_SECRET as user tokens but tag the payload with `kind: 'chat'` so
+// admin endpoints never accidentally accept it.
+
+function signChatToken(session_id) {
+  return jwt.sign({ kind: 'chat', session_id }, JWT_SECRET, { expiresIn: '30d' })
+}
+
+function verifyChatToken(token) {
+  if (!token || typeof token !== 'string') return null
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET)
+    if (decoded?.kind !== 'chat' || !decoded.session_id) return null
+    return decoded
+  } catch {
+    return null
+  }
+}
+
+// Strip control characters and clamp length. Anything that ends up rendered in
+// the admin UI (name, email, page_url, body) goes through this to defang the
+// most obvious abuse vectors. React still escapes HTML, so XSS is not the
+// concern here — UI poisoning and storage bloat are.
+function clean(input, max) {
+  if (input == null) return ''
+  return String(input).replace(/[\x00-\x1F\x7F]/g, '').slice(0, max).trim()
+}
+
+function newVisitorSessionId() {
+  return 'v_' + randomBytes(12).toString('hex')
 }
 
 function qrToLead(qr) {
@@ -792,6 +831,168 @@ app.get('/api/revenue', auth, role('operator', 'admin'), (req, res) => {
   }
 })
 
+// ── LIVE CHAT ────────────────────────────────────────────────────────────────
+//
+// Visitor ↔ admin live chat. The transport is Socket.IO (set up at the bottom
+// of this file alongside the HTTP server). The REST endpoints below cover:
+//   • image uploads (multer) — broadcast as URL-only chat messages
+//   • initial fetch of session list + transcripts when a page first loads,
+//     before the socket has caught the user up.
+
+db.ensureChatStores()
+
+// Uploads live next to the JSON store. Served as static files at /uploads.
+const UPLOADS_DIR = join(__dirname, 'uploads')
+const CHAT_UPLOADS_DIR = join(UPLOADS_DIR, 'chat')
+mkdirSync(CHAT_UPLOADS_DIR, { recursive: true })
+app.use('/uploads', express.static(UPLOADS_DIR, { maxAge: '7d' }))
+
+const ALLOWED_IMAGE_MIME = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/gif'])
+
+// We use *memory* storage so the file never touches disk until the request is
+// fully authenticated and rate-limit checked. This eliminates the "fill disk
+// with anonymous junk" attack vector that disk-storage would expose.
+const chatUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 5 * 1024 * 1024, files: 1 },
+  fileFilter: (_req, file, cb) => {
+    if (!ALLOWED_IMAGE_MIME.has(file.mimetype)) {
+      return cb(new Error('Only JPG, PNG, WEBP, or GIF images are allowed'))
+    }
+    cb(null, true)
+  },
+})
+
+// Per-session upload rate limit (sliding window of 1 minute, 10 uploads max).
+// In-memory only; resets on server restart.
+const UPLOAD_LIMIT_PER_MIN = 10
+const uploadHits = new Map() // key -> [timestamp, ...]
+function rateLimitUpload(key) {
+  const now = Date.now()
+  const hits = (uploadHits.get(key) || []).filter(ts => now - ts < 60_000)
+  if (hits.length >= UPLOAD_LIMIT_PER_MIN) return false
+  hits.push(now)
+  uploadHits.set(key, hits)
+  // Periodic GC: trim the map every so often when it gets large.
+  if (uploadHits.size > 5000) {
+    for (const [k, arr] of uploadHits) {
+      const fresh = arr.filter(ts => now - ts < 60_000)
+      if (fresh.length === 0) uploadHits.delete(k)
+      else uploadHits.set(k, fresh)
+    }
+  }
+  return true
+}
+
+// POST /api/chat/upload — multipart form, single field "file".
+// Auth: must come from either an admin/operator JWT in `Authorization`, OR
+// from a visitor presenting a valid signed chat token (`chat_token` form
+// field) whose session_id matches the `session_id` form field.
+//
+// Order of operations matters: multer reads the file into MEMORY (not disk),
+// then we authenticate, then we rate-limit, then we finally persist. This
+// guarantees that an unauthenticated request never produces a file on disk.
+app.post('/api/chat/upload', (req, res) => {
+  chatUpload.single('file')(req, res, (err) => {
+    if (err) {
+      const msg = err.code === 'LIMIT_FILE_SIZE'
+        ? 'Image must be 5 MB or smaller'
+        : err.message || 'Upload failed'
+      return res.status(400).json({ message: msg })
+    }
+    if (!req.file) return res.status(400).json({ message: 'No file uploaded' })
+
+    const session_id = clean(req.body?.session_id, 80)
+    const tokenHeader = req.headers.authorization
+    let isStaff = false
+    if (tokenHeader?.startsWith('Bearer ')) {
+      try {
+        const decoded = jwt.verify(tokenHeader.slice(7), JWT_SECRET)
+        isStaff = ['admin', 'operator'].includes(decoded?.role)
+      } catch {}
+    }
+
+    if (!isStaff) {
+      const chatToken = verifyChatToken(req.body?.chat_token)
+      if (!chatToken || !session_id || chatToken.session_id !== session_id) {
+        return res.status(401).json({ message: 'Chat session token required' })
+      }
+    } else if (!session_id) {
+      return res.status(400).json({ message: 'session_id required' })
+    }
+
+    const rateKey = isStaff ? `admin:${tokenHeader}` : `visitor:${session_id}`
+    if (!rateLimitUpload(rateKey)) {
+      return res.status(429).json({ message: 'Too many uploads — slow down' })
+    }
+
+    // Auth + rate-limit cleared — now (and only now) flush to disk.
+    const safeExt = (extname(req.file.originalname || '').toLowerCase()
+      .match(/\.(jpg|jpeg|png|webp|gif)$/)?.[0]) || '.jpg'
+    const filename = `${Date.now()}-${randomBytes(6).toString('hex')}${safeExt}`
+    try {
+      writeFileSync(join(CHAT_UPLOADS_DIR, filename), req.file.buffer)
+    } catch (e) {
+      return res.status(500).json({ message: 'Could not save image' })
+    }
+
+    res.json({
+      success: true,
+      url: `/uploads/chat/${filename}`,
+      bytes: req.file.size,
+      mime: req.file.mimetype,
+    })
+  })
+})
+
+// Admin-only: list every chat session (active + ended), newest first.
+// Used to render the visitor list and the archive view.
+app.get('/api/chat/sessions', auth, role('admin', 'operator'), (_req, res) => {
+  try {
+    // `presence` and `publicSession` are defined further down the file, in the
+    // Socket.IO section. They're already initialised by the time any HTTP
+    // request can hit this handler.
+    const sessions = db.listChatSessions().map(s => ({
+      ...publicSession(s),
+      message_count: db.listChatMessages(s.id).length,
+    }))
+    const online_count = sessions.filter(s => s.online).length
+    res.json({ data: sessions, online_count })
+  } catch (e) {
+    res.status(500).json({ message: 'Could not load chat sessions', error: e.message })
+  }
+})
+
+// Fetch the full transcript for a session.
+// Admin/operator: any session via Authorization JWT.
+// Visitor: must present a signed `chat_token` (query param) whose session_id
+// matches the one on the requested chat row. Self-asserted session ids are
+// rejected — only the server-issued token grants access.
+app.get('/api/chat/sessions/:id/messages', (req, res) => {
+  try {
+    const session = db.getChatSession(req.params.id)
+    if (!session) return res.status(404).json({ message: 'Chat not found' })
+
+    const tokenHeader = req.headers.authorization
+    let isStaff = false
+    if (tokenHeader?.startsWith('Bearer ')) {
+      try {
+        const decoded = jwt.verify(tokenHeader.slice(7), JWT_SECRET)
+        isStaff = ['admin', 'operator'].includes(decoded?.role)
+      } catch {}
+    }
+    if (!isStaff) {
+      const chatToken = verifyChatToken(req.query.chat_token)
+      if (!chatToken || chatToken.session_id !== session.session_id) {
+        return res.status(403).json({ message: 'Not allowed to view this transcript' })
+      }
+    }
+    res.json({ data: db.listChatMessages(session.id) })
+  } catch (e) {
+    res.status(500).json({ message: 'Could not load messages', error: e.message })
+  }
+})
+
 // ── HEALTH ────────────────────────────────────────────────────────────────────
 
 app.get('/api/health', (_, res) => res.json({ status: 'ok', time: new Date().toISOString() }))
@@ -807,10 +1008,354 @@ app.use((req, res) => {
   }
 })
 
+// ── SOCKET.IO LIVE CHAT ──────────────────────────────────────────────────────
+//
+// Two kinds of connections share the same Socket.IO server:
+//   • Visitors  — anonymous, identified by a stable `session_id` they persist
+//     in localStorage. Each visitor is placed in their own room
+//     `chat:<session_id>` so admins who join that room receive their messages.
+//   • Admins    — authenticated via a JWT they pass when emitting
+//     `admin:hello`. Every admin socket joins the `admins` room and gets
+//     broadcast presence + new-message pings for *every* session, then opts
+//     into a specific session via `admin:join-session`.
+//
+// We track active visitors in memory (Map<session_id, presence>) so the
+// admin's "who's online right now" panel updates in real time without
+// hitting disk on every heartbeat. The persistent JSON store still holds the
+// transcript and the session metadata for archive search.
+
+const httpServer = createServer(app)
+const io = new SocketIOServer(httpServer, {
+  cors: { origin: true, credentials: true },
+  // Visitor uploads are 5 MB; everything else is small JSON.
+  maxHttpBufferSize: 6 * 1024 * 1024,
+})
+
+const ADMIN_ROOM = 'admins'
+const presence = new Map() // session_id -> { socket_ids:Set, last_seen, page_url, name, email, customer_id }
+
+// Hard caps so an attacker spinning up sockets/sessions can't OOM the server.
+const MAX_PRESENCE_ENTRIES   = 5000   // distinct visitor sessions tracked at once
+const MAX_SOCKETS_PER_SESSION = 5     // a single visitor opening many tabs
+const PRESENCE_CLEANUP_MS     = 5000  // grace period for navigations
+const cleanupTimers = new Map()       // session_id -> Timeout (so we can dedupe)
+
+// Field-length limits applied before storage/broadcast.
+const MAX_NAME       = 80
+const MAX_EMAIL      = 200
+const MAX_PAGE_URL   = 500
+const MAX_BODY       = 4000
+
+function evictOldestPresenceIfNeeded() {
+  if (presence.size < MAX_PRESENCE_ENTRIES) return
+  let oldestKey = null
+  let oldestTs = Infinity
+  for (const [k, v] of presence) {
+    if (v.last_seen < oldestTs) { oldestTs = v.last_seen; oldestKey = k }
+  }
+  if (oldestKey) presence.delete(oldestKey)
+}
+
+function publicSession(row) {
+  if (!row) return null
+  const live = presence.get(row.session_id)
+  return {
+    ...row,
+    online: !!live,
+    page_url: live?.page_url || row.page_url || '',
+    last_seen: live?.last_seen || row.last_seen || row.updated_at || row.started_at,
+  }
+}
+
+function broadcastSessionUpdate(session_id) {
+  const row = db.getChatSessionByKey(session_id)
+  if (!row) return
+  io.to(ADMIN_ROOM).emit('chat:session-update', publicSession(row))
+}
+
+// Returns true if the socket was added; false if the per-session cap is hit.
+function visitorJoinedPresence(socket, session_id, info = {}) {
+  let entry = presence.get(session_id)
+  if (!entry) {
+    evictOldestPresenceIfNeeded()
+    entry = {
+      socket_ids: new Set(),
+      last_seen: Date.now(),
+      page_url: info.page_url || '',
+      name: info.name || '',
+      email: info.email || '',
+      customer_id: info.customer_id || null,
+    }
+    presence.set(session_id, entry)
+  }
+  if (entry.socket_ids.size >= MAX_SOCKETS_PER_SESSION && !entry.socket_ids.has(socket.id)) {
+    return false
+  }
+  entry.socket_ids.add(socket.id)
+  entry.last_seen = Date.now()
+  if (info.page_url) entry.page_url = info.page_url
+  if (info.name)     entry.name     = info.name
+  if (info.email)    entry.email    = info.email
+  if (info.customer_id) entry.customer_id = info.customer_id
+  // Cancel any pending cleanup since we're online again.
+  const t = cleanupTimers.get(session_id)
+  if (t) { clearTimeout(t); cleanupTimers.delete(session_id) }
+  return true
+}
+
+function visitorLeftPresence(socket, session_id) {
+  const entry = presence.get(session_id)
+  if (!entry) return
+  entry.socket_ids.delete(socket.id)
+  if (entry.socket_ids.size === 0 && !cleanupTimers.has(session_id)) {
+    // Single deduped grace timer per session — prevents timer amplification
+    // under churn.
+    const t = setTimeout(() => {
+      cleanupTimers.delete(session_id)
+      const cur = presence.get(session_id)
+      if (cur && cur.socket_ids.size === 0) {
+        presence.delete(session_id)
+        broadcastSessionUpdate(session_id)
+      }
+    }, PRESENCE_CLEANUP_MS)
+    cleanupTimers.set(session_id, t)
+  }
+}
+
+function persistMessageAndBroadcast({ session_id, sender_kind, sender_id, sender_name, body, image_url }) {
+  const row = db.getChatSessionByKey(session_id)
+  if (!row) return null
+  const msg = db.appendChatMessage({
+    chat_session_id: row.id,
+    session_id,
+    sender_kind,
+    sender_id: sender_id || null,
+    sender_name: sender_name || (sender_kind === 'admin' ? 'Agent' : 'Visitor'),
+    body: body ? String(body).slice(0, 4000) : '',
+    image_url: image_url || '',
+  })
+  db.upsertChatSession(session_id, {
+    last_seen: new Date().toISOString(),
+    last_message_preview: image_url ? '📷 Image' : (body || '').slice(0, 120),
+    last_message_kind: sender_kind,
+    has_admin_replied: row.has_admin_replied || sender_kind === 'admin',
+  })
+  io.to(`chat:${session_id}`).emit('chat:message', msg)
+  // Notify all admins listening to the visitor list, even those who haven't
+  // joined this specific session yet, so the row reorders/updates instantly.
+  io.to(ADMIN_ROOM).emit('chat:message-preview', { session_id, message: msg })
+  broadcastSessionUpdate(session_id)
+  return msg
+}
+
+io.on('connection', (socket) => {
+  // Each socket starts as "unidentified" — we attach `visitor` or `admin`
+  // metadata once it announces itself with a hello event.
+  socket.data.visitor = null
+  socket.data.admin = null
+
+  // ── Visitor lifecycle ──────────────────────────────────────────────────
+  //
+  // The first time a visitor connects they have no chat token. We mint a fresh
+  // session_id + signed token server-side and ship it back via `chat:identity`
+  // so the client can persist both. On reconnects the client sends the token;
+  // we verify it and trust the embedded session_id (the client's own
+  // session_id field is ignored if the token is present).
+  socket.on('visitor:hello', (payload = {}) => {
+    const verified = verifyChatToken(payload.chat_token)
+    let session_id = verified?.session_id || null
+    let chat_token = verified ? payload.chat_token : null
+
+    if (!session_id) {
+      session_id = newVisitorSessionId()
+      chat_token = signChatToken(session_id)
+    }
+
+    const accepted = visitorJoinedPresence(socket, session_id, {
+      page_url: clean(payload.page_url, MAX_PAGE_URL),
+    })
+    if (!accepted) {
+      socket.emit('chat:auth-error', { message: 'Too many connections from this session' })
+      return
+    }
+
+    socket.data.visitor = { session_id }
+    socket.join(`chat:${session_id}`)
+
+    // Optionally tie this chat to a logged-in customer for follow-up.
+    let customer_id = null
+    let name  = clean(payload.name, MAX_NAME)
+    let email = clean(payload.email, MAX_EMAIL)
+    if (payload.token) {
+      try {
+        const decoded = jwt.verify(payload.token, JWT_SECRET)
+        if (decoded && decoded.role === 'customer') {
+          customer_id = decoded.id
+          const u = db.getUser(decoded.id)
+          if (u) { name = u.name; email = u.email }
+        }
+      } catch {}
+    }
+
+    const existing = db.getChatSessionByKey(session_id)
+    db.upsertChatSession(session_id, {
+      name:        name  || existing?.name  || '',
+      email:       email || existing?.email || '',
+      customer_id: customer_id || existing?.customer_id || null,
+      page_url:    clean(payload.page_url, MAX_PAGE_URL) || existing?.page_url || '',
+      last_seen:   new Date().toISOString(),
+      status:      'active',
+    })
+    broadcastSessionUpdate(session_id)
+
+    // Identity goes out FIRST so the client persists the token before sending
+    // any messages.
+    socket.emit('chat:identity', { session_id, chat_token })
+
+    const row = db.getChatSessionByKey(session_id)
+    socket.emit('chat:hello', {
+      session: publicSession(row),
+      messages: db.listChatMessages(row.id),
+    })
+  })
+
+  socket.on('visitor:heartbeat', (payload = {}) => {
+    const v = socket.data.visitor
+    if (!v) return
+    const entry = presence.get(v.session_id)
+    const url = clean(payload.page_url, MAX_PAGE_URL)
+    if (entry) {
+      entry.last_seen = Date.now()
+      if (url) entry.page_url = url
+    }
+    if (url) {
+      db.upsertChatSession(v.session_id, { page_url: url, last_seen: new Date().toISOString() })
+    }
+    broadcastSessionUpdate(v.session_id)
+  })
+
+  socket.on('visitor:typing', (payload = {}) => {
+    const v = socket.data.visitor
+    if (!v) return
+    io.to(`chat:${v.session_id}`).emit('chat:typing', { kind: 'visitor', is_typing: !!payload.is_typing, session_id: v.session_id })
+  })
+
+  socket.on('visitor:message', (payload = {}) => {
+    const v = socket.data.visitor
+    if (!v) return
+    const body      = clean(payload.body, MAX_BODY)
+    const image_url = clean(payload.image_url, 500)
+    if (!body && !image_url) return
+    // Image URLs we accept must come from our own uploads endpoint.
+    if (image_url && !image_url.startsWith('/uploads/chat/')) return
+    const session = db.getChatSessionByKey(v.session_id)
+    persistMessageAndBroadcast({
+      session_id: v.session_id,
+      sender_kind: 'visitor',
+      sender_id: session?.customer_id || null,
+      sender_name: clean(payload.name, MAX_NAME) || session?.name || 'Visitor',
+      body,
+      image_url,
+    })
+  })
+
+  // ── Admin lifecycle ────────────────────────────────────────────────────
+  socket.on('admin:hello', (payload = {}) => {
+    let decoded = null
+    try { decoded = jwt.verify(payload.token || '', JWT_SECRET) } catch {}
+    if (!decoded || !['admin', 'operator'].includes(decoded.role)) {
+      socket.emit('chat:auth-error', { message: 'Admin auth required' })
+      return
+    }
+    const user = db.getUser(decoded.id)
+    socket.data.admin = { id: decoded.id, name: user?.name || 'Agent', role: decoded.role }
+    socket.join(ADMIN_ROOM)
+
+    // Initial snapshot
+    socket.emit('chat:snapshot', {
+      sessions: db.listChatSessions().map(publicSession),
+    })
+  })
+
+  socket.on('admin:join-session', (payload = {}) => {
+    if (!socket.data.admin) return
+    const session_id = clean(payload.session_id, 80)
+    if (!session_id) return
+    socket.join(`chat:${session_id}`)
+    const row = db.getChatSessionByKey(session_id)
+    if (row) {
+      socket.emit('chat:transcript', {
+        session_id,
+        messages: db.listChatMessages(row.id),
+      })
+    }
+  })
+
+  socket.on('admin:leave-session', (payload = {}) => {
+    if (!socket.data.admin) return
+    const session_id = clean(payload.session_id, 80)
+    if (session_id) socket.leave(`chat:${session_id}`)
+  })
+
+  socket.on('admin:typing', (payload = {}) => {
+    if (!socket.data.admin) return
+    const session_id = clean(payload.session_id, 80)
+    if (!session_id) return
+    io.to(`chat:${session_id}`).emit('chat:typing', {
+      kind: 'admin', is_typing: !!payload.is_typing, session_id,
+      admin_name: socket.data.admin.name,
+    })
+  })
+
+  socket.on('admin:message', (payload = {}) => {
+    if (!socket.data.admin) return
+    const session_id = clean(payload.session_id, 80)
+    const body      = clean(payload.body, MAX_BODY)
+    const image_url = clean(payload.image_url, 500)
+    if (!session_id || (!body && !image_url)) return
+    if (image_url && !image_url.startsWith('/uploads/chat/')) return
+    // Auto-create the session if the admin proactively starts a chat with a
+    // visitor who's only been pinging via heartbeat (no prior message yet).
+    if (!db.getChatSessionByKey(session_id)) {
+      db.upsertChatSession(session_id, {
+        name: clean(payload.visitor_name, MAX_NAME),
+        page_url: clean(payload.page_url, MAX_PAGE_URL),
+        last_seen: new Date().toISOString(),
+        status: 'active',
+      })
+    }
+    persistMessageAndBroadcast({
+      session_id,
+      sender_kind: 'admin',
+      sender_id: socket.data.admin.id,
+      sender_name: socket.data.admin.name,
+      body,
+      image_url,
+    })
+  })
+
+  socket.on('admin:end-session', (payload = {}) => {
+    if (!socket.data.admin) return
+    const session_id = clean(payload.session_id, 80)
+    const row = db.getChatSessionByKey(session_id)
+    if (!row) return
+    db.endChatSession(row.id)
+    io.to(`chat:${session_id}`).emit('chat:ended', { session_id })
+    broadcastSessionUpdate(session_id)
+  })
+
+  socket.on('disconnect', () => {
+    if (socket.data.visitor) {
+      visitorLeftPresence(socket, socket.data.visitor.session_id)
+    }
+  })
+})
+
 // ── START ─────────────────────────────────────────────────────────────────────
 
-app.listen(PORT, '0.0.0.0', () => {
+httpServer.listen(PORT, '0.0.0.0', () => {
   console.log(`[API] Server running on port ${PORT}`)
   console.log(`[API] Serving frontend from: ${DIST}`)
   console.log(`[API] NODE_ENV: ${process.env.NODE_ENV || 'development'}`)
+  console.log(`[API] Socket.IO chat enabled`)
 })

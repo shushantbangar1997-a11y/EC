@@ -4,7 +4,7 @@ import {
   FiInbox, FiTag, FiTruck, FiDollarSign, FiUser,
   FiLogOut, FiBell, FiZap, FiSun, FiMoon,
   FiChevronLeft, FiChevronRight, FiSearch,
-  FiUsers, FiTrendingUp,
+  FiUsers, FiTrendingUp, FiMessageSquare,
 } from 'react-icons/fi'
 import toast from 'react-hot-toast'
 import { useAuth } from '../../context/AuthContext'
@@ -25,6 +25,12 @@ const NAV_GROUPS = [
     items: [
       { to: '/admin/leads',     label: 'All Leads', icon: FiUsers,       badgeKey: 'totalLeads' },
       { to: '/admin/leads/hot', label: 'Hot Leads', icon: FiTrendingUp,  badgeKey: 'hotLeads', liveDot: true },
+    ],
+  },
+  {
+    label: 'Chat',
+    items: [
+      { to: '/admin/live-chat', label: 'Live Chat', icon: FiMessageSquare, badgeKey: 'activeVisitors', liveDot: true },
     ],
   },
   {
@@ -50,7 +56,7 @@ function AdminPortalInner() {
   const { theme: T, toggle } = useAdminTheme()
   const [counts, setCounts] = useState({
     liveFeed: 0, newOrders: 0, pendingOffers: 0, confirmedTrips: 0,
-    totalLeads: 0, hotLeads: 0,
+    totalLeads: 0, hotLeads: 0, activeVisitors: 0,
   })
   const [collapsed, setCollapsed] = useState(false)
   const [searchVal, setSearchVal] = useState('')
@@ -63,10 +69,11 @@ function AdminPortalInner() {
     let stopped = false
     const tick = async () => {
       try {
-        const [ordersRes, bidsRes, leadsRes] = await Promise.all([
+        const [ordersRes, bidsRes, leadsRes, chatRes] = await Promise.all([
           api.get('/admin/orders', { params: { limit: 100 } }),
           api.get('/admin/my-bids'),
           api.get('/admin/leads').catch(() => ({ data: { counts: {} } })),
+          api.get('/chat/sessions').catch(() => ({ data: { online_count: 0 } })),
         ])
         if (stopped) return
         const orders = ordersRes.data?.data || []
@@ -99,6 +106,7 @@ function AdminPortalInner() {
           confirmedTrips: bids.filter(b => b.status === 'accepted').length,
           totalLeads:     leadCounts.total || 0,
           hotLeads:       leadCounts.hot   || 0,
+          activeVisitors: chatRes.data?.online_count || 0,
         })
         document.title = liveFeedCount > 0
           ? `(${liveFeedCount}) New Orders · Everywhere Transfers`

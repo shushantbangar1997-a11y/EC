@@ -32,6 +32,8 @@ function seed() {
     quote_requests: [],
     bids: [],
     bid_messages: [],
+    chat_sessions: [],
+    chat_messages: [],
     drivers: [
       { id: 'd1', operator_id: 'u2', name: 'James Carter', phone: '+17185550001', vehicle_type: 'sedan', vehicle: 'Lincoln Town Car', plate: 'NYC-1234', status: 'available', created_at: new Date().toISOString() },
       { id: 'd2', operator_id: 'u2', name: 'Maria Santos', phone: '+17185550002', vehicle_type: 'suv', vehicle: 'Cadillac Escalade', plate: 'NYC-5678', status: 'available', created_at: new Date().toISOString() },
@@ -130,6 +132,81 @@ export const db = {
     if (!Array.isArray(_db.bid_messages)) return []
     return _db.bid_messages.filter(m => m.bid_id === bid_id)
       .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
+  },
+
+  // ── CHAT (visitor ↔ admin live chat) ────────────────────────────────────
+  // chat_sessions store one row per visitor session_id (the stable token the
+  // client persists in localStorage). We retain the session forever so the
+  // admin can search transcripts and a returning visitor sees their history.
+  ensureChatStores: () => {
+    if (!Array.isArray(_db.chat_sessions)) _db.chat_sessions = []
+    if (!Array.isArray(_db.chat_messages)) _db.chat_messages = []
+  },
+  getChatSessionByKey: (session_id) => {
+    if (!Array.isArray(_db.chat_sessions)) return null
+    return _db.chat_sessions.find(s => s.session_id === session_id) || null
+  },
+  getChatSession: (id) => {
+    if (!Array.isArray(_db.chat_sessions)) return null
+    return _db.chat_sessions.find(s => s.id === id) || null
+  },
+  upsertChatSession: (session_id, updates) => {
+    if (!Array.isArray(_db.chat_sessions)) _db.chat_sessions = []
+    const idx = _db.chat_sessions.findIndex(s => s.session_id === session_id)
+    if (idx === -1) {
+      const row = {
+        id: nextId(),
+        session_id,
+        status: 'active',
+        started_at: new Date().toISOString(),
+        ...updates,
+      }
+      _db.chat_sessions.push(row)
+      save(_db)
+      return row
+    }
+    _db.chat_sessions[idx] = {
+      ..._db.chat_sessions[idx],
+      ...updates,
+      updated_at: new Date().toISOString(),
+    }
+    save(_db)
+    return _db.chat_sessions[idx]
+  },
+  listChatSessions: () => {
+    if (!Array.isArray(_db.chat_sessions)) return []
+    return [..._db.chat_sessions].sort(
+      (a, b) => new Date(b.last_seen || b.updated_at || b.started_at) - new Date(a.last_seen || a.updated_at || a.started_at)
+    )
+  },
+  appendChatMessage: (data) => {
+    if (!Array.isArray(_db.chat_messages)) _db.chat_messages = []
+    const msg = {
+      id: nextId(),
+      created_at: new Date().toISOString(),
+      ...data,
+    }
+    _db.chat_messages.push(msg)
+    save(_db)
+    return msg
+  },
+  listChatMessages: (chat_session_id) => {
+    if (!Array.isArray(_db.chat_messages)) return []
+    return _db.chat_messages
+      .filter(m => m.chat_session_id === chat_session_id)
+      .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
+  },
+  endChatSession: (id, ended_at) => {
+    if (!Array.isArray(_db.chat_sessions)) return null
+    const idx = _db.chat_sessions.findIndex(s => s.id === id)
+    if (idx === -1) return null
+    _db.chat_sessions[idx] = {
+      ..._db.chat_sessions[idx],
+      status: 'ended',
+      ended_at: ended_at || new Date().toISOString(),
+    }
+    save(_db)
+    return _db.chat_sessions[idx]
   },
 
   listDrivers: (operator_id) => operator_id ? _db.drivers.filter(d => d.operator_id === operator_id) : _db.drivers,
